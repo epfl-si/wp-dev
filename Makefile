@@ -130,6 +130,14 @@ exec:
 httpd:
 	@docker exec -it $(_httpd_container) bash -l
 
+.PHONY: tail-errors
+tail-errors:
+	tail -F volumes/srv/*/logs/error_log.*.`date +%Y%m%d`
+
+.PHONY: tail-access
+tail-access:
+	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
+
 ######################## Cleaning up ##########################
 
 .PHONY: clean
