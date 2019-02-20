@@ -1,5 +1,3 @@
-#!make
-
 .PHONY: all
 all: check-env checkout
 
@@ -44,36 +42,35 @@ else
 include .env
 endif
 
-_mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=${WP_ENV}")
-_httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=${WP_ENV}")
+_mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
+_httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
 
 .PHONY: vars
 vars: check-env
 	@echo 'Environment-related vars:'
-	@echo '  WP_ENV=${WP_ENV}'
-	@echo '  _mgmt_container=${_mgmt_container}'
-	@echo '  _httpd_container=${_httpd_container}'
+	@echo '  WP_ENV=$(WP_ENV)'
+	@echo '  _mgmt_container=$(_mgmt_container)'
+	@echo '  _httpd_container=$(_httpd_container)'
 
 	@echo ''
 	@echo DB-related vars:
-	@echo '  MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}'
-	@echo '  MYSQL_DB_HOST=${MYSQL_DB_HOST}'
-	@echo '  MYSQL_SUPER_USER=${MYSQL_SUPER_USER}'
-	@echo '  MYSQL_SUPER_PASSWORD=${MYSQL_SUPER_PASSWORD}'
+	@echo '  MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD)'
+	@echo '  MYSQL_DB_HOST=$(MYSQL_DB_HOST)'
+	@echo '  MYSQL_SUPER_USER=$(MYSQL_SUPER_USER)'
+	@echo '  MYSQL_SUPER_PASSWORD=$(MYSQL_SUPER_PASSWORD)'
 
 	@echo ''
 	@echo 'Wordpress-related vars:'
-	@echo '  WP_VERSION=${WP_VERSION}'
-	@echo '  WP_ADMIN_USER=${WP_ADMIN_USER}'
-	@echo '  WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}'
-	@echo '  WP_PORT_HTTP=${WP_PORT_HTTP}'
-	@echo '  WP_PORT_HTTPS=${WP_PORT_HTTPS}'
+	@echo '  WP_VERSION=$(WP_VERSION)'
+	@echo '  WP_ADMIN_USER=$(WP_ADMIN_USER)'
+	@echo '  WP_ADMIN_EMAIL=$(WP_ADMIN_EMAIL)'
+	@echo '  WP_PORT_HTTP=$(WP_PORT_HTTP)'
+	@echo '  WP_PORT_HTTPS=$(WP_PORT_HTTPS)'
 
 	@echo ''
 	@echo 'WPManagement-related vars:'
-	@echo '  WP_PORT_PHPMA=${WP_PORT_PHPMA}'
-	@echo '  WP_PORT_SSHD=${WP_PORT_SSHD}'
-	@echo '  PLUGINS_CONFIG_BASE_PATH=${PLUGINS_CONFIG_BASE_PATH}'
+	@echo '  WP_PORT_PHPMA=$(WP_PORT_PHPMA)'
+	@echo '  WP_PORT_SSHD=$(WP_PORT_SSHD)'
 
 ######################## Pulling code ##########################
 #
@@ -115,7 +112,7 @@ volumes/wp-content/plugins volumes/wp-content/mu-plugins: volumes/wp-content/jah
 pull: check-env
 	docker-compose pull
 
-######################## Containers Lifecycle ##########################
+######################## Containers Lifecycle #####################
 
 .PHONY: up
 up: check-env checkout
@@ -131,9 +128,9 @@ down: check-env
 .PHONY: exec
 exec: check-env
 	@docker exec --user www-data -it  \
-	  -e WP_ENV=${WP_ENV} \
-	  -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-	  -e MYSQL_DB_HOST=${MYSQL_DB_HOST} \
+	  -e WP_ENV=$(WP_ENV) \
+	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
+	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
 	  $(_mgmt_container) bash -l
 
 .PHONY: httpd
