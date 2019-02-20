@@ -119,18 +119,11 @@ pull: check-env
 
 .PHONY: up
 up: check-env checkout
-	@WP_ENV=${WP_ENV} \
-		MYSQL_DB_HOST=${MYSQL_DB_HOST} \
-		MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-		WP_PORT_HTTP=${WP_PORT_HTTP} \
-		WP_PORT_HTTPS=${WP_PORT_HTTPS} \
-		docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) up -d
+	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) up -d
 
 .PHONY: down
 down: check-env
-	@WP_PORT_HTTP=${WP_PORT_HTTP} \
-	 WP_PORT_HTTPS=${WP_PORT_HTTPS} \
-	 docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) down
+	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) down
 
 
 ######################## Development Tasks ########################
