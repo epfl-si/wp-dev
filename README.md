@@ -1,27 +1,68 @@
 <h1 align="center">
-  WordPress @ EPFL: DevOps Boogaloo
+  WordPress @ EPFL: the development environment
 </h1>
 
 In this repository you will find:
 
-- The Dockerfiles and build dependencies for all custom-made Docker images
+- Support for running the VPSI WordPress stack locally
 
-- Some Ansible code to manage state on-disk
+# Install and Usage
 
-## Install and Usage
+## Initial Setup
 
-To be documented
+1. Clone the repository
+1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:<pre>127.0.0.1       wp-httpd</pre>
+1. `git clone` the repository onto your hard drive
+1. Go into the `wp-local` subdirectory and copy and modify `env.sample` into `.env`
+1. Type `make up` to bring up the development stack, then `make exec` to enter the so-called management container:<pre>
+cd /srv/${WP_ENV}/
+mkdir -p wp-httpd/htdocs
+cd wp-httpd/htdocs
+</pre>
+1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either the `wp` command-line tool (for a “vanilla” WordPress site) or `jahia2wp create`
+1. If you want to modify the EPFL-provided themes and plug-ins interactively, you can do so by replacing the deployed subdirectories with symlinks to `/wp/wp-content`, e.g. <pre>
+cd /srv/${WP_ENV}/wp-httpd/htdocs/
+cd where/ever/is/my/WordPress/wp-content
+rm -rf themes/wp-theme-2018 plugins/epfl* plugins/EPFL-*
+ln -s /wp/wp-content/plugins/epfl{,-scienceqa,-stats,-tequila,-infoscience} \
+      /wp/wp-content/plugins/EPFL-{Content-Filter,settings} plugins/
+ln -s /wp/wp-content/themes/wp-theme-2018 themes/
+</pre>
 
-## Overview and Roadmap
+## Day-To-Day Operations
 
-To be documented
+1. Go into the `wp-local` subdirectory and `make up`
+1. Hack on things
+1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
 
-- More of the state management (in particular of the Kubernetes state) should be automated
+### Volumes
 
-## Contributor list
+#### `volumes/db`
 
-Big up to all the following people, without whom this project will not be
+The MySQL persistent database directory, used by the `mysql` container
 
-| [<img src="https://avatars0.githubusercontent.com/u/490665?v=4s=100" width="100px;"/><br /><sub>Manu B.</sub>](https://github.com/ebreton)<br /> | [<img src="https://avatars0.githubusercontent.com/u/2668031?v=4s=100" width="100px;"/><br /><sub>Manu J. </sub>](https://github.com/jaepetto)<br /> | [<img src="https://avatars0.githubusercontent.com/u/4997224?v=4s=100" width="100px;"/><br /><sub>Greg</sub>](https://github.com/GregLeBarbar)<br /> | [<img src="https://avatars0.githubusercontent.com/u/11942430?v=4s=100" width="100px;"/><br /><sub>Lulu</sub>](https://github.com/LuluTchab)<br /> | [<img src="https://avatars0.githubusercontent.com/u/25363740?v=4s=100" width="100px;"/><br /><sub>Laurent</sub>](https://github.com/lboatto)<br /> | [<img src="https://avatars0.githubusercontent.com/u/29034311?v=4s=100" width="100px;"/><br /><sub>Luc</sub>](https://github.com/lvenries)<br /> | <br /> |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [<img src="https://avatars0.githubusercontent.com/u/1629585?v=4s=100" width="100px;"/><br /><sub>Dominique</sub>](https://github.com/domq)<br /> | [<img src="https://avatars0.githubusercontent.com/u/176002?v=4s=100" width="100px;"/><br /><sub>Nicolas </sub>](https://github.com/ponsfrilus)<br /> | [<img src="https://avatars0.githubusercontent.com/u/2843501?v=4s=100" width="100px;"/><br /><sub>William </sub>](https://github.com/williambelle)<br /> | [<img src="https://avatars0.githubusercontent.com/u/28109?v=4s=100" width="100px;"/><br /><sub>CampToCamp</sub>](https://github.com/camptocamp)<br /> | <br /> | <br /> | | <br /> | <br /> |
+#### `volumes/srv` (mounted as `/srv`)
+
+The serving directory tree, comprised of any number of WordPress
+instances and/or other Apache-servable assets (e.g. directories
+containing just a `.htaccess` file). The purpose and layout are
+identical to the `/srv` directory in production (which is hosted on a
+NAS); in particular, the subdirectory structure is the same:
+
+| Path fragment | Purpose |
+| --- | --- |
+| `/srv/` | The root of the serving directory |
+| `${WP_ENV}/` | The so-called *environment* mimicking the top-level NAS subdirectories in production (one per serving replicated `httpd` pod in OpenShift) |
+| `wp-httpd/` | The host name in termes of Apache's [`VirtualDocumentRoot` directive](https://httpd.apache.org/docs/2.4/mod/mod_vhost_alias.html#virtualdocumentroot). When running locally, the host name must match both the name of the `httpd` container in `devsupport/docker-compose.yml`, and a suitable entry in `/etc/hosts` so that one can navigate to the sites below this directory |
+| `htdocs/` | Dictated by the `VirtualDocumentRoot` value |
+| `sub/dir/` | Any path can go here, affording for a hierarchy of nested WordPress instances to be installed locally |
+| `wp-config.php`<br/>`index.php`<br/>etc. | A typical WordPress installation |
+
+#### `volumes/wp-content` (mounted as `/wp/wp-content`)
+
+Contains the VPSI-specific code that goes into an ordinary WordPress
+`wp-content` directory. A set of symlinks may (or may not) be used to
+reference these from `/srv` (as seen from the inside of the
+`httpd` container)
+
+

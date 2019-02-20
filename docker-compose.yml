@@ -1,0 +1,59 @@
+# docker-compose.yml for running a local copy of the WordPress stack
+#
+# Unlike the real thing, there is no Varnish (but there is phpmyadmin)
+#
+
+version: '3'
+
+services:
+
+  db:
+    image: mariadb:5.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./volumes/db:/var/lib/mysql
+
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+      - PMA_ARBITRARY=1
+      ports:
+      - ${WP_PORT_PHPMA}:80
+      volumes:
+      - /sessions
+
+  httpd:
+    container_name: wp-httpd
+    build: wp-ops/docker/httpd
+    labels:
+      ch.epfl.wordpress.httpd.env: ${WP_ENV}
+    image: epflidevelop/os-wp-httpd
+    volumes:
+      # See README.md and Makefile for explanations on volumes
+      - ./volumes/srv:/srv
+      # This is specific to development mode, so as to override
+      # baked-in code of plugins and themes
+      - ./volumes/wp-content:/wp/wp-content
+    links:
+      - db:db
+    environment:
+      - WP_ENV=${WP_ENV}
+    ports:
+      - "${WP_PORT_HTTP}:8080"
+      - "${WP_PORT_HTTPS}:8443"
+
+  mgmt:
+    labels:
+      ch.epfl.wordpress.mgmt.env: ${WP_ENV}
+    image: epflidevelop/os-wp-mgmt
+    build: wp-ops/docker/mgmt
+    env_file:
+      - .env
+    environment:
+      - WP_ENV=${WP_ENV}
+    volumes:
+      - ./volumes/srv:/srv
+      - .env:/srv/.env
+    ports:
+      - "${WP_PORT_SSHD}:22"
