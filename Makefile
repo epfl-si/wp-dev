@@ -1,5 +1,7 @@
 .PHONY: all
-all: check-env checkout
+all: checkout up
+
+include .env
 
 m = $(notdir $(MAKE))
 .PHONY: help
@@ -33,20 +35,11 @@ WP_PORT_HTTPS ?= 443
 
 DOCKER_COMPOSE_PROJECT_NAME = wp-local
 
-.PHONY: check-env
-check-env:
-ifeq ($(wildcard .env),)
-	@echo "Please create your .env file first, from env.sample"
-	@exit 1
-else
-include .env
-endif
-
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
 
 .PHONY: vars
-vars: check-env
+vars:
 	@echo 'Environment-related vars:'
 	@echo '  WP_ENV=$(WP_ENV)'
 	@echo '  _mgmt_container=$(_mgmt_container)'
@@ -109,24 +102,24 @@ volumes/wp-content/plugins volumes/wp-content/mu-plugins: volumes/wp-content/jah
 
 
 .PHONY: pull
-pull: check-env
+pull:
 	docker-compose pull
 
 ######################## Containers Lifecycle #####################
 
 .PHONY: up
-up: check-env checkout
+up: checkout
 	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) up -d
 
 .PHONY: down
-down: check-env
+down:
 	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) down
 
 
 ######################## Development Tasks ########################
 
 .PHONY: exec
-exec: check-env
+exec:
 	@docker exec --user www-data -it  \
 	  -e WP_ENV=$(WP_ENV) \
 	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
@@ -134,7 +127,7 @@ exec: check-env
 	  $(_mgmt_container) bash -l
 
 .PHONY: httpd
-httpd: check-env
+httpd:
 	@docker exec -it $(_httpd_container) bash -l
 
 ######################## Cleaning up ##########################

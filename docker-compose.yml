@@ -44,6 +44,7 @@ services:
       - ./volumes/wp-content:/wp/wp-content
     links:
       - db:db
+    # The `httpd` container only needs to know WP_ENV:
     environment:
       - WP_ENV=${WP_ENV}
     ports:
@@ -55,6 +56,7 @@ services:
       ch.epfl.wordpress.mgmt.env: ${WP_ENV}
     image: epflidevelop/os-wp-mgmt
     build: wp-ops/docker/mgmt
+    # The `mgmt` container gets access to the entire environment:
     env_file:
       - .env
     environment:
