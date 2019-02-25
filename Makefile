@@ -71,19 +71,17 @@ vars:
 # than submodules - Plus this lets you substitute your own arrangement
 
 .PHONY: checkout
-checkout: volumes/wp-content/themes/wp-theme-2018 \
+checkout: volumes/wp-content/jahia2wp \
+  volumes/wp-content/themes/wp-theme-2018 \
   volumes/wp-content/plugins \
   volumes/wp-content/mu-plugins \
   wp-ops
 
 # Figure out whether we clone over https or git+ssh (you need a GitHub
 # account set up with an ssh public key for the latter)
-_GITHUB_BASE := $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/)
+_GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/)
 
-define git_clone =
-@mkdir -p $(dir $@) || true
-cd $(dir $@); git clone $(_GITHUB_BASE)$(strip $(1))
-endef
+git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@)
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
@@ -98,7 +96,7 @@ volumes/wp-content/jahia2wp:
 
 volumes/wp-content/plugins volumes/wp-content/mu-plugins: volumes/wp-content/jahia2wp
 	@mkdir -p $(dir $@) || true
-	ln -s jahia2wp/data/wp/wp-content/$(notdir $@) $@
+	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
 
 
 .PHONY: pull
