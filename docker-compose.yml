@@ -66,3 +66,6 @@ services:
       - .env:/srv/.env
     ports:
       - "${WP_PORT_SSHD}:22"
+
+  acceptance:
+    build: docker/acceptance

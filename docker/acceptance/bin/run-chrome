@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const chromeLauncher = require('chrome-launcher');
+
+const opts = {
+  //chromeFlags: ['--headless'],
+  logLevel: 'info',
+  output: 'json'
+};
+
+(async () => {
+  // Launch chrome using chrome-launcher.
+  const chrome = await chromeLauncher.launch(opts);
+  console.log('Success! Chrome is awaiting connection. Try \n\n' +
+              'CHROME_REMOTE_DEBUGGING_PORT=' + chrome.port + ' npm test\n');
+})()
