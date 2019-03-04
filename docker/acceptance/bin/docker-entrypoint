@@ -1,0 +1,65 @@
+#!/bin/sh
+
+set -e -x
+
+script="$(basename "$0")"
+
+usage () {
+    die <<USAGE;
+Usage: $script [--test-suite URL ] \
+    [ --test-target URL ]
+
+Relevant environment variables for testing:
+    WP_ADMIN_USERNAME
+    WP_ADMIN_PASSWORD
+
+USAGE
+}
+
+warn () {
+    echo >&2 "$@"
+}
+
+die () {
+    warn "$@"
+    exit 2
+}
+
+git_clone_test_suite_from () {
+    local url="$1"
+    git clone "$url" test_suite
+
+    rm -rf cucumber/steps/ features/
+    cp -a test_suite/features .
+    cp -a cucumber/steps/ .
+}
+
+parse_args () {
+    export WP_ACCEPTANCE_TARGET='https://www.epfl.ch/'
+    while [ -n "$1" ]; do
+        case "$1" in
+            --test-suite)
+                shift
+                git_clone_test_suite_from "$1"
+                shift ;;
+            --test-target)
+                shift
+                WP_ACCEPTANCE_TARGET="$1"
+                shift ;;
+            --screenshot-always)
+                export WP_ACCEPTANCE_SCREENSHOT_ALWAYS=y
+                shift ;;
+            --*)
+                usage ;;
+            *)
+                exec bash -c "$@" ;;
+        esac
+    done
+}
+
+do_it () {
+    npx cucumber-js -b -r cucumber -f json:/test-output/cucumber-report.json --exit
+}
+
+parse_args "$@"
+do_it

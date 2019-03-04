@@ -4,7 +4,8 @@ const { After, Status } = require('cucumber'),
       puppeteer = require('../lib/puppeteer')
 
 function isScreenshotWorthy(testCase) {
-  return testCase.result.status === Status.FAILED;
+  return process.env.WP_ACCEPTANCE_SCREENSHOT_ALWAYS ||
+    testCase.result.status === Status.FAILED
 }
 
 

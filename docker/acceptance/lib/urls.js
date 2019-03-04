@@ -1,6 +1,8 @@
 module.exports = function urls () {
+  let homesite = process.env.WP_ACCEPTANCE_TARGET || 'https://wp-httpd/'
+
   return {
-    home: 'https://www.epfl.ch',
-    wp_admin: 'https://www.epfl.ch/wp-admin'
+    home: homesite,
+    wp_admin: homesite + 'wp-admin'
   }
 }
