@@ -3,7 +3,7 @@
 const chromeLauncher = require('chrome-launcher');
 
 const opts = {
-  //chromeFlags: ['--headless'],
+  chromeFlags: ['--ignore-certificate-errors'],
   logLevel: 'info',
   output: 'json'
 };

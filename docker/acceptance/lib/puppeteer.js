@@ -1,3 +1,5 @@
+'use strict'
+
 const puppeteer = require('puppeteer'),
       isDocker = require('is-docker'),
       util = require('util'),
@@ -10,15 +12,21 @@ function getUserSpecifiedPort (world) {
 }
 
 module.exports.launch = async function launch (world) {
-  let userSpecifiedPort
-  if (isDocker()) {
-    return puppeteer.launch({headless: true,
-                             args: ['--no-sandbox', '--disable-setuid-sandbox']})
-  } else if (userSpecifiedPort = getUserSpecifiedPort()) {
+  const userSpecifiedPort = getUserSpecifiedPort()
+  if (userSpecifiedPort) {
     const resp = await util.promisify(request)(`http://localhost:${userSpecifiedPort}/json/version`)
     const { webSocketDebuggerUrl } = JSON.parse(resp.body)
     return puppeteer.connect({browserWSEndpoint: webSocketDebuggerUrl})
-  } else {
-    return puppeteer.launch({headless: false, slowMo: 5})
   }
+
+  let launchOpts = { args: ["--ignore-certificate-errors"] }
+  if (isDocker()) {
+    launchOpts.headless = true
+    launchOpts.args = launchOpts.args.concat(
+      ['--no-sandbox', '--disable-setuid-sandbox'])
+  } else {
+    launchOpts.headless = false
+    launchOpts.slowMo = 5
+  }
+return puppeteer.launch(launchOpts)
 }
