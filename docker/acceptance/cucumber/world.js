@@ -11,8 +11,6 @@ let world = module.exports = {}
 
 // But then, the world was made (How? When? See below!)
 async function makeWorld (world, config) {
-  _.extend(world, config)
-
   world.credentials = await credentials(world)
   world.urls = await urls(world)
 
@@ -22,18 +20,18 @@ async function makeWorld (world, config) {
 }
 
 (function() {
-  let worldIsMade = false, theConfig
+  let worldIsMade = false
   setWorldConstructor(function(config) {
     // We would like to call `makeWorld()` here, but we can't since it
     // is async; so we just stash `config` away for later.
-    theConfig = config
+    _.extend(world, config)
     return world  // So that all step functions share the world together
   })
 
   // First call to Before() is the the soonest we can makeWorld()
   Before(async function() {
     if (worldIsMade) return
-    await makeWorld(world, theConfig)
+    await makeWorld(world, world.config)
     worldIsMade = true
   })
 })()
