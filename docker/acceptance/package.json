@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Acceptance testing for EPFL's WordPress service",
   "scripts": {
+    "docker": "docker run -it --rm -v $PWD/test-output:/test-output $(docker build -q .)",
     "chrome": "npx node bin/run-chrome",
     "test": "npx cucumber-js -b -r cucumber"
   },

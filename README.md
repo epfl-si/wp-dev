@@ -34,6 +34,22 @@ ln -s /wp/wp-content/themes/wp-theme-2018 themes/
 1. Hack on things
 1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
 
+### Acceptance tests
+
+To build and run the "canned" version try<pre>
+cd docker/acceptance
+npm run docker --  --screenshot-always
+</pre>
+
+To run the "unpacked" version of same against the local development
+environment, using a browser that is re-used across test runs, do<pre>
+cd docker/acceptance npm i ./bin/run-chrome
+</pre>
+
+and follow the instructions that appear on-screen.
+
+
+
 # Technical Documentation
 
 ## `.env` file
