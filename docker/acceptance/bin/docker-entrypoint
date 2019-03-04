@@ -6,7 +6,7 @@ script="$(basename "$0")"
 
 usage () {
     die <<USAGE;
-Usage: $script [--test-suite URL ] \
+Usage: $script [--test-suite GIT_URL,SUBDIR ] \
     [ --test-target URL ]
 
 Relevant environment variables for testing:
@@ -26,12 +26,18 @@ die () {
 }
 
 git_clone_test_suite_from () {
-    local url="$1"
+    local url subdir
+
+    case "$1" in
+        *,*) url="$(echo "$1" |cut -d, -f1)"
+             subdir="$(echo "$1" |cut -d, -f2)" ;;
+        *) url="$1" ;;
+    esac
     git clone "$url" test_suite
 
     rm -rf cucumber/steps/ features/
-    cp -a test_suite/features .
-    cp -a cucumber/steps/ .
+    cp -a "$(find test_suite/"$subdir" -name features -type d)" .
+    cp -a "$(find test_suite/"$subdir" -name steps -type d)" cucumber/
 }
 
 parse_args () {
