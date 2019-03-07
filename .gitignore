@@ -2,3 +2,5 @@ volumes/
 wp-ops/
 .env
 .make.vars
+.docker*.stamp
+
