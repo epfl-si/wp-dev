@@ -61,6 +61,9 @@ services:
       - .env
     environment:
       - WP_ENV=${WP_ENV}
+      - MYSQL_DB_HOST=${MYSQL_DB_HOST}
+      - MYSQL_SUPER_USER=${MYSQL_SUPER_USER}
+      - MYSQL_SUPER_PASSWORD=${MYSQL_SUPER_PASSWORD}
     volumes:
       - ./volumes/srv:/srv
       - .env:/srv/.env
