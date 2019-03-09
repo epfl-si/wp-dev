@@ -39,9 +39,10 @@ services:
     volumes:
       # See README.md and Makefile for explanations on volumes
       - ./volumes/srv:/srv
-      # This is specific to development mode, so as to override
-      # baked-in code of plugins and themes
-      - ./volumes/wp-content:/wp/wp-content
+      # Unlike production, /wp is editable from outside the Docker
+      # container, and contains the "live" code (in the form of
+      # Git checkouts; see Makefile)
+      - ./volumes/wp:/wp
     links:
       - db:db
     # The `httpd` container only needs to know WP_ENV:

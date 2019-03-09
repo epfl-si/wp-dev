@@ -51,6 +51,10 @@ DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
 	.docker-local-images-built.stamp
 
 DOCKER_BASE_IMAGE_NAME = epflidevelop/os-wp-base
+DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
+
+WP_CONTENT_DIR = volumes/wp/wp-content
+JAHIA2WP_TOPDIR = $(WP_CONTENT_DIR)/jahia2wp
 
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
@@ -86,31 +90,44 @@ vars:
 #
 # As a matter of taste, we'd rather have Makefile-driven `git clone`s
 # than submodules - Plus this lets you substitute your own arrangement
+# if you wish.
+#
+# Code doesn't only get pulled from git either: volumes/wp is extracted
+# from the "httpd" Docker image, and we create a couple of symlinks too.
 
 .PHONY: checkout
-checkout: volumes/wp-content/jahia2wp \
-  volumes/wp-content/themes/wp-theme-2018 \
-  volumes/wp-content/plugins \
-  volumes/wp-content/mu-plugins \
+checkout: \
+  volumes/wp \
+  $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
+  $(WP_CONTENT_DIR)/plugins \
+  $(WP_CONTENT_DIR)/mu-plugins \
+  $(JAHIA2WP_TOPDIR) \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@)
 
-wp-ops:
-	$(call git_clone, epfl-idevelop/wp-ops)
+volumes/wp: .docker-local-images-built.stamp
+	docker run --rm  --name volumes-wp-extractor \
+	  --entrypoint /bin/bash \
+	  $(DOCKER_HTTPD_IMAGE_NAME) \
+	  -c "tar --exclude=/wp/wp-content/{plugins,mu-plugins,themes} \
+              -clf - /wp" \
+	  | tar -Cvolumes -xpvf - wp
 
-volumes/wp-content/themes/wp-theme-2018:
+$(WP_CONTENT_DIR)/themes/wp-theme-2018: volumes/wp
 	$(call git_clone, epfl-idevelop/wp-theme-2018)
 
-# For historical reasons, plugins and mu-plugins currently
-# reside in a repository called jahia2wp
-volumes/wp-content/jahia2wp:
-	$(call git_clone, epfl-idevelop/jahia2wp)
-
-volumes/wp-content/plugins volumes/wp-content/mu-plugins: volumes/wp-content/jahia2wp
+$(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_TOPDIR)
 	@mkdir -p $(dir $@) || true
 	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
 
+# For historical reasons, plugins and mu-plugins currently
+# reside in a repository called jahia2wp
+$(JAHIA2WP_TOPDIR): volumes/wp
+	$(call git_clone, epfl-idevelop/jahia2wp)
+
+wp-ops:
+	$(call git_clone, epfl-idevelop/wp-ops)
 
 ################ Building or pulling Docker images ###############
 

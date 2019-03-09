@@ -30,7 +30,7 @@ ln -s /wp/wp-content/themes/wp-theme-2018 themes/
 
 ## Day-To-Day Operations
 
-1. Go into the `wp-local` subdirectory and type `make`
+1. Type `make checkout up`
 1. Hack on things
 1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
 
@@ -51,6 +51,15 @@ and follow the instructions that appear on-screen.
 
 
 # Technical Documentation
+
+## `docker-compose.yml`
+
+Unlike production (which uses Kubernetes / OpenShift), the bunch is
+tied together using the `docker-compose.yml` file on the developer's
+workstation. Some containers (e.g. `phpmyadmin`) only run in
+development mode; others (e.g. `httpd`) have additional Docker volumes
+mounted, so as to "reach into" them from the developer's IDE or code
+editor.
 
 ## `.env` file
 
@@ -82,11 +91,12 @@ NAS); in particular, the subdirectory structure is the same:
 | `sub/dir/` | Any path can go here, affording for a hierarchy of nested WordPress instances to be installed locally |
 | `wp-config.php`<br/>`index.php`<br/>etc. | A typical WordPress installation |
 
-### `volumes/wp-content` (mounted as `/wp/wp-content`)
+### `volumes/wp` (mounted as `/wp`)
 
-Contains the VPSI-specific code that goes into an ordinary WordPress
-`wp-content` directory. A set of symlinks may (or may not) be used to
-reference these from `/srv` (as seen from the inside of the
-`httpd` container)
+Contains a "live" copy of all the PHP code (WordPress + VPSI-authored,
+standard-issue themes and plug-ins) - Unlike in production, where that
+same `/wp` directory is baked into the Docker image. A set of symlinks
+may (or may not) be used to reference standard-issue themes and
+plugins from `/srv` (as seen from the inside of the `httpd` container)
 
 
