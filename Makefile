@@ -104,7 +104,7 @@ checkout: \
   $(JAHIA2WP_TOPDIR) \
   wp-ops
 
-git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@)
+git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
 
 volumes/wp: .docker-local-images-built.stamp
 	docker run --rm  --name volumes-wp-extractor \
@@ -113,6 +113,7 @@ volumes/wp: .docker-local-images-built.stamp
 	  -c "tar --exclude=/wp/wp-content/{plugins,mu-plugins,themes} \
               -clf - /wp" \
 	  | tar -Cvolumes -xpvf - wp
+	touch $@
 
 $(WP_CONTENT_DIR)/themes/wp-theme-2018: volumes/wp
 	$(call git_clone, epfl-idevelop/wp-theme-2018)
