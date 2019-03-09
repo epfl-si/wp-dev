@@ -56,8 +56,20 @@ DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
 WP_CONTENT_DIR = volumes/wp/wp-content
 JAHIA2WP_TOPDIR = $(WP_CONTENT_DIR)/jahia2wp
 
+CTAGS_TARGETS_PYTHON = $(JAHIA2WP_TOPDIR)/src \
+	$(JAHIA2WP_TOPDIR)/functional_tests \
+	$(JAHIA2WP_TOPDIR)/data
+
+CTAGS_TARGETS_PHP = volumes/wp/*.php \
+	volumes/wp/wp-admin \
+	volumes/wp/wp-includes \
+	$(WP_CONTENT_DIR)/themes/wp-theme-2018 \
+	$(WP_CONTENT_DIR)/plugins/epfl-* \
+	$(WP_CONTENT_DIR)/plugins/polylang
+
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
+
 
 .PHONY: vars
 vars:
@@ -65,6 +77,7 @@ vars:
 	@echo '  WP_ENV=$(WP_ENV)'
 	@echo '  _mgmt_container=$(_mgmt_container)'
 	@echo '  _httpd_container=$(_httpd_container)'
+	@echo '  CTAGS_TARGETS=$(CTAGS_TARGETS)'
 
 	@echo ''
 	@echo DB-related vars:
@@ -197,11 +210,17 @@ tail-errors:
 tail-access:
 	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
 
+CTAGS_TARGETS = $(CTAGS_TARGETS_PYTHON) $(CTAGS_TARGETS_PHP)
+CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)
+tags: checkout
+	ctags $(CTAGS_FLAGS)
+
+TAGS: checkout
+	ctags -e $(CTAGS_FLAGS)
 
 ######################## Cleaning up ##########################
 
 .PHONY: clean
 clean: down clean-images
-	rm .make.vars
-
+	rm -f .make.vars TAGS tags
 
