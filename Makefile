@@ -110,26 +110,39 @@ vars:
 
 .PHONY: checkout
 checkout: \
-  volumes/wp \
   $(JAHIA2WP_DIR) \
+  $(WP_CONTENT_DIR) \
+  $(WP_CONTENT_DIR)/plugins/accred \
+  $(WP_CONTENT_DIR)/plugins/tequila \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
-  $(WP_CONTENT_DIR)/plugins \
-  $(WP_CONTENT_DIR)/mu-plugins \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
 
-volumes/wp: .docker-local-images-built.stamp
+$(WP_CONTENT_DIR): .docker-local-images-built.stamp $(JAHIA2WP_DIR)
+	-rm -f `find $(WP_CONTENT_DIR)/plugins \
+	             $(WP_CONTENT_DIR)/themes \
+	             $(WP_CONTENT_DIR)/mu-plugins -type l`
 	docker run --rm  --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
-	  -c "tar --exclude=/wp/wp-content/{plugins,mu-plugins,themes} \
-              -clf - /wp" \
+	  -c "tar -clf - --exclude=/wp/wp-content/themes/wp-theme-2018 \
+	                 --exclude=/wp/wp-content/plugins/{accred,tequila} \
+              /wp" \
 	  | tar -Cvolumes -xpvf - wp
+# Replace excluded directories with a git checkout of same -
+# Currently plugins and mu-plugins reside in jahia2wp, for historical
+# reasons:
+	set -e -x; \
+	for linkable in mu-plugins \
+	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
+	                  find themes plugins -mindepth 1 -maxdepth 1 -type d); \
+	do \
+	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
+	  ln -s ../../jahia2wp/data/wp/wp-content/$$linkable \
+	    $(WP_CONTENT_DIR)/$$linkable; \
+	done
 	touch $@
-
-$(WP_CONTENT_DIR)/themes/wp-theme-2018: volumes/wp
-	$(call git_clone, epfl-idevelop/wp-theme-2018)
 
 $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 	@mkdir -p $(dir $@) || true
@@ -137,8 +150,21 @@ $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 
 # For historical reasons, plugins and mu-plugins currently
 # reside in a repository called jahia2wp
-$(JAHIA2WP_DIR): volumes/wp
+$(JAHIA2WP_DIR):
 	$(call git_clone, epfl-idevelop/jahia2wp)
+
+$(WP_CONTENT_DIR)/plugins/accred: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-sti/wordpress.plugin.accred)
+# TODO: unfork!
+	(cd $@; git checkout vpsi)
+
+$(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-sti/wordpress.plugin.tequila)
+# TODO: unfork!
+	(cd $@; git checkout vpsi)
+
+$(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-theme-2018)
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
