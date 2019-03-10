@@ -54,11 +54,11 @@ DOCKER_BASE_IMAGE_NAME = epflidevelop/os-wp-base
 DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
 
 WP_CONTENT_DIR = volumes/wp/wp-content
-JAHIA2WP_TOPDIR = $(WP_CONTENT_DIR)/jahia2wp
+JAHIA2WP_DIR = volumes/wp/jahia2wp
 
-CTAGS_TARGETS_PYTHON = $(JAHIA2WP_TOPDIR)/src \
-	$(JAHIA2WP_TOPDIR)/functional_tests \
-	$(JAHIA2WP_TOPDIR)/data
+CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
+	$(JAHIA2WP_DIR)/functional_tests \
+	$(JAHIA2WP_DIR)/data
 
 CTAGS_TARGETS_PHP = volumes/wp/*.php \
 	volumes/wp/wp-admin \
@@ -111,10 +111,10 @@ vars:
 .PHONY: checkout
 checkout: \
   volumes/wp \
+  $(JAHIA2WP_DIR) \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/plugins \
   $(WP_CONTENT_DIR)/mu-plugins \
-  $(JAHIA2WP_TOPDIR) \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
@@ -131,13 +131,13 @@ volumes/wp: .docker-local-images-built.stamp
 $(WP_CONTENT_DIR)/themes/wp-theme-2018: volumes/wp
 	$(call git_clone, epfl-idevelop/wp-theme-2018)
 
-$(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_TOPDIR)
+$(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 	@mkdir -p $(dir $@) || true
 	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
 
 # For historical reasons, plugins and mu-plugins currently
 # reside in a repository called jahia2wp
-$(JAHIA2WP_TOPDIR): volumes/wp
+$(JAHIA2WP_DIR): volumes/wp
 	$(call git_clone, epfl-idevelop/jahia2wp)
 
 wp-ops:
