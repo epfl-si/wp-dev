@@ -29,19 +29,21 @@ cd wp-httpd/htdocs
 
 ### Acceptance tests
 
-To build and run the "canned" version try<pre>
+To run the acceptance tests in their developer-friendly ("unpacked")
+incarnationagainst the local development environment, using a browser
+that is re-used across test runs, do<pre>
 cd docker/acceptance
-npm run docker --  --screenshot-always
-</pre>
-
-To run the "unpacked" version of same against the local development
-environment, using a browser that is re-used across test runs, do<pre>
-cd docker/acceptance npm i ./bin/run-chrome
+npm i
+./bin/run-chrome
 </pre>
 
 and follow the instructions that appear on-screen.
 
-
+To build and run the same in the "canned" version (the one that runs
+within the Jenkins pipeline) try<pre>
+cd docker/acceptance
+npm run docker --  --screenshot-always
+</pre>
 
 # Technical Documentation
 
