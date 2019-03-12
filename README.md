@@ -27,6 +27,13 @@ cd wp-httpd/htdocs
 1. Hack on things
 1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
 
+### Apache Access and Error Logs
+
+To follow the Apache access and error logs, type (respectively)<pre>
+make tail-access
+make tail-errors
+</pre>
+
 ### Debugger
 
 Once the Docker containers are up and running, type
