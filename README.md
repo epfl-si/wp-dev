@@ -27,6 +27,33 @@ cd wp-httpd/htdocs
 1. Hack on things
 1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
 
+### Debugger
+
+Once the Docker containers are up and running, type
+`./devscripts/php-xdebug start` to turn on debugging using
+[Xdebug](https://xdebug.org/docs/remote#starting).
+
+(When you are done with debugging, type `./devscripts/php-xdebug stop`)
+
+Your debugger or IDE must be listening for incoming Xdebug connections
+on port 9000, and your workstation / laptop must have a non-localhost
+IPv4 address set up; if this is not the case, the script will attempt
+to set up a fake one for you (for debugging while riding the bus —
+Supported platforms only).
+
+⚠ The first run of `./devscripts/php-xdebug start` needs to download
+and install some support software into the `wp-httpd` docker image, so
+using a fake IP address is probably not going to work the first time
+around (although it should for the subsequent ones, until you restart
+the `wp-httpd` container).
+
+[Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
+
+💡 The next piece of trouble when remote debugging is path mapping,
+which is not covered here. If your IDE breakpoints don't quite work,
+consider inserting the following line in an appropriate place in your
+PHP code:<pre>xdebug_break();</pre>
+
 ### Acceptance tests
 
 To run the acceptance tests in their developer-friendly ("unpacked")

@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+
+usage () {
+    die <<"USAGE"
+
+php-xdebug: Start an Xdebug session in the local WordPress `httpd` container.
+
+Usage:
+
+   php-xdebug start
+   php-xdebug stop
+
+See https://gist.github.com/chadrien/c90927ec2d160ffea9c4
+and also (if you use IntelliJ IDEA)
+https://www.jetbrains.com/help/idea/configuring-xdebug.html
+
+USAGE
+}
+
+warn () {
+    if [ -n "$1" ]; then
+        echo "$@" >&2
+    else
+        cat >&2
+    fi
+}
+
+die () {
+    warn "$@"
+    exit 2
+}
+
+myip () {
+    $(dirname "$0")/myip "$@"
+}
+
+dockerexec="docker exec -i wp-httpd"
+
+ensure_php_xdebug_installed () {
+    if ! $dockerexec sh -c \
+         'test -f /etc/php/$PHP_VERSION/mods-available/xdebug.ini';
+    then
+        $dockerexec apt update
+        $dockerexec apt install php-xdebug
+    fi
+}
+
+set -e
+
+case "$1" in
+    start)
+        ensure_php_xdebug_installed
+        myip --ensure
+        $dockerexec sh -c \
+            'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
+xdebug.remote_enable=on
+xdebug.remote_autostart=on
+xdebug.remote_host=$(myip)
+EOF
+        ;;
+    stop)
+        $dockerexec sh -c \
+            'rm -f /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini'
+        ;;
+    *) usage ;;
+esac
+
+$dockerexec apache2ctl graceful
