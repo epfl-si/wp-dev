@@ -54,6 +54,12 @@ which is not covered here. If your IDE breakpoints don't quite work,
 consider inserting the following line in an appropriate place in your
 PHP code:<pre>xdebug_break();</pre>
 
+### Indexation (ctags / etags)
+
+If you are a ctags / etags user, type `make tags` resp. `make TAGS` to
+index the checked out sources (including the core of WordPress and the
+third-party plugins).
+
 ### Acceptance tests
 
 To run the acceptance tests in their developer-friendly ("unpacked")
