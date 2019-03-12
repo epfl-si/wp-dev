@@ -85,6 +85,23 @@ cd docker/acceptance
 npm run docker --  --screenshot-always
 </pre>
 
+### Database Access
+
+The development environment provides a
+[PHPMyAdmin](https://www.phpmyadmin.net/) instance on
+http://localhost:8080/ . The database host is "db"; the user and
+password are in the `.env` file, as the values of the
+`MYSQL_SUPER_USER` and `MYSQL_SUPER_PASSWORD` variables, respectively.
+
+As far as command-line access is concerned, you can access a superuser
+MySQL prompt by typing<pre>
+docker exec -it wp-local_db_1 bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
+</pre>
+
+and you can activate and follow the generate query log with<pre>
+make tail-sql
+</pre>
+
 # Technical Documentation
 
 ## `docker-compose.yml`

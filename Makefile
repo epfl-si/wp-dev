@@ -37,6 +37,9 @@ help:
 	@echo "$(m) tail-access    Follow the tail of Apache's access resp."
 	@echo '$(m) tail-errors    error logs through the terminal'
 	@echo
+	@echo "$(m) tail-sql       Activate and follow the MySQL general"
+	@echo '                    query log'
+	@echo
 
 # Default values, can be overridden either on the command line of make
 # or in .env
@@ -235,6 +238,10 @@ tail-errors:
 .PHONY: tail-access
 tail-access:
 	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
+
+.PHONY: tail-sql
+tail-sql:
+	./devscripts/mysql-general-log tail
 
 CTAGS_TARGETS = $(CTAGS_TARGETS_PYTHON) $(CTAGS_TARGETS_PHP)
 CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)

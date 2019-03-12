@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+
+usage () {
+    die <<"USAGE"
+
+mysql-general-log: Turn MySQL statement log ("general log") on or off
+
+Usage:
+
+   mysql-general-log start
+   mysql-general-log stop
+
+You can follow the logs e.g. with
+
+   mysql-general-log tail
+
+USAGE
+}
+
+warn () {
+    if [ -n "$1" ]; then
+        echo "$@" >&2
+    else
+        cat >&2
+    fi
+}
+
+die () {
+    warn "$@"
+    exit 2
+}
+
+dockerimage=wp-local_db_1
+dockerexec="docker exec -i $dockerimage"
+
+dockermysql () {
+    $dockerexec bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
+}
+
+warn_altered_mysql_log_file () {
+    warn <<WARN_GENERAL_LOG_FILE
+WARNING: the variable 'general_log_file' appears to have been altered;
+"$0 tail" may not work.
+WARN_GENERAL_LOG_FILE
+}
+
+start () {
+    # https://stackoverflow.com/a/7470567/435004
+    echo 'SET GLOBAL general_log = ON;' | dockermysql
+    status >/dev/null
+}
+
+stop () {
+    echo 'SET GLOBAL general_log = OFF;' | dockermysql
+}
+
+status () {
+    echo 'SHOW VARIABLES LIKE "general_log%"' | dockermysql
+    case $(echo 'SELECT @@general_log_file AS "";' | dockermysql) in
+        */*) warn_altered_mysql_log_file ; return 2 ;;
+        *.log) return 0 ;;
+        *)  warn_altered_mysql_log_file ; return 2 ;;
+    esac
+}
+
+tail () {
+    trap stop EXIT HUP INT
+    start
+    docker exec -it $dockerimage bash -c "exec tail -F /var/lib/mysql/*.log"
+}
+
+set -e
+
+case "$1" in
+    start)   start  ;;
+    stop)    stop   ;;
+    status)  status ;;
+    tail)    tail   ;;
+    *)       usage  ;;
+esac
