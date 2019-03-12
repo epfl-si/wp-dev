@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+
+. "$(dirname "$0")"/functions.sh
+
+usage () {
+    die <<"USAGE"
+
+backup-restore: Backup and restore the WordPress state
+
+Usage:
+  backup-restore backup <tgz file>
+  backup-restore restore <tgz file>
+
+USAGE
+}
+
+main () {
+    case "$1" in
+        backup) shift; backup "$@" ;;
+        restore) shift; restore "$@" ;;
+        *) usage ;;
+    esac
+}
+
+dockerimage=wp-local_db_1
+dockerexec="docker exec -i $dockerimage"
+
+backup () {
+    trap "rm volumes/databases.sql" EXIT HUP QUIT INT
+    dockermysql mysqldump --all-databases > volumes/databases.sql
+    tar -Cvolumes -zcvf "$1" srv databases.sql
+}
+
+restore () {
+    tar -Cvolumes -zxvf "$1" srv
+    tar --to-stdout -zxf "$1" databases.sql | dockermysql mysql
+}
+
+#####################################################################
+set -e
+main "$@"

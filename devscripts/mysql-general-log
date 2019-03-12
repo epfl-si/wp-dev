@@ -29,17 +29,19 @@ WARN_GENERAL_LOG_FILE
 
 start () {
     # https://stackoverflow.com/a/7470567/435004
-    echo 'SET GLOBAL general_log = ON;' | dockermysql
+    echo 'SET GLOBAL general_log = ON;' | dockermysql mysql
     status >/dev/null
 }
 
 stop () {
-    echo 'SET GLOBAL general_log = OFF;' | dockermysql
+    echo 'SET GLOBAL general_log = OFF;' | dockermysql mysql
 }
 
 status () {
-    echo 'SHOW VARIABLES LIKE "general_log%"' | dockermysql
-    case $(echo 'SELECT @@general_log_file AS "";' | dockermysql) in
+    echo 'SHOW VARIABLES LIKE "general_log%"' | dockermysql mysql
+    case $(echo 'SELECT @@general_log_file AS "";' \
+               | dockermysql mysql)
+    in
         */*) warn_altered_mysql_log_file ; return 2 ;;
         *.log) return 0 ;;
         *)  warn_altered_mysql_log_file ; return 2 ;;
@@ -49,7 +51,7 @@ status () {
 tail () {
     trap stop EXIT HUP INT
     start
-    docker exec -it wp-local_db_1  bash -c "exec tail -F /var/lib/mysql/*.log"
+    dockermysql "exec tail -F /var/lib/mysql/*.log"
 }
 
 set -e

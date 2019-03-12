@@ -4,3 +4,4 @@ wp-ops/
 .make.vars
 .docker*.stamp
 
+wordpress-state.tgz

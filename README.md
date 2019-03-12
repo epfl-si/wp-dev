@@ -102,6 +102,13 @@ and you can activate and follow the generate query log with<pre>
 make tail-sql
 </pre>
 
+### Backup / Restore
+
+`make backup` will create a `wordpress-state.tgz` containing all the
+files under `volumes/srv`, plus a database dump in SQL format.
+
+`make restore` performs the opposite operation.
+
 # Technical Documentation
 
 ## `docker-compose.yml`

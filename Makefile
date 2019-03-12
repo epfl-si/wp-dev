@@ -37,9 +37,12 @@ help:
 	@echo "$(m) tail-access    Follow the tail of Apache's access resp."
 	@echo '$(m) tail-errors    error logs through the terminal'
 	@echo
-	@echo "$(m) tail-sql       Activate and follow the MySQL general"
+	@echo '$(m) tail-sql       Activate and follow the MySQL general'
 	@echo '                    query log'
 	@echo
+	@echo '$(m) backup         Backup the whole state (incl. MySQL)'
+	@echo '                    to wordpress-state.tgz'
+	@echo '$(m) restore        Restore from wordpress-state.tgz'
 
 # Default values, can be overridden either on the command line of make
 # or in .env
@@ -250,6 +253,14 @@ tags: checkout
 
 TAGS: checkout
 	ctags -e $(CTAGS_FLAGS)
+
+.phony: backup
+backup:
+	./devscripts/backup-restore backup wordpress-state.tgz
+
+.phony: restore
+restore:
+	./devscripts/backup-restore restore wordpress-state.tgz
 
 ######################## Cleaning up ##########################
 

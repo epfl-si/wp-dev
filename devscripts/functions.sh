@@ -12,5 +12,15 @@ die () {
 }
 
 dockermysql () {
-    docker exec -i wp-local_db_1 bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
+    local dockerbash="docker exec -i wp-local_db_1 bash -c"
+    case "$1" in
+        mysql|mysqldump)
+            local cmd="$1"; shift
+            case "$#" in
+                0) $dockerbash "$cmd -p\$MYSQL_ROOT_PASSWORD" ;;
+                *) $dockerbash "$cmd -p\$MYSQL_ROOT_PASSWORD $*" ;;
+            esac ;;
+        *)
+            $dockerbash "$*" ;;
+    esac
 }
