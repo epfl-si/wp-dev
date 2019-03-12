@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 
+. "$(dirname "$0")"/functions.sh
+
 usage () {
     die <<"USAGE"
 
@@ -16,26 +18,6 @@ You can follow the logs e.g. with
    mysql-general-log tail
 
 USAGE
-}
-
-warn () {
-    if [ -n "$1" ]; then
-        echo "$@" >&2
-    else
-        cat >&2
-    fi
-}
-
-die () {
-    warn "$@"
-    exit 2
-}
-
-dockerimage=wp-local_db_1
-dockerexec="docker exec -i $dockerimage"
-
-dockermysql () {
-    $dockerexec bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
 }
 
 warn_altered_mysql_log_file () {
@@ -67,7 +49,7 @@ status () {
 tail () {
     trap stop EXIT HUP INT
     start
-    docker exec -it $dockerimage bash -c "exec tail -F /var/lib/mysql/*.log"
+    docker exec -it wp-local_db_1  bash -c "exec tail -F /var/lib/mysql/*.log"
 }
 
 set -e

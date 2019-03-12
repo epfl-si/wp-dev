@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 
+. "$(dirname "$0")"/functions.sh
+
 usage () {
     die <<"USAGE"
 
@@ -16,19 +18,6 @@ and also (if you use IntelliJ IDEA)
 https://www.jetbrains.com/help/idea/configuring-xdebug.html
 
 USAGE
-}
-
-warn () {
-    if [ -n "$1" ]; then
-        echo "$@" >&2
-    else
-        cat >&2
-    fi
-}
-
-die () {
-    warn "$@"
-    exit 2
 }
 
 myip () {

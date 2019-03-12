@@ -10,6 +10,7 @@
 # bus), and --ensure is passed as the first command-line argument, set
 # up an IP address.
 
+. "$(dirname "$0")"/functions.sh
 
 main () {
     if [ "$1" == "--ensure" ]; then
@@ -26,19 +27,6 @@ main () {
             *) die "Sorry, unsupported OS: $(uname -s)" ;;
         esac
     fi
-}
-
-warn () {
-    if [ -n "$1" ]; then
-        echo "$@" >&2
-    else
-        cat >&2
-    fi
-}
-
-die () {
-    warn "$@"
-    exit 1
 }
 
 myip_linux () {
