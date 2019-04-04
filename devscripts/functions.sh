@@ -12,7 +12,7 @@ die () {
 }
 
 dockermysql () {
-    local dockerbash="docker exec -i wp-local_db_1 bash -c"
+    local dockerbash="docker-compose exec -T db bash -c"
     case "$1" in
         mysql|mysqldump)
             local cmd="$1"; shift
