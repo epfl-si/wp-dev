@@ -1,7 +1,6 @@
 FROM node:latest
 
 WORKDIR /opt/app
-RUN mkdir /test-output
 
 # Install Google Chrome to grab its dependencies (puppeteer will download
 # a version of Chromium for itself regardless)
@@ -16,5 +15,8 @@ ADD package.json package-lock.json /opt/app/
 RUN npm install
 
 ADD . /opt/app/
+
+RUN mkdir /test-output
+WORKDIR /test-output
 
 ENTRYPOINT ["/opt/app/bin/docker-entrypoint"]
