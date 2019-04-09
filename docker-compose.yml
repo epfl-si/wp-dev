@@ -43,6 +43,9 @@ services:
       # container, and contains the "live" code (in the form of
       # Git checkouts; see Makefile)
       - ./volumes/wp:/wp
+      # Certificates are auto-generated when httpd first starts up.
+      # For comfort, keep them across restarts
+      - ./volumes/ssl:/etc/apache2/ssl
     links:
       - db:db
     # The `httpd` container only needs to know WP_ENV:
