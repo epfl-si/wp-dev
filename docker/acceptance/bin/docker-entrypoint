@@ -64,7 +64,7 @@ parse_args () {
 }
 
 do_it () {
-    npx cucumber-js -b -r cucumber -f json:./cucumber-report.json --exit
+    npx cucumber-js -b -r cucumber -f json:$OLDPWD/cucumber-report.json --exit
 }
 
 cd /opt/app  # Jenkins alters the workingDir
