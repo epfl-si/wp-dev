@@ -58,7 +58,7 @@ parse_args () {
             --*)
                 usage ;;
             *)
-                exec bash -c "$@" ;;
+                exec bash -c "$*" ;;
         esac
     done
 }
