@@ -19,4 +19,6 @@ ADD . /opt/app/
 RUN mkdir /test-output
 WORKDIR /test-output
 
+ENV HOME=/tmp
+
 ENTRYPOINT ["/opt/app/bin/docker-entrypoint"]
