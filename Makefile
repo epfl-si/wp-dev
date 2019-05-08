@@ -54,8 +54,6 @@ WP_ENV ?= your-env
 WP_PORT_HTTP ?= 80
 WP_PORT_HTTPS ?= 443
 
-DOCKER_COMPOSE_PROJECT_NAME = wp-local
-
 DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-base-image-built.stamp \
   .docker-all-images-built.stamp
@@ -216,11 +214,11 @@ clean-images:
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
-	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) up -d
+	docker-compose up -d
 
 .PHONY: down
 down:
-	docker-compose -p $(DOCKER_COMPOSE_PROJECT_NAME) down
+	docker-compose down
 
 
 ######################## Development Tasks ########################
