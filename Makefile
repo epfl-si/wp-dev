@@ -143,7 +143,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 # Currently plugins and mu-plugins reside in jahia2wp, for historical
 # reasons:
 	set -e -x; \
-	for linkable in mu-plugins \
+	for linkable in \
 	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
 	                  find themes plugins -mindepth 1 -maxdepth 1 -type d); \
 	do \
@@ -151,6 +151,8 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	  ln -s ../../jahia2wp/data/wp/wp-content/$$linkable \
 	    $(WP_CONTENT_DIR)/$$linkable; \
 	done
+	rm -rf $(WP_CONTENT_DIR)/mu-plugins
+	ln -s ../jahia2wp/data/wp/wp-content/mu-plugins $(WP_CONTENT_DIR)
 	touch $@
 
 $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
