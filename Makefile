@@ -136,7 +136,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	docker run --rm  --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
-	  -c "tar -clf - --exclude=/wp/wp-content/themes/wp-theme-2018 \
+	  -c "tar -clf - --exclude=/wp/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/wp-content/plugins/{accred,tequila} \
               /wp" \
 	  | tar -Cvolumes -xpvf - wp
