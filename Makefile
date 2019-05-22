@@ -124,6 +124,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/accred \
   $(WP_CONTENT_DIR)/plugins/tequila \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
+  $(WP_CONTENT_DIR)/themes/wp-theme-light \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
@@ -174,8 +175,14 @@ $(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
 # TODO: unfork!
 	(cd $@; git checkout vpsi)
 
-$(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-theme-2018)
+$(WP_CONTENT_DIR)/themes/wp-theme-2018.git: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-theme-2018.git)
+
+$(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
+	ln -s wp-theme-2018.git/wp-theme-2018 $@
+
+$(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
+	ln -s wp-theme-2018.git/wp-theme-light $@
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
