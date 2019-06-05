@@ -200,7 +200,7 @@ pull:
 
 .docker-base-image-built.stamp: wp-ops 	$(_DOCKER_BASE_IMAGE_DEPS)
 	[ -d wp-ops/docker/wp-base ] && \
-	  docker build -t $(DOCKER_BASE_IMAGE_NAME) wp-ops/docker/wp-base
+	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) wp-ops/docker/wp-base
 	touch $@
 
 .docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops \
