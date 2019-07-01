@@ -3,7 +3,7 @@
 Fonctionnalité: Interface d'administration
 
   Scénario: Nouveau site - Plug-ins à jour
-    Etant donné un nouveau site
+    Étant donné un nouveau site
     Lorsque je me connecte sur wp-admin
     Et que je navigue vers '/wp-admin/plugins.php'
     Alors je vois que le plug-in 'polylang' est à jour
