@@ -27,6 +27,14 @@ cd wp-httpd/htdocs
 1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either the `wp` command-line tool (for a “vanilla” WordPress site) or `jahia2wp create`
 </pre>
 
+### wp-gutenberg-epfl activation
+
+Once you have at least one site up and running, you can convert it to WordPress 5 by typing
+
+```
+make wp5 SITE_DIR=/srv/test/wp-httpd/htdocs/vpsi-next
+```
+
 ## Day-To-Day Operations
 
 1. Type `make checkout up`

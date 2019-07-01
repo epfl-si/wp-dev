@@ -63,6 +63,7 @@ DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
 DOCKER_MGMT_IMAGE_NAME = epflidevelop/os-wp-mgmt
 
 WP_CONTENT_DIR = volumes/wp/wp-content
+WP5_CONTENT_DIR = volumes/wp/5/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
@@ -125,6 +126,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/tequila \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
+  $(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
@@ -156,6 +158,11 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	ln -s ../jahia2wp/data/wp/wp-content/mu-plugins $(WP_CONTENT_DIR)
 	touch $@
 
+# TODO: When the image can host both versions of WordPress, we will want
+# to unpack the version 5 contents as well here.
+$(WP5_CONTENT_DIR):
+	@mkdir -p $@
+
 $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 	@mkdir -p $(dir $@) || true
 	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
@@ -175,6 +182,9 @@ $(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
 # TODO: unfork!
 	(cd $@; git checkout vpsi)
 
+$(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl: $(WP5_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-gutenberg-epfl)
+
 $(WP_CONTENT_DIR)/themes/wp-theme-2018.git: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-theme-2018.git)
 
@@ -186,6 +196,7 @@ $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
+	(cd $@; git checkout feature/wp5)
 
 ################ Building or pulling Docker images ###############
 
@@ -219,11 +230,22 @@ clean-images:
 	rm -f .docker*.stamp
 
 
-######################## Containers Lifecycle #####################
+######################## Development Lifecycle #####################
+
+SITE_DIR := /srv/test/wp-httpd/htdocs
+.PHONY: wp5
+# TODO: We currently don't have a story to create a site at the top
+# level automatically.
+wp5: checkout
+	[ -L volumes/$(SITE_DIR)/wp ] || ln -sf /wp/5 volumes/$(SITE_DIR)/wp
+	[ -L volumes/$(SITE_DIR)/wp-content/plugins/wp-gutenberg-epfl ] || ln -sf ../../wp/wp-content/plugins/wp-gutenberg-epfl volumes/$(SITE_DIR)/wp-content/plugins/
+	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin deactivate epfl' || true
+	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin activate wp-gutenberg-epfl'
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
+	(cd $(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm i; npm start)
 
 .PHONY: down
 down:
