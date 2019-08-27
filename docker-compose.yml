@@ -31,6 +31,7 @@ services:
       - /sessions
 
   httpd:
+    privileged: true
     container_name: wp-httpd
     build: wp-ops/docker/httpd
     labels:
@@ -70,6 +71,8 @@ services:
       - MYSQL_SUPER_PASSWORD=${MYSQL_SUPER_PASSWORD}
     volumes:
       - ./volumes/srv:/srv
+      - ./volumes/wp:/wp
       - .env:/srv/.env
+      - /Users/quatrava/Library/Application Support/IntelliJIdea2019.1/python/pydevd-pycharm.egg:/pydevd-pycharm.egg
     ports:
       - "${WP_PORT_SSHD}:22"
