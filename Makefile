@@ -62,8 +62,8 @@ DOCKER_BASE_IMAGE_NAME = epflidevelop/os-wp-base
 DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
 DOCKER_MGMT_IMAGE_NAME = epflidevelop/os-wp-mgmt
 
-WP_CONTENT_DIR = volumes/wp/wp-content
-WP5_CONTENT_DIR = volumes/wp/5/wp-content
+WP_CONTENT_DIR = volumes/wp/5/wp-content
+WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
@@ -126,23 +126,27 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/tequila \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
-  $(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
+  $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
+  $(WP4_CONTENT_DIR)/plugins/accred \
+  $(WP4_CONTENT_DIR)/plugins/tequila \
+  $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
+  $(WP4_CONTENT_DIR)/themes/wp-theme-light \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
 
-$(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
 	docker run --rm  --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
-	  -c "tar -clf - --exclude=/wp/wp-content/themes/{wp-theme-2018,wp-theme-light} \
-	                 --exclude=/wp/wp-content/plugins/{accred,tequila} \
+	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
+	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,wp-gutenberg-epfl,epfl*} \
               /wp" \
 	  | tar -Cvolumes -xpvf - wp
-# Replace excluded directories with a git checkout of same -
+# Excluded directories are replaced with a git checkout of same.
 # Currently plugins and mu-plugins reside in jahia2wp, for historical
 # reasons:
 	set -e -x; \
@@ -150,18 +154,16 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
 	                  find themes plugins -mindepth 1 -maxdepth 1 -type d); \
 	do \
-	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
-	  ln -s ../../jahia2wp/data/wp/wp-content/$$linkable \
+	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
+	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
 	    $(WP_CONTENT_DIR)/$$linkable; \
+	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
+	    $(WP4_CONTENT_DIR)/$$linkable; \
 	done
-	rm -rf $(WP_CONTENT_DIR)/mu-plugins
-	ln -s ../jahia2wp/data/wp/wp-content/mu-plugins $(WP_CONTENT_DIR)
+	rm -rf $(WP_CONTENT_DIR)/mu-plugins $(WP4_CONTENT_DIR)/mu-plugins
+	ln -s ../../jahia2wp/data/wp/wp-content/mu-plugins $(WP_CONTENT_DIR)
+	ln -s ../../jahia2wp/data/wp/wp-content/mu-plugins $(WP4_CONTENT_DIR)
 	touch $@
-
-# TODO: When the image can host both versions of WordPress, we will want
-# to unpack the version 5 contents as well here.
-$(WP5_CONTENT_DIR):
-	@mkdir -p $@
 
 $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 	@mkdir -p $(dir $@) || true
@@ -171,6 +173,7 @@ $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 # reside in a repository called jahia2wp
 $(JAHIA2WP_DIR):
 	$(call git_clone, epfl-idevelop/jahia2wp)
+	(cd $@; git checkout release2018)
 
 $(WP_CONTENT_DIR)/plugins/accred: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-sti/wordpress.plugin.accred)
@@ -182,7 +185,7 @@ $(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
 # TODO: unfork!
 	(cd $@; git checkout vpsi)
 
-$(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl: $(WP5_CONTENT_DIR)
+$(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-gutenberg-epfl)
 
 $(WP_CONTENT_DIR)/themes/wp-theme-2018.git: $(WP_CONTENT_DIR)
@@ -197,6 +200,15 @@ $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
 	(cd $@; git checkout feature/wp5)
+
+############ Additional symlinks for obsolete WordPress 4 codebase ###########
+$(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
+	@-mkdir -p $(dir $@) 2>/dev/null
+	ln -s ../../../5/wp-content/plugins/$* $@
+
+$(WP4_CONTENT_DIR)/themes/%: $(WP4_CONTENT_DIR)
+	@-mkdir -p $(dir $@) 2>/dev/null
+	ln -s ../../../5/wp-content/themes/$* $@
 
 ################ Building or pulling Docker images ###############
 
@@ -245,7 +257,7 @@ wp5: checkout
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
-	(cd $(WP5_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm i; npm start)
+	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm i; npm start)
 
 .PHONY: down
 down:
