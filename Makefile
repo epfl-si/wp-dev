@@ -70,9 +70,9 @@ CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
   $(JAHIA2WP_DIR)/functional_tests \
   $(JAHIA2WP_DIR)/data
 
-CTAGS_TARGETS_PHP = volumes/wp/*.php \
-  volumes/wp/wp-admin \
-  volumes/wp/wp-includes \
+CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
+  volumes/wp/5/wp-admin \
+  volumes/wp/5/wp-includes \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/plugins/epfl-* \
   $(WP_CONTENT_DIR)/plugins/polylang
