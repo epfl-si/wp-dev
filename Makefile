@@ -228,13 +228,13 @@ pull:
 
 .docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops \
                                  $(_DOCKER_HTTPD_IMAGE_DEPS)
-	docker-compose build
+	docker-compose build $(DOCKER_BUILD_ARGS)
 	touch $@
 
 .PHONY: docker-build
 docker-build:
 	rm -f .docker*built.stamp
-	$(MAKE) .docker-all-images-built.stamp
+	$(MAKE) .docker-all-images-built.stamp DOCKER_BUILD_ARGS=$(DOCKER_BUILD_ARGS) DOCKER_BASE_BUILD_ARGS=$(DOCKER_BASE_BUILD_ARGS)
 
 .PHONY: clean-images
 clean-images:
