@@ -10,21 +10,27 @@ In this repository you will find:
 
 ## Initial Setup
 
-1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:<pre>127.0.0.1       wp-httpd</pre>
-1. Clone the repository
+1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:  
+   `127.0.0.1       wp-httpd`
+1. Clone the [repository](https://github.com/epfl-idevelop/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
 1. Inspect subdirectories `wp-ops` and `volumes/wp/jahia2wp` and make
-sure they are on the branches you wish to develop from.
+   sure they are on the branches you wish to develop from.
    - As of Q4 2019, the “mainstream” platform (the one being used in
-     production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp` on `release2018`
-1. Type `make` to bring up the development stack, then `make exec` to enter the so-called management container
-1. Within the management container, type<pre>
+     production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp`
+     on `release2018`
+1. Type `make` to bring up the development stack, then `make exec` to enter the
+   so-called management container
+1. Within the management container, type  
+```
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
 cd wp-httpd/htdocs
-</pre>
-1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either the `wp` command-line tool (for a “vanilla” WordPress site) or `jahia2wp create`
-</pre>
+```  
+1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either
+   the `wp` command-line tool (for a “vanilla” WordPress site) or
+   `jahia2wp create`. Check the [new-wp-site.sh](https://github.com/epfl-idevelop/wp-ops/blob/feature/script-to-create-a-site/docker/mgmt/new-wp-site.sh) command, it should work without any of the
+   ansible or jahia2wp jam.
 
 ### wp-gutenberg-epfl activation
 
@@ -38,14 +44,16 @@ make wp5 SITE_DIR=/srv/test/wp-httpd/htdocs/vpsi-next
 
 1. Type `make checkout up`
 1. Hack on things
-1. Additional helpful commands are: `make exec`, `make httpd` and more (try `make help` for an overview)
+1. Additional helpful commands are: `make exec`, `make httpd` and more (try
+   `make help` for an overview)
 
 ### Apache Access and Error Logs
 
-To follow the Apache access and error logs, type (respectively)<pre>
+To follow the Apache access and error logs, type (respectively)
+```
 make tail-access
 make tail-errors
-</pre>
+```
 
 ### Debugger
 
@@ -107,13 +115,15 @@ password are in the `.env` file, as the values of the
 `MYSQL_SUPER_USER` and `MYSQL_SUPER_PASSWORD` variables, respectively.
 
 As far as command-line access is concerned, you can access a superuser
-MySQL prompt by typing<pre>
+MySQL prompt by typing
+```
 docker exec -it wp-local_db_1 bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
-</pre>
+```
 
-and you can activate and follow the generate query log with<pre>
+and you can activate and follow the generate query log with
+```
 make tail-sql
-</pre>
+```
 
 ### Backup / Restore
 
@@ -180,7 +190,8 @@ developers can push their changes back upstream - That includes the
 which (for historical reasons) is a Python-based utility that contains
 some WordPress plugins and mu-plugins.
 
-You can audit the development rig by yourselves if you type `find volumes/wp -type l -o -name .git` . Here is what you'll find:
+You can audit the development rig by yourselves if you type
+`find volumes/wp -type l -o -name .git`. Here is what you'll find:
 
 | Path under `volumes/wp` | Implementation | Purpose |
 |-------------------------|---------|----------------|
@@ -194,4 +205,11 @@ You can audit the development rig by yourselves if you type `find volumes/wp -ty
 | `volumes/wp/wp-content/themes/epfl-blank`<br/>`volumes/wp/wp-content/themes/epfl-master` | Symlinks to jahia2wp (like the `EPFL-*` and `epfl*` plug-ins above) | So-called "2010-style" themes,  provided as part of the jahia2wp codebase for historical reasons. (These themes are obsolescent, as obviously further development focuses on `wp-theme-2018`) |
 | `wp-content/index.php`<br/>`wp-content/plugins/shortcodes-ultimate`<br/> and more (basically all files except the ones mentioned above)  | Extracted from the Docker image by `make checkout` | These files or plug-ins are required by WordPress, and one can even edit them, but the development kit doesn't help with pushing the changes upstream. (In fact, doing `make checkout` again will revert the edits.)<br/> 💡 <b>There might be some plug-ins (even VPSI-authored plugins) in that state</b> — See below |
 
-💡 Depending on which branch of jahia2wp is checked out, there might be some plug-ins that exist in the Docker image, but not in `volumes/wp/jahia2wp/data/wp/wp-content/plugins`. If you type `make checkout` after changing branches in jahia2wp, the Makefile extracts the "orphan" plugins from the image, but (obviously) doesn't symlink them back into jahia2wp. These are not really source code — That is, you could edit these files, but you won't be able to push the changes upstream, and the next `make checkout` will revert the changes.
+💡 Depending on which branch of jahia2wp is checked out, there might be some
+plug-ins that exist in the Docker image, but not in
+`volumes/wp/jahia2wp/data/wp/wp-content/plugins`. If you type `make checkout`
+after changing branches in jahia2wp, the Makefile extracts the "orphan" plugins
+from the image, but (obviously) doesn't symlink them back into jahia2wp. These
+are not really source code — That is, you could edit these files, but you won't
+be able to push the changes upstream, and the next `make checkout` will revert
+the changes.
