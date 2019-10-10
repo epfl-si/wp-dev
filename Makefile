@@ -312,5 +312,5 @@ clean: down clean-images
 	rm -f .make.vars TAGS tags
 
 .PHONY: mrproper
-mrproper:
+mrproper: clean
 	rm -rf volumes/wp
