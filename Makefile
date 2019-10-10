@@ -199,7 +199,6 @@ $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
-	(cd $@; git checkout feature/wp5)
 
 ############ Additional symlinks for obsolete WordPress 4 codebase ###########
 $(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
