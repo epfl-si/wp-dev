@@ -10,14 +10,13 @@ In this repository you will find:
 
 ## Initial Setup
 
+1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:<pre>127.0.0.1       wp-httpd</pre>
 1. Clone the repository
 1. Type `make checkout` to download and setup all the required codebases
 1. Inspect subdirectories `wp-ops` and `volumes/wp/jahia2wp` and make
 sure they are on the branches you wish to develop from.
-   - As of Q1 2019, the “mainstream” platform (the one being used in
-     production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp` on a branch derived from `origin/release2018`
-   - If you wish to work on the “new” platform (the one where all the WordPress code goes into the Docker image), both `wp-ops` and `volumes/wp/jahia2wp` should be on a branch derived from `origin/wwp-shared-wordpress-code`
-1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:<pre>127.0.0.1       wp-httpd</pre>
+   - As of Q4 2019, the “mainstream” platform (the one being used in
+     production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp` on `release2018`
 1. Type `make` to bring up the development stack, then `make exec` to enter the so-called management container
 1. Within the management container, type<pre>
 cd /srv/${WP_ENV}/
