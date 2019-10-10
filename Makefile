@@ -312,3 +312,6 @@ restore:
 clean: down clean-images
 	rm -f .make.vars TAGS tags
 
+.PHONY: mrproper
+mrproper:
+	rm -rf volumes/wp
