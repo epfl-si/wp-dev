@@ -21,12 +21,10 @@ In this repository you will find:
      on `release2018`
 1. Type `make` to bring up the development stack, then `make exec` to enter the
    so-called management container
-1. Within the management container, type  
-```
+1. Within the management container, type  <pre>
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
-cd wp-httpd/htdocs
-```  
+cd wp-httpd/htdocs</pre>
 1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either
    the `wp` command-line tool (for a “vanilla” WordPress site) or
    `jahia2wp create`. Check the [new-wp-site.sh](https://github.com/epfl-idevelop/wp-ops/blob/feature/script-to-create-a-site/docker/mgmt/new-wp-site.sh) command, it should work without any of the
