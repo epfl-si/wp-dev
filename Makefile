@@ -65,6 +65,7 @@ DOCKER_MGMT_IMAGE_NAME = epflidevelop/os-wp-mgmt
 WP_CONTENT_DIR = volumes/wp/5/wp-content
 WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
+WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-idevelop/wp-cli
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
   $(JAHIA2WP_DIR)/functional_tests \
@@ -131,6 +132,7 @@ checkout: \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP4_CONTENT_DIR)/themes/wp-theme-light \
+  $(WP_CLI_DIR) \
   wp-ops
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
@@ -196,6 +198,9 @@ $(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.g
 
 $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
 	ln -s wp-theme-2018.git/wp-theme-light $@
+
+$(WP_CLI_DIR):
+	$(call git_clone, epfl-idevelop/wp-cli)
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)

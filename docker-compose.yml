@@ -72,6 +72,7 @@ services:
     volumes:
       - ./volumes/srv:/srv
       - ./volumes/wp:/wp
+      - ./volumes/wp/wp-cli/vendor/epfl-idevelop:/var/www/.wp-cli/packages/vendor/epfl-idevelop
       - .env:/srv/.env
       - /Users/quatrava/Library/Application Support/IntelliJIdea2019.1/python/pydevd-pycharm.egg:/pydevd-pycharm.egg
     ports:
