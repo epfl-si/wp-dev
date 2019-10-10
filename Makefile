@@ -238,6 +238,7 @@ docker-build:
 .PHONY: clean-images
 clean-images:
 	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES) epflidevelop/os-wp-base; do docker rmi $$image || true; done
+	docker image prune
 	rm -f .docker*.stamp
 
 
