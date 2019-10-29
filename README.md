@@ -27,7 +27,7 @@ mkdir -p wp-httpd/htdocs
 cd wp-httpd/htdocs</pre>
 1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either
    the `wp` command-line tool (for a “vanilla” WordPress site) or
-   `jahia2wp create`. Check the [new-wp-site.sh](https://github.com/epfl-idevelop/wp-ops/blob/feature/script-to-create-a-site/docker/mgmt/new-wp-site.sh) command, it should work without any of the
+   `jahia2wp create`. Check the [new-wp-site.sh](https://github.com/epfl-idevelop/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command, it should work without any of the
    ansible or jahia2wp jam.
 
 ### wp-gutenberg-epfl activation
