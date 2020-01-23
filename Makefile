@@ -208,11 +208,11 @@ wp-ops:
 ############ Additional symlinks for obsolete WordPress 4 codebase ###########
 $(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
 	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -s ../../../5/wp-content/plugins/$* $@
+	ln -sf ../../../5/wp-content/plugins/$* $@
 
 $(WP4_CONTENT_DIR)/themes/%: $(WP4_CONTENT_DIR)
 	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -s ../../../5/wp-content/themes/$* $@
+	ln -sf ../../../5/wp-content/themes/$* $@
 
 ################ Building or pulling Docker images ###############
 
