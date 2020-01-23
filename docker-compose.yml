@@ -74,5 +74,7 @@ services:
       - ./volumes/wp:/wp
       - ./volumes/wp/wp-cli/vendor/epfl-idevelop:/var/www/.wp-cli/packages/vendor/epfl-idevelop
       - .env:/srv/.env
+      - ./volumes/usrlocalbin:/usr/local/bin
+      - ./wp-ops:/wp-ops
     ports:
       - "${WP_PORT_SSHD}:22"

@@ -134,9 +134,20 @@ checkout: \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP4_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CLI_DIR) \
-  wp-ops
+  wp-ops \
+  volumes/usrlocalbin
 
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
+
+volumes/usrlocalbin: .docker-all-images-built.stamp
+	mkdir $@
+	docker run --rm  --name volumes-usrlocalbin-extractor \
+	  --entrypoint /bin/bash \
+	  $(DOCKER_MGMT_IMAGE_NAME) \
+	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
+	  | tar -Cvolumes/usrlocalbin -xpvf -
+	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
+	touch $@
 
 $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
