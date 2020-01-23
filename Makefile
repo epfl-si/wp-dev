@@ -125,6 +125,7 @@ checkout: \
   $(WP_CONTENT_DIR) \
   $(WP_CONTENT_DIR)/plugins/accred \
   $(WP_CONTENT_DIR)/plugins/tequila \
+  $(WP_CONTENT_DIR)/plugins/epfl-menus \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
@@ -149,12 +150,13 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
               /wp" \
 	  | tar -Cvolumes -xpvf - wp
 # Excluded directories are replaced with a git checkout of same.
-# Currently plugins and mu-plugins reside in jahia2wp, for historical
-# reasons:
+# Currently a number of plugins and mu-plugins reside in jahia2wp, for
+# historical reasons:
 	set -e -x; \
 	for linkable in \
 	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
-	                  find themes plugins -mindepth 1 -maxdepth 1 -type d); \
+	                  find themes plugins -mindepth 1 -maxdepth 1 -type d \
+	                  -not -name epfl-menus); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
 	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
@@ -198,6 +200,9 @@ $(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.g
 
 $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
 	ln -s wp-theme-2018.git/wp-theme-light $@
+
+$(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-plugin-epfl-menus)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-idevelop/wp-cli)
