@@ -25,10 +25,11 @@ In this repository you will find:
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
 cd wp-httpd/htdocs</pre>
-1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either
-   the `wp` command-line tool (for a “vanilla” WordPress site) or
-   `jahia2wp create`. Check the [new-wp-site.sh](https://github.com/epfl-idevelop/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command, it should work without any of the
-   ansible or jahia2wp jam.
+1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using
+either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`new-wp-site.sh`](https://github.com/epfl-idevelop/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command (such a site comes with a number of EPFL-specific presets, main theme disabled etc.)
+3. Browse the site (it's probably not going to work very well at this stage, what with it having no plugins and themes)
+4. Tack `/wp-admin` to the end of the URL to get at the login screen
+5. Log in with the `administrator` account (scroll back in your Terminal looking for `Admin password:` to get at the password)
 
 ### wp-gutenberg-epfl activation
 
@@ -195,7 +196,7 @@ You can audit the development rig by yourselves if you type
 |-------------------------|---------|----------------|
 | `jahia2wp` | Git checkout from the [jahia2wp depot](https://github.com/epfl-idevelop/jahia2wp) | Provides the targets for the `plugins` and `mu-plugins` symlinks below, both inside and outside the Docker containers |
 | `wp-content/mu-plugins` | Symlink to `../../jahia2wp/data/wp/wp-content/mu-plugins` | The "must-use" plugins (we only use those from jahia2wp at the moment) |
-| `wp-content/plugins/epfl`<br/>`wp-content/plugins/epfl-404`<br/>`wp-content/plugins/EPFL-Content-Filter`<br/>`wp-content/plugins/epfl-404`<br/>etc. | Symlinks to the corresponding plug-ins in `../../jahia2wp/data/wp/wp-content/plugins` | These plug-ins are available for WordPress sites (in `/srv`) to symlink to; but unlike in production, they are symlinks themselves (so that when editing the files in there, one does so in the correct Git depot) |
+| `wp-content/plugins/epfl`<br/>`wp-content/plugins/epfl-404`<br/>`wp-content/plugins/EPFL-Content-Filter`<br/>`wp-content/plugins/epfl-404`<br/>etc. | Symlinks to the corresponding plug-ins in `../../jahia2wp/data/wp/wp-content/plugins` | These plug-ins are available for WordPress sites (in `/srv`) to symlink to; but unlike in production, they are symlinks themselves (so that when editing the files in there, one does so in the correct Git depot) |
 | `volumes/wp/wp-content/plugins/accred` | Git checkout of [the Accred plug-in](https://github.com/epfl-sti/wordpress.plugin.accred/) | A (mostly) VPSI-authored WordPress plug-in, that lives in its own Git repository  |
 | `volumes/wp/wp-content/plugins/tequila` | Git checkout of [the Tequila plug-in](https://github.com/epfl-sti/wordpress.plugin.tequila/) | Ditto (at some point, we probably want to refactor the ones under jahia2wp in this way as well) |
 | `volumes/wp/wp-content/themes/wp-theme-2018` | Git checkout of [`wp-theme-2018`](https://github.com/epfl-idevelop/wp-theme-2018/) | The modern WordPress theme, that implements [the 2018 style guide](https://epfl-idevelop.github.io/elements/#/) |
