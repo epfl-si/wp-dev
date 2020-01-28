@@ -10,7 +10,7 @@ In this repository you will find:
 
 ## Initial Setup
 
-1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:  
+1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
    `127.0.0.1       wp-httpd`
 1. Clone the [repository](https://github.com/epfl-idevelop/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
@@ -21,7 +21,7 @@ In this repository you will find:
      on `release2018`
 1. Type `make` to bring up the development stack.<br>
    💡 If working outside EPFL without VPN access, use instead <pre>make OUTSIDE_EPFL=1</pre>
-1. Type `make exec` to enter the so-called management container. 
+1. Type `make exec` to enter the so-called management container.
 1. Within the management container, type  <pre>
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
@@ -79,24 +79,38 @@ Once the Docker containers are up and running, type
 
 (When you are done with debugging, type `./devscripts/php-xdebug stop`)
 
-Your debugger or IDE must be listening for incoming Xdebug connections
-on port 9000, and your workstation / laptop must have a non-localhost
-IPv4 address set up; if this is not the case, the script will attempt
-to set up a fake one for you (for debugging while riding the bus —
-Supported platforms only).
-
 ⚠ The first run of `./devscripts/php-xdebug start` needs to download
-and install some support software into the `wp-httpd` docker image, so
-using a fake IP address is probably not going to work the first time
-around (although it should for the subsequent ones, until you restart
-the `wp-httpd` container).
+and install some support software into the `wp-httpd` container.
 
-[Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
+#### IDE configuration and Path Mapping
 
-💡 The next piece of trouble when remote debugging is path mapping,
-which is not covered here. If your IDE breakpoints don't quite work,
-consider inserting the following line in an appropriate place in your
-PHP code:<pre>xdebug_break();</pre>
+Your debugger or IDE must be listening for incoming Xdebug connections
+on port 9000. Additionally, the debugger should be set up to understand that the paths it receives (from inside the `wp-httpd` container) differ from the ones that is sees (outside the container). This is known as **path mapping**.
+
+- Visual Studio Code with [PHP Debug extension](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug)
+    - Set your `wp-dev/.vscode/launch.json` to
+    <pre>{
+      "version": "0.2.0",
+      "configurations": [
+          {
+              "name": "Listen for XDebug",
+              "type": "php",
+              "request": "launch",
+              "port": 9000,
+              "pathMappings": {
+                  "/wp": "${workspaceRoot}/volumes/wp"
+                }
+          }
+      ]
+    }
+    </pre>
+
+- PHPStorm / IntelliJ
+  - [Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
+
+💡 If your IDE breakpoints don't quite work because of path mapping issues,
+try inserting the following line in an appropriate place in your
+PHP code (instead of clicking in the IDE to set up breakpoints):<pre>xdebug_break();</pre>
 
 ### Indexation (ctags / etags)
 
