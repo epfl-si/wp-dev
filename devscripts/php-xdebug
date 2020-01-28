@@ -20,9 +20,6 @@ https://www.jetbrains.com/help/idea/configuring-xdebug.html
 USAGE
 }
 
-myip () {
-    $(dirname "$0")/myip "$@"
-}
 
 dockerexec="docker exec -i wp-httpd"
 
@@ -40,12 +37,11 @@ set -e
 case "$1" in
     start)
         ensure_php_xdebug_installed
-        myip --ensure
         $dockerexec sh -c \
             'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
 xdebug.remote_enable=on
 xdebug.remote_autostart=on
-xdebug.remote_host=$(myip)
+xdebug.remote_connect_back=on
 EOF
         ;;
     stop)
