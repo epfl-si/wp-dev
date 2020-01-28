@@ -26,11 +26,27 @@ In this repository you will find:
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
 cd wp-httpd/htdocs</pre>
-1. Create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using
+
+## Populate the Serving Tree
+
+
+### Copy From Production
+
+This is the easiest way. Assuming you have production access, run <pre>./devscripts/copy-enac-from-prod.sh</pre> to copy a subset of the production serving tree of `www.epfl.ch` into your wp-dev checkout.
+
+### Empty Site
+
+This is more difficult, as the sites created in this way are initially “bare” (they lack symlinks to the plugins, must-use plugins and themes; and they are devoid of configuration and data).
+
+1. Enter the management container (see above), then create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using
 either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`new-wp-site.sh`](https://github.com/epfl-idevelop/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command (such a site comes with a number of EPFL-specific presets, main theme disabled etc.)
-3. Browse the site (it's probably not going to work very well at this stage, what with it having no plugins and themes)
-4. Tack `/wp-admin` to the end of the URL to get at the login screen
-5. Log in with the `administrator` account (scroll back in your Terminal looking for `Admin password:` to get at the password)
+1. Browse the site (it's probably not going to work very well at this stage, what with it having no plugins and themes)
+
+## Access the Admin Area
+
+1. Tack `/wp-admin` to the end of the URL to get at the login screen
+1. Log in with the `administrator` account (scroll back in your Terminal looking for `Admin password:` to get at the password)
+1. Because of production-specific reverse-proxy shenanigans, you will be redirected to port 8443 at some point. Just edit the URL to get rid of the `:8443` part.
 
 ### wp-gutenberg-epfl activation
 
