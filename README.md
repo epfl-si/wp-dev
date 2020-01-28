@@ -10,7 +10,7 @@ In this repository you will find:
 
 ## Initial Setup
 
-1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:  
+1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
    `127.0.0.1       wp-httpd`
 1. Clone the [repository](https://github.com/epfl-idevelop/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
@@ -21,7 +21,7 @@ In this repository you will find:
      on `release2018`
 1. Type `make` to bring up the development stack.<br>
    💡 If working outside EPFL without VPN access, use instead <pre>make OUTSIDE_EPFL=1</pre>
-1. Type `make exec` to enter the so-called management container. 
+1. Type `make exec` to enter the so-called management container.
 1. Within the management container, type  <pre>
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
@@ -64,16 +64,10 @@ Once the Docker containers are up and running, type
 (When you are done with debugging, type `./devscripts/php-xdebug stop`)
 
 Your debugger or IDE must be listening for incoming Xdebug connections
-on port 9000, and your workstation / laptop must have a non-localhost
-IPv4 address set up; if this is not the case, the script will attempt
-to set up a fake one for you (for debugging while riding the bus —
-Supported platforms only).
+on port 9000.
 
 ⚠ The first run of `./devscripts/php-xdebug start` needs to download
-and install some support software into the `wp-httpd` docker image, so
-using a fake IP address is probably not going to work the first time
-around (although it should for the subsequent ones, until you restart
-the `wp-httpd` container).
+and install some support software into the `wp-httpd` container.
 
 [Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
 
