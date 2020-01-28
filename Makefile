@@ -140,12 +140,13 @@ checkout: \
 git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
 
 volumes/usrlocalbin: .docker-all-images-built.stamp
-	mkdir $@
+	mkdir $@ || true
 	docker run --rm  --name volumes-usrlocalbin-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_MGMT_IMAGE_NAME) \
 	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
 	  | tar -Cvolumes/usrlocalbin -xpvf -
+	rm -f volumes/usrlocalbin/new-wp-site
 	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
 	touch $@
 
