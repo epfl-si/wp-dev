@@ -19,8 +19,9 @@ In this repository you will find:
    - As of Q4 2019, the “mainstream” platform (the one being used in
      production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp`
      on `release2018`
-1. Type `make` to bring up the development stack, then `make exec` to enter the
-   so-called management container
+1. Type `make` to bring up the development stack.<br>
+   💡 If working outside EPFL without VPN access, use instead <pre>make OUTSIDE_EPFL=1</pre>
+1. Type `make exec` to enter the so-called management container. 
 1. Within the management container, type  <pre>
 cd /srv/${WP_ENV}/
 mkdir -p wp-httpd/htdocs
