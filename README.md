@@ -63,16 +63,36 @@ Once the Docker containers are up and running, type
 
 (When you are done with debugging, type `./devscripts/php-xdebug stop`)
 
-Your debugger or IDE must be listening for incoming Xdebug connections
-on port 9000.
-
 ⚠ The first run of `./devscripts/php-xdebug start` needs to download
 and install some support software into the `wp-httpd` container.
 
-[Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
+#### IDE configuration
+
+Your debugger or IDE must be listening for incoming Xdebug connections
+on port 9000.
+
+- Visual Studio Code with [PHP Debug extension](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug)
+    - Set your `wp-dev/.vscode/launch.json` to <pre>{
+      "version": "0.2.0",
+      "configurations": [
+          {
+              "name": "Listen for XDebug",
+              "type": "php",
+              "request": "launch",
+              "port": 9000,
+              "pathMappings": {
+                  "/wp": "${workspaceRoot}/volumes/wp"
+                }
+          }
+      ]
+    }
+    </pre>
+
+- PHPStorm / IntelliJ
+  - [Additional instructions to configure PHPStorm / IntelliJ](https://www.jetbrains.com/help/idea/configuring-xdebug.html)
 
 💡 The next piece of trouble when remote debugging is path mapping,
-which is not covered here. If your IDE breakpoints don't quite work,
+which is not covered here for PHPStorm/Intellij. If your IDE breakpoints don't quite work,
 consider inserting the following line in an appropriate place in your
 PHP code:<pre>xdebug_break();</pre>
 
