@@ -16,7 +16,7 @@ docker_mgmt_cmd () {
 
 wp_import_docker() {
     local site="$1"
-    docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; pwd; wp db import -"
+    docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; wp db import -"
 }
 
 wp_prepare () {
@@ -34,7 +34,7 @@ ln -s /wp/5.2 wp
 for symlinkdir in wp-content/plugins wp-content/mu-plugins wp-content/themes; do
     mkdir -p "$symlinkdir" || true
     rm -f "$symlinkdir"/*
-    (cd "$symlinkdir"; pwd; ln -s ../../wp/"$symlinkdir"/* .)
+    (cd "$symlinkdir"; ln -s ../../wp/"$symlinkdir"/* .)
 done
 
 POPULATE_SITE_SCRIPT
