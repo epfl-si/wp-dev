@@ -1,5 +1,7 @@
 #!/bin/sh
 
+WP_VERSION=5.2
+
 set -e -x
 scriptdir="$(dirname "$0")"
 
@@ -26,11 +28,11 @@ set -e -x
 mkdir -p /srv/test/wp-httpd/htdocs/$site || true
 cd /srv/test/wp-httpd/htdocs/$site
 /usr/local/bin/new-wp-site
+rm wp
+ln -s "/wp/$WP_VERSION" wp
 CREATE_SITE_SCRIPT
 
 cat <<'POPULATE_SITE_SCRIPT'
-rm wp
-ln -s /wp/5.2 wp
 for symlinkdir in wp-content/plugins wp-content/mu-plugins wp-content/themes; do
     mkdir -p "$symlinkdir" || true
     rm -f "$symlinkdir"/*
