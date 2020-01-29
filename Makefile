@@ -138,7 +138,7 @@ checkout: \
   wp-ops \
   volumes/usrlocalbin
 
-git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
+git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
 
 volumes/usrlocalbin: .docker-all-images-built.stamp
 	mkdir $@ || true
