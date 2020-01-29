@@ -208,10 +208,10 @@ $(WP_CONTENT_DIR)/themes/wp-theme-2018.git: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-theme-2018.git)
 
 $(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
-	ln -s wp-theme-2018.git/wp-theme-2018 $@
+	ln -sf wp-theme-2018.git/wp-theme-2018 $@
 
 $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
-	ln -s wp-theme-2018.git/wp-theme-light $@
+	ln -sf wp-theme-2018.git/wp-theme-light $@
 
 $(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-plugin-epfl-menus)
