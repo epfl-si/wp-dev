@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# Print the local IP address to stdout
+#
+# The purpose is to tell things inside the Docker container (e.g.,
+# some PHP or Python code) how to reach other things on the
+# workstation (e.g. a debugger).
+#
+# If we don't currently have an IP address (for instance we are in the
+# bus), and --ensure is passed as the first command-line argument, set
+# up an IP address.
+
+. "$(dirname "$0")"/functions.sh
+
+main () {
+    if [ "$1" == "--ensure" ]; then
+        shift
+        case "$(uname -s)" in
+            Darwin) myip_mac "$@" >/dev/null || setup_ip_mac "$@";;
+            Linux) myip_linux "$@" >/dev/null || setup_ip_linux "$@";;
+            *) die "Sorry, unsupported OS: $(uname -s)" ;;
+        esac
+    else
+        case "$(uname -s)" in
+            Darwin) myip_mac "$@";;
+            Linux) myip_linux "$@";;
+            *) die "Sorry, unsupported OS: $(uname -s)" ;;
+        esac
+    fi
+}
+
+myip_linux () {
+    die "myip_linux is UNIMPLEMENTED"
+}
+
+myip_mac () {
+    ifconfig | (
+        while read inet ip rest; do
+            [ "$inet" == "inet" ] || continue
+            case "$ip" in
+                127.*|172.1*|172.2*) continue ;;
+            esac
+            echo $ip
+            return 0
+        done
+        return 1
+    )
+}
+
+setup_ip_linux () {
+    die "myip_linux is UNIMPLEMENTED"
+}
+
+setup_ip_mac () {
+    sudo ifconfig bridge0 192.168.59.97
+}
+
+##########################################################################
+main "$@"
