@@ -221,6 +221,7 @@ $(WP_CLI_DIR):
 
 wp-ops:
 	$(call git_clone, epfl-idevelop/wp-ops)
+	$(MAKE) -C wp-ops checkout
 
 ############ Additional symlinks for obsolete WordPress 4 codebase ###########
 $(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
