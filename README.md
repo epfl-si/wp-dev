@@ -32,7 +32,11 @@ cd wp-httpd/htdocs</pre>
 
 ### Copy From Production
 
-This is the easiest way. Assuming you have production access, run <pre>./devscripts/copy-enac-from-prod.sh</pre> to copy a subset of the production serving tree of `www.epfl.ch` into your wp-dev checkout.
+This is the easiest way. Assuming you have production access, run <pre>./devscripts/copy-enac-from-prod.sh</pre> to copy a subset of the production serving tree of `www.epfl.ch` into your wp-dev checkout. It offers you this sites:
+- https://wp-httpd/
+- https://wp-httpd/shools
+- https://wp-httpd/schools/enac
+- https://wp-httpd/schools/enac/education
 
 ### Empty Site
 

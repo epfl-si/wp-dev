@@ -49,7 +49,7 @@ wp_search_replace () {
 }
 
 # TODO: make this flexible (split $1, reverse)
-for site in "" schools schools/enac schools/enac/education3 ; do
+for site in "" schools schools/enac schools/enac/education ; do
     wp_prepare "$site"
     wp_export_prod "$site" | wp_import_docker "$site"
     wp_search_replace "$site"
