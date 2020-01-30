@@ -48,7 +48,8 @@ case "$1" in
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_connect_back=on
-EOF;;
+EOF
+            ;;
             # Darwin is not, so use the current ip strategy
             *)
                 myip --ensure
@@ -57,7 +58,9 @@ EOF;;
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_host=$(myip)
-EOF;;
+EOF
+            ;;
+        esac
         ;;
     stop)
         $dockerexec sh -c \
