@@ -129,6 +129,7 @@ checkout: \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
+  $(WP_CONTENT_DIR)/plugins/epfl-404 \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -137,7 +138,7 @@ checkout: \
   wp-ops \
   volumes/usrlocalbin
 
-git_clone = mkdir -p $(dir $@) || true; cd $(dir $@); test -d $(notdir $@) || git clone $(_GITHUB_BASE)$(strip $(1)) $(notdir $@); touch $(notdir $@)
+git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
 
 volumes/usrlocalbin: .docker-all-images-built.stamp
 	mkdir $@ || true
@@ -168,7 +169,9 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	for linkable in \
 	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
 	                  find themes plugins -mindepth 1 -maxdepth 1 -type d \
-	                  -not -name epfl-menus); \
+                    -not -name epfl-menus \
+                    -not -name epfl-404 \
+                    ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
 	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
@@ -215,6 +218,9 @@ $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.
 
 $(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-plugin-epfl-menus)
+
+$(WP_CONTENT_DIR)/plugins/epfl-404: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-plugin-epfl-404)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-idevelop/wp-cli)
