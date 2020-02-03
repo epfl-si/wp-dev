@@ -172,7 +172,7 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	                  find themes plugins -mindepth 1 -maxdepth 1 -type d \
                     -not -name epfl-menus \
                     -not -name epfl-404 \
-										-not -name EPFL-settings \
+                    -not -name EPFL-settings \
                     ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
