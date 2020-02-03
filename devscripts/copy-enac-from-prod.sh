@@ -78,25 +78,3 @@ for site in "" schools schools/enac schools/enac/education ; do
     wp_export_prod "$site" | wp_import_docker "$site"
     wp_search_replace "$site"
 done
-
-## Debug mode ?
-echo -n "   Do you want to activate debug mode on the loaded sites (y/n) ? "
-read answer
-
-# TODO: make this flexible (split $1, reverse)
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-    for site in "" schools schools/enac schools/enac/education ; do
-        wp_debug_mode_activate "$site"
-    done
-fi
-
-## Without tequila ?
-echo -n "   Do you want to desactivate Tequila feature on the loaded sites (y/n) ? "
-read answer
-
-# TODO: make this flexible (split $1, reverse)
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-    for site in "" schools schools/enac schools/enac/education ; do
-        wp_tequila_desactivation "$site"
-    done
-fi
