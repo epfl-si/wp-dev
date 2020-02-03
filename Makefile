@@ -130,7 +130,7 @@ checkout: \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
   $(WP_CONTENT_DIR)/plugins/epfl-404 \
-	$(WP_CONTENT_DIR)/plugins/epfl-settings \
+  $(WP_CONTENT_DIR)/plugins/epfl-settings \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
