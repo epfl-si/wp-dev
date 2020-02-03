@@ -130,6 +130,7 @@ checkout: \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
   $(WP_CONTENT_DIR)/plugins/epfl-404 \
+  $(WP_CONTENT_DIR)/plugins/EPFL-settings \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -171,6 +172,7 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	                  find themes plugins -mindepth 1 -maxdepth 1 -type d \
                     -not -name epfl-menus \
                     -not -name epfl-404 \
+                    -not -name EPFL-settings \
                     ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
@@ -221,6 +223,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/epfl-404: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-plugin-epfl-404)
+
+$(WP_CONTENT_DIR)/plugins/EPFL-settings: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-plugin-epfl-settings)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-idevelop/wp-cli)
