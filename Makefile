@@ -301,6 +301,13 @@ up: checkout $(DOCKER_IMAGE_STAMPS)
 down:
 	docker-compose down
 
+_find_git_depots := find . -name .git -prune |xargs -n 1 dirname
+.PHONY: gitstatus
+gitstatus:
+	for dir in `$(_find_git_depots)`; do (set -e -x; cd $$dir; git status); done
+
+gitpull:
+	for dir in `$(_find_git_depots)`; do (set -e -x; cd $$dir; git pull); done
 
 ######################## Development Tasks ########################
 
