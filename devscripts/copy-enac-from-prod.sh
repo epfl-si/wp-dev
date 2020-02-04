@@ -48,8 +48,9 @@ wp_search_replace () {
     docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; wp search-replace https://www.epfl.ch http://wp-httpd"
 }
 
+
 # TODO: make this flexible (split $1, reverse)
-for site in "" schools schools/enac schools/enac/education3 ; do
+for site in "" schools schools/enac schools/enac/education ; do
     wp_prepare "$site"
     wp_export_prod "$site" | wp_import_docker "$site"
     wp_search_replace "$site"
