@@ -38,6 +38,8 @@ This is the easiest way. Assuming you have production access, run <pre>./devscri
 - https://wp-httpd/schools/enac
 - https://wp-httpd/schools/enac/education
 
+You can, optionally, run <pre>./devscripts/customize-local-sites.sh</pre>. You will be asked if you want to activate debug mode or get back to standard authentification on the copied sites.
+
 ### Empty Site
 
 This is more difficult, as the sites created in this way are initially “bare” (they lack symlinks to the plugins, must-use plugins and themes; and they are devoid of configuration and data).
