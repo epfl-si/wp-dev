@@ -12,7 +12,7 @@ In this repository you will find:
 
 1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
    `127.0.0.1       wp-httpd`
-1. Clone the [repository](https://github.com/epfl-idevelop/wp-dev)
+1. Clone the [repository](https://github.com/epfl-si/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
 1. Inspect subdirectories `wp-ops` and `volumes/wp/jahia2wp` and make
    sure they are on the branches you wish to develop from.
@@ -45,7 +45,7 @@ You can, optionally, run <pre>./devscripts/customize-local-sites.sh</pre>. You w
 This is more difficult, as the sites created in this way are initially “bare” (they lack symlinks to the plugins, must-use plugins and themes; and they are devoid of configuration and data).
 
 1. Enter the management container (see above), then create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using
-either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`new-wp-site.sh`](https://github.com/epfl-idevelop/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command (such a site comes with a number of EPFL-specific presets, main theme disabled etc.)
+either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`new-wp-site.sh`](https://github.com/epfl-si/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command (such a site comes with a number of EPFL-specific presets, main theme disabled etc.)
 1. Browse the site (it's probably not going to work very well at this stage, what with it having no plugins and themes)
 
 ## Access the Admin Area
@@ -222,7 +222,7 @@ code of both the WordPress core, the "official" plug-ins and the
 plug-ins and themes authored by EPFL staff. The latter are
 additionally checked out as part of their original Git depots, so that
 developers can push their changes back upstream - That includes the
-[jahia2wp repository](https://github.com/epfl-idevelop/jahia2wp),
+[jahia2wp repository](https://github.com/epfl-si/jahia2wp),
 which (for historical reasons) is a Python-based utility that contains
 some WordPress plugins and mu-plugins.
 
@@ -231,13 +231,13 @@ You can audit the development rig by yourselves if you type
 
 | Path under `volumes/wp` | Implementation | Purpose |
 |-------------------------|---------|----------------|
-| `jahia2wp` | Git checkout from the [jahia2wp depot](https://github.com/epfl-idevelop/jahia2wp) | Provides the targets for the `plugins` and `mu-plugins` symlinks below, both inside and outside the Docker containers |
+| `jahia2wp` | Git checkout from the [jahia2wp depot](https://github.com/epfl-si/jahia2wp) | Provides the targets for the `plugins` and `mu-plugins` symlinks below, both inside and outside the Docker containers |
 | `wp-content/mu-plugins` | Symlink to `../../jahia2wp/data/wp/wp-content/mu-plugins` | The "must-use" plugins (we only use those from jahia2wp at the moment) |
 | `wp-content/plugins/epfl`<br/>`wp-content/plugins/epfl-404`<br/>`wp-content/plugins/EPFL-Content-Filter`<br/>`wp-content/plugins/epfl-404`<br/>etc. | Symlinks to the corresponding plug-ins in `../../jahia2wp/data/wp/wp-content/plugins` | These plug-ins are available for WordPress sites (in `/srv`) to symlink to; but unlike in production, they are symlinks themselves (so that when editing the files in there, one does so in the correct Git depot) |
 | `volumes/wp/wp-content/plugins/accred` | Git checkout of [the Accred plug-in](https://github.com/epfl-sti/wordpress.plugin.accred/) | A (mostly) VPSI-authored WordPress plug-in, that lives in its own Git repository  |
 | `volumes/wp/wp-content/plugins/tequila` | Git checkout of [the Tequila plug-in](https://github.com/epfl-sti/wordpress.plugin.tequila/) | Ditto (at some point, we probably want to refactor the ones under jahia2wp in this way as well) |
-| `volumes/wp/wp-content/themes/wp-theme-2018` | Git checkout of [`wp-theme-2018`](https://github.com/epfl-idevelop/wp-theme-2018/) | The modern WordPress theme, that implements [the 2018 style guide](https://epfl-idevelop.github.io/elements/#/) |
-| `volumes/wp/wp-content/themes/wp-theme-2018` | Git checkout of [`wp-theme-2018`](https://github.com/epfl-idevelop/wp-theme-2018/) | The modern WordPress theme, that implements [the 2018 style guide](https://epfl-idevelop.github.io/elements/#/) |
+| `volumes/wp/wp-content/themes/wp-theme-2018` | Git checkout of [`wp-theme-2018`](https://github.com/epfl-si/wp-theme-2018/) | The modern WordPress theme, that implements [the 2018 style guide](https://epfl-si.github.io/elements/#/) |
+| `volumes/wp/wp-content/themes/wp-theme-2018` | Git checkout of [`wp-theme-2018`](https://github.com/epfl-si/wp-theme-2018/) | The modern WordPress theme, that implements [the 2018 style guide](https://epfl-si.github.io/elements/#/) |
 | `volumes/wp/wp-content/themes/epfl-blank`<br/>`volumes/wp/wp-content/themes/epfl-master` | Symlinks to jahia2wp (like the `EPFL-*` and `epfl*` plug-ins above) | So-called "2010-style" themes,  provided as part of the jahia2wp codebase for historical reasons. (These themes are obsolescent, as obviously further development focuses on `wp-theme-2018`) |
 | `wp-content/index.php`<br/>`wp-content/plugins/shortcodes-ultimate`<br/> and more (basically all files except the ones mentioned above)  | Extracted from the Docker image by `make checkout` | These files or plug-ins are required by WordPress, and one can even edit them, but the development kit doesn't help with pushing the changes upstream. (In fact, doing `make checkout` again will revert the edits.)<br/> 💡 <b>There might be some plug-ins (even VPSI-authored plugins) in that state</b> — See below |
 

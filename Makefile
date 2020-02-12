@@ -65,7 +65,7 @@ DOCKER_MGMT_IMAGE_NAME = epflidevelop/os-wp-mgmt
 WP_CONTENT_DIR = volumes/wp/5/wp-content
 WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
-WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-idevelop/wp-cli
+WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
   $(JAHIA2WP_DIR)/functional_tests \
@@ -199,7 +199,7 @@ $(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
 # For historical reasons, plugins and mu-plugins currently
 # reside in a repository called jahia2wp
 $(JAHIA2WP_DIR):
-	$(call git_clone, epfl-idevelop/jahia2wp)
+	$(call git_clone, epfl-si/jahia2wp)
 	(cd $@; git checkout release2018)
 
 $(WP_CONTENT_DIR)/plugins/accred: $(WP_CONTENT_DIR)
@@ -213,10 +213,10 @@ $(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
 	(cd $@; git checkout vpsi)
 
 $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-gutenberg-epfl)
+	$(call git_clone, epfl-si/wp-gutenberg-epfl)
 
 $(WP_CONTENT_DIR)/themes/wp-theme-2018.git: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-theme-2018.git)
+	$(call git_clone, epfl-si/wp-theme-2018.git)
 
 $(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
 	ln -sf wp-theme-2018.git/wp-theme-2018 $@
@@ -225,28 +225,28 @@ $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.
 	ln -sf wp-theme-2018.git/wp-theme-light $@
 
 $(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-menus)
+	$(call git_clone, epfl-si/wp-plugin-epfl-menus)
 
 $(WP_CONTENT_DIR)/plugins/epfl-404: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-404)
+	$(call git_clone, epfl-si/wp-plugin-epfl-404)
 
 $(WP_CONTENT_DIR)/plugins/EPFL-settings: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-settings)
+	$(call git_clone, epfl-si/wp-plugin-epfl-settings)
 
 $(WP_CONTENT_DIR)/plugins/epfl-scienceqa: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-scienceqa)
+	$(call git_clone, epfl-si/wp-plugin-epfl-scienceqa)
 
 $(WP_CONTENT_DIR)/plugins/EPFL-Content-Filter: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-content-filter)
+	$(call git_clone, epfl-si/wp-plugin-epfl-content-filter)
 
 $(WP_CONTENT_DIR)/plugins/epfl-intranet: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-plugin-epfl-intranet)
 
 $(WP_CLI_DIR):
-	$(call git_clone, epfl-idevelop/wp-cli)
+	$(call git_clone, epfl-si/wp-cli)
 
 wp-ops:
-	$(call git_clone, epfl-idevelop/wp-ops)
+	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
 
 ############ Additional symlinks for obsolete WordPress 4 codebase ###########
