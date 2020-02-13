@@ -133,6 +133,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/EPFL-settings \
   $(WP_CONTENT_DIR)/plugins/epfl-scienceqa \
   $(WP_CONTENT_DIR)/plugins/EPFL-Content-Filter \
+  $(WP_CONTENT_DIR)/plugins/epfl-intranet \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -177,6 +178,7 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
                     -not -name EPFL-settings \
                     -not -name epfl-scienceqa \
                     -not -name EPFL-Content-Filter \
+                    -not -name epfl-intranet \
                     ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
@@ -236,6 +238,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-scienceqa: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/EPFL-Content-Filter: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-idevelop/wp-plugin-epfl-content-filter)
+
+$(WP_CONTENT_DIR)/plugins/epfl-intranet: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-idevelop/wp-plugin-epfl-intranet)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-idevelop/wp-cli)
