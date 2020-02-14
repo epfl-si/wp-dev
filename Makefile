@@ -11,8 +11,8 @@ include .env
 # Figure out whether we clone over https or git+ssh (you need a GitHub
 # account set up with an ssh public key for the latter)
 	@echo _GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/) >> $@
-	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v epflidevelop | cut -d: -f2-) >> $@
-	@echo _DOCKER_BUILT_IMAGES = epflidevelop/wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep epflidevelop | cut -d: -f2-) >> $@
+	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v epflsi | cut -d: -f2-) >> $@
+	@echo _DOCKER_BUILT_IMAGES = epflsi/wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep epflsi | cut -d: -f2-) >> $@
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_MGMT_IMAGE_DEPS = $(shell find wp-ops/docker/mgmt -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_HTTPD_IMAGE_DEPS = $(shell find wp-ops/docker/httpd -type f | sed 's/\n/ /g') >> $@
@@ -58,9 +58,9 @@ DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-base-image-built.stamp \
   .docker-all-images-built.stamp
 
-DOCKER_BASE_IMAGE_NAME = epflidevelop/os-wp-base
-DOCKER_HTTPD_IMAGE_NAME = epflidevelop/os-wp-httpd
-DOCKER_MGMT_IMAGE_NAME = epflidevelop/os-wp-mgmt
+DOCKER_BASE_IMAGE_NAME = epflsi/os-wp-base
+DOCKER_HTTPD_IMAGE_NAME = epflsi/os-wp-httpd
+DOCKER_MGMT_IMAGE_NAME = epflsi/os-wp-mgmt
 
 WP_CONTENT_DIR = volumes/wp/5/wp-content
 WP4_CONTENT_DIR = volumes/wp/4/wp-content
@@ -290,7 +290,7 @@ docker-build:
 
 .PHONY: clean-images
 clean-images:
-	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES) epflidevelop/os-wp-base; do docker rmi $$image || true; done
+	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES) epflsi/os-wp-base; do docker rmi $$image || true; done
 	docker image prune
 	rm -f .docker*.stamp
 
