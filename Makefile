@@ -135,6 +135,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/EPFL-Content-Filter \
   $(WP_CONTENT_DIR)/plugins/epfl-intranet \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
+  $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -181,6 +182,7 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
                     -not -name EPFL-Content-Filter \
                     -not -name epfl-intranet \
                     -not -name epfl-restauration \
+                    -not -name EPFL-Library-Plugins \
                     ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
@@ -246,6 +248,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-intranet: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/epfl-restauration: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-restauration)
+
+$(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-plugin-epfl-library)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-si/wp-cli)
