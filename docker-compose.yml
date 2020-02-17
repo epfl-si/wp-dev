@@ -36,7 +36,7 @@ services:
     build: wp-ops/docker/httpd
     labels:
       ch.epfl.wordpress.httpd.env: ${WP_ENV}
-    image: epflidevelop/os-wp-httpd
+    image: epflsi/os-wp-httpd
     volumes:
       # See README.md and Makefile for explanations on volumes
       - ./volumes/srv:/srv
@@ -59,7 +59,7 @@ services:
   mgmt:
     labels:
       ch.epfl.wordpress.mgmt.env: ${WP_ENV}
-    image: epflidevelop/os-wp-mgmt
+    image: epflsi/os-wp-mgmt
     build: wp-ops/docker/mgmt
     # The `mgmt` container gets access to the entire environment:
     env_file:
