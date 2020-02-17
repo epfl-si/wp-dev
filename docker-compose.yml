@@ -72,7 +72,7 @@ services:
     volumes:
       - ./volumes/srv:/srv
       - ./volumes/wp:/wp
-      - ./volumes/wp/wp-cli/vendor/epfl-idevelop:/var/www/.wp-cli/packages/vendor/epfl-idevelop
+      - ./volumes/wp/wp-cli/vendor/epfl-si:/var/www/.wp-cli/packages/vendor/epfl-si
       - .env:/srv/.env
       - ./volumes/usrlocalbin:/usr/local/bin
       - ./wp-ops:/wp-ops
