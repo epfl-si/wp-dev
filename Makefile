@@ -244,7 +244,7 @@ $(WP_CONTENT_DIR)/plugins/EPFL-Content-Filter: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-content-filter)
 
 $(WP_CONTENT_DIR)/plugins/epfl-intranet: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-idevelop/wp-plugin-epfl-intranet)
+	$(call git_clone, epfl-si/wp-plugin-epfl-intranet)
 
 $(WP_CONTENT_DIR)/plugins/epfl-restauration: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-restauration)
