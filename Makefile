@@ -125,6 +125,7 @@ checkout: \
   $(WP_CONTENT_DIR) \
   $(WP_CONTENT_DIR)/plugins/accred \
   $(WP_CONTENT_DIR)/plugins/tequila \
+  $(WP_CONTENT_DIR)/plugins/enlighter \
   $(WP_CONTENT_DIR)/plugins/epfl-menus \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
@@ -171,7 +172,7 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
-	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,wp-gutenberg-epfl,epfl*,EPFL*} \
+	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,wp-gutenberg-epfl,epfl*,EPFL*} \
               /wp" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpvf - wp
 # Excluded directories are replaced with a git checkout of same.
@@ -257,6 +258,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-restauration: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-library)
+
+$(WP_CONTENT_DIR)/plugins/enlighter: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/enlighter)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-si/wp-cli)
