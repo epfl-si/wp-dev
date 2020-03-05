@@ -146,13 +146,19 @@ checkout: \
 
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
 
+ifeq ($(shell uname -s),Linux)
+_HOST_TAR_X := tar -m --overwrite
+else
+_HOST_TAR_X := tar
+endif
+
 volumes/usrlocalbin: .docker-all-images-built.stamp
 	mkdir $@ || true
 	docker run --rm  --name volumes-usrlocalbin-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_MGMT_IMAGE_NAME) \
 	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
-	  | tar -Cvolumes/usrlocalbin -xpvf -
+	  | $(_HOST_TAR_X) -Cvolumes/usrlocalbin -xpvf -
 	rm -f volumes/usrlocalbin/new-wp-site
 	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
 	touch $@
@@ -165,9 +171,9 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
-	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,wp-gutenberg-epfl,epfl*} \
+	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,wp-gutenberg-epfl,epfl*,EPFL*} \
               /wp" \
-	  | tar -Cvolumes -xpvf - wp
+	  | $(_HOST_TAR_X) -Cvolumes -xpvf - wp
 # Excluded directories are replaced with a git checkout of same.
 # Currently a number of plugins and mu-plugins reside in jahia2wp, for
 # historical reasons:
