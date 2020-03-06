@@ -46,7 +46,10 @@ This is more difficult, as the sites created in this way are initially “bare�
 
 1. Enter the management container (see above), then create one or more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using
 either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`new-wp-site.sh`](https://github.com/epfl-si/wp-ops/blob/master/docker/mgmt/new-wp-site.sh) command (such a site comes with a number of EPFL-specific presets, main theme disabled etc.)
-1. Browse the site (it's probably not going to work very well at this stage, what with it having no plugins and themes)
+1. Install and activate the EPFL theme with the following command:
+   `wp theme install --activate wp-theme-2018`
+1. Browse the site. You should now see a working EPFL theme, and a “raw” WordPress without plugins.
+1. If required, you can install additional plugins with the `wp plugin install --activate <i>pluginName</i>` command.
 
 ## Access the Admin Area
 
