@@ -254,7 +254,7 @@ $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-library)
 
 $(WP_CONTENT_DIR)/plugins/enlighter: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-si/enlighter)
+	$(call git_clone, epfl-si/wp-plugin-enlighter)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-si/wp-cli)
