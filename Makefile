@@ -324,7 +324,7 @@ wp5: checkout
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
-	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm i; npm start)
+	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm start)
 
 .PHONY: down
 down:
