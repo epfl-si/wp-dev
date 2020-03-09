@@ -16,7 +16,7 @@ include .env
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_MGMT_IMAGE_DEPS = $(shell find wp-ops/docker/mgmt -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_HTTPD_IMAGE_DEPS = $(shell find wp-ops/docker/httpd -type f | sed 's/\n/ /g') >> $@
-	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo -- tar -m --overwrite ; else echo tar; fi) >> $@
+	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 
 m = $(notdir $(MAKE))
 .PHONY: help
