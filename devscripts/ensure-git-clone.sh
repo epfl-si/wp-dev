@@ -19,6 +19,6 @@ fi
 if ! test -d "$TARGET_DIR"; then
     do_git_clone
 elif [ "$(cd "$TARGET_DIR" && git remote get-url origin)" != "$GIT_URL" ] ; then
-    mv "$TARGET" "$TARGET"-orig
+    mv "$TARGET_DIR" "$TARGET_DIR"-orig
     do_git_clone
 fi
