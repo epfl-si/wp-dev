@@ -76,7 +76,8 @@ CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
   volumes/wp/5/wp-includes \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/plugins/epfl-* \
-  $(WP_CONTENT_DIR)/plugins/polylang
+  $(WP_CONTENT_DIR)/plugins/polylang \
+  $(WP_CONTENT_DIR)/mu-plugins
 
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
@@ -137,6 +138,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-intranet \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
   $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
+  $(WP_CONTENT_DIR)/mu-plugins \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
