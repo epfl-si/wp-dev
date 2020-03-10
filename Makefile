@@ -76,7 +76,8 @@ CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
   volumes/wp/5/wp-includes \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/plugins/epfl-* \
-  $(WP_CONTENT_DIR)/plugins/polylang
+  $(WP_CONTENT_DIR)/plugins/polylang \
+  $(WP_CONTENT_DIR)/mu-plugins
 
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
@@ -137,6 +138,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-intranet \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
   $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
+  $(WP_CONTENT_DIR)/mu-plugins \
   $(WP4_CONTENT_DIR)/plugins/accred \
   $(WP4_CONTENT_DIR)/plugins/tequila \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -193,16 +195,14 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
 	    $(WP4_CONTENT_DIR)/$$linkable; \
 	done
 	rm -rf $(WP_CONTENT_DIR)/mu-plugins $(WP4_CONTENT_DIR)/mu-plugins
-	ln -s ../../jahia2wp/data/wp/wp-content/mu-plugins $(WP_CONTENT_DIR)
-	ln -s ../../jahia2wp/data/wp/wp-content/mu-plugins $(WP4_CONTENT_DIR)
 	touch $@
 
-$(WP_CONTENT_DIR)/plugins $(WP_CONTENT_DIR)/mu-plugins: $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR)/plugins: $(JAHIA2WP_DIR)
 	@mkdir -p $(dir $@) || true
 	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
 
-# For historical reasons, plugins and mu-plugins currently
-# reside in a repository called jahia2wp
+# For historical reasons, some plugins still reside in a repository
+# called jahia2wp
 $(JAHIA2WP_DIR):
 	$(call git_clone, epfl-si/jahia2wp)
 	(cd $@; git checkout release2018)
@@ -255,6 +255,9 @@ $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/enlighter: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-enlighter)
+
+$(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-mu-plugins)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-si/wp-cli)
