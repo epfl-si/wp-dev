@@ -336,10 +336,11 @@ down:
 _find_git_depots := find . -name .git -prune |xargs -n 1 dirname
 .PHONY: gitstatus
 gitstatus:
-	for dir in `$(_find_git_depots)`; do (set -e -x; cd $$dir; git status); done
+	@set -e; for dir in `$(_find_git_depots)`; do (cd $$dir; echo "$$(tput bold)$$dir$$(tput sgr0)"; git status -uno; echo); done
 
+.PHONY: gitpull
 gitpull:
-	for dir in `$(_find_git_depots)`; do (set -e -x; cd $$dir; git pull); done
+	@set -e; for dir in `$(_find_git_depots)`; do (cd $$dir; echo "$$(tput bold)$$dir$$(tput sgr0)"; git pull; echo); done
 
 ######################## Development Tasks ########################
 
