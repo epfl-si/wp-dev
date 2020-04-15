@@ -21,6 +21,18 @@ SET_DEBUG_WP_SITES
 )"
 }
 
+wp_debug_mode_deactivate () {
+    local site="$1"
+    docker_mgmt_cmd "$(cat <<SET_DEBUG_WP_SITES
+set -e -x
+cd /srv/test/wp-httpd/htdocs/$site
+wp config set WP_DEBUG false --raw --type=constant
+wp config set WP_DEBUG_LOG false --raw --type=constant
+wp config set WP_DEBUG_DISPLAY false --raw --type=constant
+SET_DEBUG_WP_SITES
+)"
+}
+
 wp_tequila_desactivation () {
     local site="$1"
     docker_mgmt_cmd "$(cat <<SET_AUTH_WITHOUT_ACCRED
@@ -45,13 +57,18 @@ SET_ADMIN_PASSWORD
 
 ## Debug mode ?
 echo ""
-echo -n "Do you want to activate debug mode on the loaded sites (y/n)?"
+echo -n "Do you want to activate debug mode on the loaded sites (y / n / d(eactivate)?"
 read answer
 
 # TODO: make this flexible (split $1, reverse)
 if [ "$answer" != "${answer#[Yy]}" ] ;then
     for site in "" schools schools/enac schools/enac/education ; do
         wp_debug_mode_activate "$site"
+    done
+fi
+if [ "$answer" != "${answer#[Dd]}" ] ;then
+    for site in "" schools schools/enac schools/enac/education ; do
+        wp_debug_mode_deactivate "$site"
     done
 fi
 
