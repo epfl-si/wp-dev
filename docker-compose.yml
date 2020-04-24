@@ -73,6 +73,7 @@ services:
       - ./volumes/srv:/srv
       - ./volumes/wp:/wp
       - ./volumes/wp/wp-cli/vendor/epfl-si:/var/www/.wp-cli/packages/vendor/epfl-si
+      - ./volumes/wp/wp-cli/vendor/cortneyray:/var/www/.wp-cli/packages/vendor/cortneyray
       - .env:/srv/.env
       - ./volumes/usrlocalbin:/usr/local/bin
       - ./wp-ops:/wp-ops
