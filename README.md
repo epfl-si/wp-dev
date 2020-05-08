@@ -96,7 +96,7 @@ and install some support software into the `wp-httpd` container.
 Your debugger or IDE must be listening for incoming Xdebug connections
 on port 9000. Additionally, the debugger should be set up to understand that the paths it receives (from inside the `wp-httpd` container) differ from the ones that is sees (outside the container). This is known as **path mapping**.
 
-- Visual Studio Code with [PHP Debug extension](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug)
+- Visual Studio Code with [PHP Debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) extension
     - Set your `wp-dev/.vscode/launch.json` to
     <pre>{
       "version": "0.2.0",
