@@ -6,7 +6,7 @@ set -e -x
 scriptdir="$(dirname "$0")"
 
 wp_export_prod() {
-    ssh -X www-data@ssh-wwp.epfl.ch -p 32222 "cd /srv/www/www.epfl.ch/htdocs/$1; wp db export -"
+    ssh www-data@ssh-wwp.epfl.ch -p 32222 "cd /srv/www/www.epfl.ch/htdocs/$1; wp db export -"
 }
 
 docker_mgmt_cmd () {
