@@ -45,7 +45,8 @@ POPULATE_SITE_SCRIPT
 
 wp_search_replace () {
     local site="$1"
-    docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; wp search-replace https://www.epfl.ch http://wp-httpd"
+    docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; wp search-replace --all-tables https://www.epfl.ch http://wp-httpd"
+    docker_mgmt_cmd "set -e -x; cd /srv/test/wp-httpd/htdocs/$site; wp search-replace --all-tables --include-columns=callback_url http://wp-httpd https://wp-httpd epfl_pubsub_subscribers"
 }
 
 
