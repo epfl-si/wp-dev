@@ -66,6 +66,7 @@ WP_CONTENT_DIR = volumes/wp/5/wp-content
 WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
+POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
 WP_CLI_POLYLANG_DIR = volumes/wp/wp-cli/vendor/cortneyray/wp-cli-polylang
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
@@ -145,6 +146,7 @@ checkout: \
   $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP4_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CLI_DIR) \
+  $(POLYLANG_CLI_DIR) \
   $(WP_CLI_POLYLANG_DIR) \
   wp-ops \
   volumes/usrlocalbin
@@ -263,6 +265,9 @@ $(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
 
 $(WP_CLI_DIR):
 	$(call git_clone, epfl-si/wp-cli)
+
+$(POLYLANG_CLI_DIR):
+	$(call git_clone, epfl-si/polylang-cli)
 
 $(WP_CLI_POLYLANG_DIR):
 	$(call git_clone, epfl-si/wp-cli-polylang)
