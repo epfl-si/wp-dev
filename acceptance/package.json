@@ -13,7 +13,7 @@
     "chrome-launcher": "^0.10.5",
     "cucumber": "^5.1.0",
     "is-docker": "^1.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "once": "^1.4.0",
     "puppeteer": "^1.12.2",
     "request": "^2.88.0"
