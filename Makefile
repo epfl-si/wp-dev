@@ -297,7 +297,7 @@ pull:
 	touch $@
 
 ifdef OUTSIDE_EPFL
-_OUTSIDE_EPFL_DOCKER_BUILD_ARGS:=--build-arg INSTALL_AUTO_FLAGS=--exclude=wp-media-folder
+_OUTSIDE_EPFL_DOCKER_BUILD_ARGS:=--build-arg INSTALL_AUTO_FLAGS="--exclude=wp-media-folder --exclude=wpforms"
 endif
 
 .docker-base-image-built.stamp: wp-ops 	$(_DOCKER_BASE_IMAGE_DEPS)
