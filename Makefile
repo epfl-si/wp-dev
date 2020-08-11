@@ -63,7 +63,6 @@ DOCKER_HTTPD_IMAGE_NAME = epflsi/os-wp-httpd
 DOCKER_MGMT_IMAGE_NAME = epflsi/os-wp-mgmt
 
 WP_CONTENT_DIR = volumes/wp/5/wp-content
-WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
@@ -141,10 +140,6 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
   $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
   $(WP_CONTENT_DIR)/mu-plugins \
-  $(WP4_CONTENT_DIR)/plugins/accred \
-  $(WP4_CONTENT_DIR)/plugins/tequila \
-  $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
-  $(WP4_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
   $(WP_CLI_POLYLANG_DIR) \
@@ -164,7 +159,7 @@ volumes/usrlocalbin: .docker-all-images-built.stamp
 	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
 	touch $@
 
-$(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
@@ -192,13 +187,11 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
                     -not -name EPFL-Library-Plugins \
                     ); \
 	do \
-	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
+	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
 	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
 	    $(WP_CONTENT_DIR)/$$linkable; \
-	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
-	    $(WP4_CONTENT_DIR)/$$linkable; \
 	done
-	rm -rf $(WP_CONTENT_DIR)/mu-plugins $(WP4_CONTENT_DIR)/mu-plugins
+	rm -rf $(WP_CONTENT_DIR)/mu-plugins
 	touch $@
 
 $(WP_CONTENT_DIR)/plugins: $(JAHIA2WP_DIR)
@@ -275,15 +268,6 @@ $(WP_CLI_POLYLANG_DIR):
 wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
-
-############ Additional symlinks for obsolete WordPress 4 codebase ###########
-$(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
-	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -sf ../../../5/wp-content/plugins/$* $@
-
-$(WP4_CONTENT_DIR)/themes/%: $(WP4_CONTENT_DIR)
-	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -sf ../../../5/wp-content/themes/$* $@
 
 ################ Building or pulling Docker images ###############
 
