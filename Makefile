@@ -300,7 +300,7 @@ ifdef OUTSIDE_EPFL
 _OUTSIDE_EPFL_DOCKER_BUILD_ARGS:=--build-arg INSTALL_AUTO_FLAGS="--exclude=wp-media-folder --exclude=wpforms"
 endif
 
-.docker-base-image-built.stamp: wp-ops 	$(_DOCKER_BASE_IMAGE_DEPS)
+.docker-base-image-built.stamp: wp-ops $(_DOCKER_BASE_IMAGE_DEPS)
 	[ -d wp-ops/docker/wp-base ] && \
 	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) $(_OUTSIDE_EPFL_DOCKER_BUILD_ARGS) wp-ops/docker/wp-base
 	touch $@
