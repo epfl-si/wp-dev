@@ -66,7 +66,7 @@ WP_CONTENT_DIR = volumes/wp/5/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
-WP_CLI_POLYLANG_DIR = volumes/wp/wp-cli/vendor/cortneyray/wp-cli-polylang
+WP_CLI_POLYLANG_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli-polylang
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
   $(JAHIA2WP_DIR)/functional_tests \
