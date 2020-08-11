@@ -317,9 +317,23 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
-	[ -f volumes/$(SITE_DIR)/wp-config.php ] || $(_docker_exec_mgmt) bash -c \
-	   "set -e -x; mkdir -p $(SITE_DIR) || true; cd $(SITE_DIR); new-wp-site"
+	$(MAKE) rootsite
 	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm start)
+
+.PHONY: rootsite
+rootsite:
+	@$(_docker_exec_mgmt) bash -c 'wp --path=$(SITE_DIR) eval "1;"' ||       \
+	 $(_docker_exec_mgmt) bash -c '                                          \
+	    set -e -x;                                                           \
+	    mkdir -p $(SITE_DIR) || true;                                        \
+            cd $(SITE_DIR);                                                      \
+            new-wp-site;                                                         \
+            for subdir in themes plugins mu-plugins; do                          \
+              ln -s ../wp/wp-content/$$subdir wp-content/$$subdir;               \
+            done;                                                                \
+	    wp theme activate wp-theme-2018 ;                                    \
+	    wp user update admin --user_pass=password;                           \
+	    '
 
 .PHONY: down
 down:
