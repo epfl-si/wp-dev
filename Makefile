@@ -310,20 +310,15 @@ clean-images:
 	docker image prune
 	rm -f .docker*.stamp
 
-
 ######################## Development Lifecycle #####################
 
 SITE_DIR := /srv/test/wp-httpd/htdocs
-.PHONY: wp5
-# TODO: We currently don't have a story to create a site at the top
-# level automatically.
-wp5: checkout
-	[ -L volumes/$(SITE_DIR)/wp ] || ln -sf /wp/5 volumes/$(SITE_DIR)/wp
-	[ -L volumes/$(SITE_DIR)/wp-content/plugins/wp-gutenberg-epfl ] || ln -sf ../../wp/wp-content/plugins/wp-gutenberg-epfl volumes/$(SITE_DIR)/wp-content/plugins/
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
+	[ -f volumes/$(SITE_DIR)/wp-config.php ] || $(_docker_exec_mgmt) bash -c \
+	   "set -e -x; mkdir -p $(SITE_DIR) || true; cd $(SITE_DIR); new-wp-site"
 	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm start)
 
 .PHONY: down
