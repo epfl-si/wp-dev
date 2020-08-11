@@ -80,8 +80,8 @@ CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
   $(WP_CONTENT_DIR)/plugins/polylang \
   $(WP_CONTENT_DIR)/mu-plugins
 
-_mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
-_httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
+_mgmt_container = `docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)"`
+_httpd_container = `docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)"`
 
 _docker_exec_mgmt :=  docker exec --user www-data -it  \
 	  -e WP_ENV=$(WP_ENV) \
