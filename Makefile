@@ -315,8 +315,6 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 wp5: checkout
 	[ -L volumes/$(SITE_DIR)/wp ] || ln -sf /wp/5 volumes/$(SITE_DIR)/wp
 	[ -L volumes/$(SITE_DIR)/wp-content/plugins/wp-gutenberg-epfl ] || ln -sf ../../wp/wp-content/plugins/wp-gutenberg-epfl volumes/$(SITE_DIR)/wp-content/plugins/
-	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin deactivate epfl' || true
-	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin activate wp-gutenberg-epfl'
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
