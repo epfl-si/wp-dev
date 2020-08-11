@@ -83,6 +83,11 @@ CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
 _mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
 _httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
 
+_docker_exec_mgmt :=  docker exec --user www-data -it  \
+	  -e WP_ENV=$(WP_ENV) \
+	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
+	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
+	  $(_mgmt_container)
 
 .PHONY: vars
 vars:
@@ -338,11 +343,7 @@ gitpull:
 
 .PHONY: exec
 exec:
-	@docker exec --user www-data -it  \
-	  -e WP_ENV=$(WP_ENV) \
-	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
-	  $(_mgmt_container) bash -l
+	@$(_docker_exec_mgmt) bash -l
 
 .PHONY: httpd
 httpd:
