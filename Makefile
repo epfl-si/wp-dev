@@ -63,11 +63,10 @@ DOCKER_HTTPD_IMAGE_NAME = epflsi/os-wp-httpd
 DOCKER_MGMT_IMAGE_NAME = epflsi/os-wp-mgmt
 
 WP_CONTENT_DIR = volumes/wp/5/wp-content
-WP4_CONTENT_DIR = volumes/wp/4/wp-content
 JAHIA2WP_DIR = volumes/wp/jahia2wp
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
-WP_CLI_POLYLANG_DIR = volumes/wp/wp-cli/vendor/cortneyray/wp-cli-polylang
+WP_CLI_POLYLANG_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli-polylang
 
 CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
   $(JAHIA2WP_DIR)/functional_tests \
@@ -81,9 +80,14 @@ CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
   $(WP_CONTENT_DIR)/plugins/polylang \
   $(WP_CONTENT_DIR)/mu-plugins
 
-_mgmt_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)")
-_httpd_container = $(shell docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)")
+_mgmt_container = `docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)"`
+_httpd_container = `docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)"`
 
+_docker_exec_mgmt :=  docker exec --user www-data -it  \
+	  -e WP_ENV=$(WP_ENV) \
+	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
+	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
+	  $(_mgmt_container)
 
 .PHONY: vars
 vars:
@@ -141,10 +145,6 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
   $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
   $(WP_CONTENT_DIR)/mu-plugins \
-  $(WP4_CONTENT_DIR)/plugins/accred \
-  $(WP4_CONTENT_DIR)/plugins/tequila \
-  $(WP4_CONTENT_DIR)/themes/wp-theme-2018 \
-  $(WP4_CONTENT_DIR)/themes/wp-theme-light \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
   $(WP_CLI_POLYLANG_DIR) \
@@ -164,7 +164,7 @@ volumes/usrlocalbin: .docker-all-images-built.stamp
 	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
 	touch $@
 
-$(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
@@ -192,13 +192,11 @@ $(WP_CONTENT_DIR) $(WP4_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_
                     -not -name EPFL-Library-Plugins \
                     ); \
 	do \
-	  rm -rf $(WP_CONTENT_DIR)/$$linkable $(WP4_CONTENT_DIR)/$$linkable; \
+	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
 	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
 	    $(WP_CONTENT_DIR)/$$linkable; \
-	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
-	    $(WP4_CONTENT_DIR)/$$linkable; \
 	done
-	rm -rf $(WP_CONTENT_DIR)/mu-plugins $(WP4_CONTENT_DIR)/mu-plugins
+	rm -rf $(WP_CONTENT_DIR)/mu-plugins
 	touch $@
 
 $(WP_CONTENT_DIR)/plugins: $(JAHIA2WP_DIR)
@@ -276,15 +274,6 @@ wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
 
-############ Additional symlinks for obsolete WordPress 4 codebase ###########
-$(WP4_CONTENT_DIR)/plugins/%: $(WP4_CONTENT_DIR)
-	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -sf ../../../5/wp-content/plugins/$* $@
-
-$(WP4_CONTENT_DIR)/themes/%: $(WP4_CONTENT_DIR)
-	@-mkdir -p $(dir $@) 2>/dev/null
-	ln -sf ../../../5/wp-content/themes/$* $@
-
 ################ Building or pulling Docker images ###############
 
 .PHONY: pull
@@ -300,7 +289,7 @@ ifdef OUTSIDE_EPFL
 _OUTSIDE_EPFL_DOCKER_BUILD_ARGS:=--build-arg INSTALL_AUTO_FLAGS="--exclude=wp-media-folder --exclude=wpforms"
 endif
 
-.docker-base-image-built.stamp: wp-ops 	$(_DOCKER_BASE_IMAGE_DEPS)
+.docker-base-image-built.stamp: wp-ops $(_DOCKER_BASE_IMAGE_DEPS)
 	[ -d wp-ops/docker/wp-base ] && \
 	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) $(_OUTSIDE_EPFL_DOCKER_BUILD_ARGS) wp-ops/docker/wp-base
 	touch $@
@@ -321,23 +310,30 @@ clean-images:
 	docker image prune
 	rm -f .docker*.stamp
 
-
 ######################## Development Lifecycle #####################
 
 SITE_DIR := /srv/test/wp-httpd/htdocs
-.PHONY: wp5
-# TODO: We currently don't have a story to create a site at the top
-# level automatically.
-wp5: checkout
-	[ -L volumes/$(SITE_DIR)/wp ] || ln -sf /wp/5 volumes/$(SITE_DIR)/wp
-	[ -L volumes/$(SITE_DIR)/wp-content/plugins/wp-gutenberg-epfl ] || ln -sf ../../wp/wp-content/plugins/wp-gutenberg-epfl volumes/$(SITE_DIR)/wp-content/plugins/
-	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin deactivate epfl' || true
-	docker exec -it $(_httpd_container) bash -c 'cd $(SITE_DIR); wp --allow-root plugin activate wp-gutenberg-epfl'
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
+	$(MAKE) rootsite
 	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm start)
+
+.PHONY: rootsite
+rootsite:
+	@$(_docker_exec_mgmt) bash -c 'wp --path=$(SITE_DIR) eval "1;"' ||       \
+	 $(_docker_exec_mgmt) bash -c '                                          \
+	    set -e -x;                                                           \
+	    mkdir -p $(SITE_DIR) || true;                                        \
+            cd $(SITE_DIR);                                                      \
+            new-wp-site;                                                         \
+            for subdir in themes plugins mu-plugins; do                          \
+              ln -s ../wp/wp-content/$$subdir wp-content/$$subdir;               \
+            done;                                                                \
+	    wp theme activate wp-theme-2018 ;                                    \
+	    wp user update admin --user_pass=password;                           \
+	    '
 
 .PHONY: down
 down:
@@ -356,11 +352,7 @@ gitpull:
 
 .PHONY: exec
 exec:
-	@docker exec --user www-data -it  \
-	  -e WP_ENV=$(WP_ENV) \
-	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
-	  $(_mgmt_container) bash -l
+	@$(_docker_exec_mgmt) bash -l
 
 .PHONY: httpd
 httpd:
