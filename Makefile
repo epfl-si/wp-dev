@@ -321,11 +321,15 @@ rootsite:
 	 $(_docker_exec_mgmt) bash -c '                                          \
 	    set -e -x;                                                           \
 	    mkdir -p $(SITE_DIR) || true;                                        \
-            cd $(SITE_DIR);                                                      \
-            new-wp-site;                                                         \
-            for subdir in themes plugins mu-plugins; do                          \
-              ln -s ../wp/wp-content/$$subdir wp-content/$$subdir;               \
-            done;                                                                \
+            cd $(SITE_DIR);                                                  \
+            new-wp-site;                                                     \
+            for subdir in plugins mu-plugins; do                                                          \
+              ln -s ../wp/wp-content/$$subdir wp-content/$$subdir;                                        \
+            done;                                                                                         \
+            mkdir -p $(SITE_DIR)/wp-content/themes;                                                       \
+            for subtheme in wp-theme-2018 wp-theme-light; do                                              \
+              ln -s ../../wp/wp-content/themes/wp-theme-2018.git/$$subtheme wp-content/themes/$$subtheme; \
+            done;                                                                                         \
 	    wp theme activate wp-theme-2018 ;                                    \
 	    wp user update admin --user_pass=password;                           \
 	    '
