@@ -313,7 +313,7 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
 	$(MAKE) rootsite
-	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm start)
+	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start)
 
 .PHONY: rootsite
 rootsite:
