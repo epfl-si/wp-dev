@@ -57,12 +57,12 @@ either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`
 1. Log in with the `administrator` account (scroll back in your Terminal looking for `Admin password:` to get at the password)
 1. Because of production-specific reverse-proxy shenanigans, you will be redirected to port 8443 at some point. Just edit the URL to get rid of the `:8443` part.
 
-### wp-gutenberg-epfl activation
+### wp-gutenberg-epfl development
 
-Once you have at least one site up and running, you can convert it to WordPress 5 by typing
+Once you have at least one site up and running, you can start editing wp-gutenberg
 
 ```
-make wp5 SITE_DIR=/srv/test/wp-httpd/htdocs/vpsi-next
+make gutenberg
 ```
 
 ## Day-To-Day Operations
