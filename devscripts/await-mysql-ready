@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+
+. "$(dirname "$0")"/functions.sh
+
+usage () {
+    die <<"USAGE"
+
+await-mysql-ready: Exactly what it says on the tin.
+
+USAGE
+}
+
+for retry in $(seq 1 30); do
+    if dockermysql mysql -u root -h db -e "'select 1'" >/dev/null; then exit 0 ; fi
+    sleep 1
+done
+
+die "MySQL unavailable after 30 seconds, giving up"

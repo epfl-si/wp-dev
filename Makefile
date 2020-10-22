@@ -312,6 +312,7 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS)
 	docker-compose up -d
+	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
 	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start)
 
