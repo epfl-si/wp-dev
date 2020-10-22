@@ -353,6 +353,10 @@ gitpull:
 exec:
 	@$(_docker_exec_mgmt) bash -l
 
+.PHONY: mysql
+mysql:
+	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MYSQL_ROOT_PASSWORD -u root -h db'
+
 .PHONY: httpd
 httpd:
 	@docker exec -it $(_httpd_container) bash -l
