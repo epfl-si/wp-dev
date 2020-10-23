@@ -265,7 +265,7 @@ $(WP_CONTENT_DIR)/plugins/enlighter: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-enlighter)
 
 $(WP_CONTENT_DIR)/plugins/epfl-cache-control: $(WP_CONTENT_DIR)
-  $(call git_clone, epfl-si/wp-plugin-epfl-cache-control)
+	$(call git_clone, epfl-si/wp-plugin-epfl-cache-control)
 
 $(WP_CONTENT_DIR)/plugins/epfl-remote-content-shortcode: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-remote-content)
