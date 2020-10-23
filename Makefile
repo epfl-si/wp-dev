@@ -143,6 +143,10 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-intranet \
   $(WP_CONTENT_DIR)/plugins/epfl-restauration \
   $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins \
+	$(WP_CONTENT_DIR)/plugins/epfl-cache-control \
+	$(WP_CONTENT_DIR)/plugins/epfl-remote-content-shortcode \
+	$(WP_CONTENT_DIR)/plugins/epfl-emploi \
+	$(WP_CONTENT_DIR)/plugins/epfl-courses-se \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
@@ -188,6 +192,10 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
                     -not -name epfl-intranet \
                     -not -name epfl-restauration \
                     -not -name EPFL-Library-Plugins \
+										-not -name epfl-cache-control \
+										-not -name epfl-remote-content-shortcode \
+										-not -name epfl-emploi \
+										-not -name epfl-courses-se \
                     ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
@@ -255,6 +263,18 @@ $(WP_CONTENT_DIR)/plugins/EPFL-Library-Plugins: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/enlighter: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-enlighter)
+
+$(WP_CONTENT_DIR)/plugins/epfl-cache-control: $(WP_CONTENT_DIR)
+  $(call git_clone, epfl-si/wp-plugin-epfl-cache-control)
+
+$(WP_CONTENT_DIR)/plugins/epfl-remote-content-shortcode: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-plugin-epfl-remote-content)
+
+$(WP_CONTENT_DIR)/plugins/epfl-emploi: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-plugin-epfl-emploi)
+
+$(WP_CONTENT_DIR)/plugins/epfl-courses-se: $(WP_CONTENT_DIR)
+	$(call git_clone, wp-plugin-epfl-courses-se)
 
 $(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-mu-plugins)
