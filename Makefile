@@ -194,9 +194,9 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
                     -not -name EPFL-Library-Plugins \
                     -not -name epfl-cache-control \
                     -not -name epfl-remote-content-shortcode \
-										-not -name epfl-emploi \
-										-not -name epfl-courses-se \
-                    ); \
+                    -not -name epfl-emploi \
+                    -not -name epfl-courses-se \
+      ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
 	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
