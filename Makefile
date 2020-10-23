@@ -274,7 +274,7 @@ $(WP_CONTENT_DIR)/plugins/epfl-emploi: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-emploi)
 
 $(WP_CONTENT_DIR)/plugins/epfl-courses-se: $(WP_CONTENT_DIR)
-	$(call git_clone, wp-plugin-epfl-courses-se)
+	$(call git_clone, epfl-si/wp-plugin-epfl-courses-se)
 
 $(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-mu-plugins)
