@@ -147,6 +147,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-remote-content-shortcode \
   $(WP_CONTENT_DIR)/plugins/epfl-emploi \
   $(WP_CONTENT_DIR)/plugins/epfl-courses-se \
+  $(WP_CONTENT_DIR)/plugins/epfl-coming-soon \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
@@ -196,6 +197,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
                     -not -name epfl-remote-content-shortcode \
                     -not -name epfl-emploi \
                     -not -name epfl-courses-se \
+                    -not -name epfl-coming-soon \
       ); \
 	do \
 	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
@@ -275,6 +277,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-emploi: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/epfl-courses-se: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-courses-se)
+
+$(WP_CONTENT_DIR)/plugins/epfl-coming-soon: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-plugin-epfl-coming-soon)
 
 $(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-mu-plugins)
