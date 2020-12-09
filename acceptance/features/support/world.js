@@ -1,9 +1,9 @@
 'use strict'
 
 const { setWorldConstructor, Before } = require('cucumber'),
-      puppeteer = require('../lib/puppeteer'),
-      credentials = require('../lib/credentials'),
-      urls = require('../lib/urls'),
+      puppeteer = require('../../lib/puppeteer'),
+      credentials = require('../../lib/credentials'),
+      urls = require('../../lib/urls'),
       _ = require('lodash')
 
 // In the beginning, the world was void.
