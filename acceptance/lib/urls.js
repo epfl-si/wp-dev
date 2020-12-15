@@ -10,6 +10,7 @@ module.exports = function urls () {
   return {
     home: homesite,
     wp_admin: homesite + 'wp-admin',
-    login: homesite + 'wp-login.php'
+    login: homesite + 'wp-login.php',
+    pluginsList: homesite + 'wp-admin/plugins.php'
   }
 }

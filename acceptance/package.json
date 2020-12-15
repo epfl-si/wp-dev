@@ -17,6 +17,7 @@
     "lodash": "^4.17.20",
     "once": "^1.4.0",
     "puppeteer": "^5.5.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "node-fetch": "^2.6.1"
   }
 }

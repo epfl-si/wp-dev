@@ -1,6 +1,7 @@
 const { setWorldConstructor, setDefaultTimeout } = require('cucumber'),
     credentials = require('../../lib/credentials'),
-    urls = require('../../lib/urls')
+    urls = require('../../lib/urls'),
+    plugins = require('../../lib/plugins')
 
 
 function CustomWorld({attach, parameters}) {
@@ -11,6 +12,7 @@ function CustomWorld({attach, parameters}) {
 
     this.credentials = credentials()
     this.urls = urls()
+    this.plugins = plugins()
 }
 
 setWorldConstructor(CustomWorld)

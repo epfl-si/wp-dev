@@ -4,7 +4,7 @@ const { Before, After } = require('cucumber'),
 
 
 Before(async function() {
-    const browser = await puppeteer.launch({ slowMo: 50, headless: false, args: ["--ignore-certificate-errors"] });
+    const browser = await puppeteer.launch({ slowMo: 35, headless: false, args: ["--ignore-certificate-errors"] });
     const page = await browser.newPage();
     this.browser = browser;
     this.page = page;
