@@ -4,14 +4,15 @@ Here you will find the tools to use the [`cucumber`](https://github.com/cucumber
 
 ## Getting Started
 
-1. Install dependencies.
+### Locally
+1. Install dependencies:
 
 ```bash
 npm i
 ```
 
-2. Run integration test suite locally.
+2. Run integration test suite:
 
 ```bash
-npm run cucumber
+npm run test
 ```

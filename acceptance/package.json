@@ -5,8 +5,7 @@
   "scripts": {
     "docker": "docker run -it --rm -v $PWD/test-output:/test-output $(docker build -q .)",
     "chrome": "npx node bin/run-chrome",
-    "test": "npx cucumber-js -b -r cucumber",
-    "cucumber": "cucumber-js features --tags 'not @ignore'"
+    "test": "npx cucumber-js -b cucumber"
   },
   "author": "EPFL IDEV-FSD <idev-fsd@groupes.epfl.ch>",
   "license": "ISC",
