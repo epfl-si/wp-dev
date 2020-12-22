@@ -11,7 +11,7 @@ Before(async function() {
 })
 
 After(async function(scenario) {
-    //checkForScreenshot(scenario)
+    await checkForScreenshot(scenario)
     // Teardown browser
     if (this.browser) {
         await this.browser.close();
