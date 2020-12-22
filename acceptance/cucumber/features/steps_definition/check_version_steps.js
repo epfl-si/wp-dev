@@ -32,3 +32,8 @@ Then('je vois que le thème EPFL 2018 est à jour', async function () {
     assert.equal(currentVersion.trim(), latestVersion.trim(),
         `The thème EPFL 2018 version mismatch with the latest provided by Github. Installed: ${currentVersion}, latest version: ${latestVersion}`);
 });
+
+Then('je vois que le mu-plugin {string} est présent', async function (string) {
+    const muPlugins = await this.page.$$eval(`td.plugin-title`, muPlugins => muPlugins.map(muPlugin => muPlugin.textContent));
+    assert.ok(muPlugins.indexOf(string) > -1)
+});

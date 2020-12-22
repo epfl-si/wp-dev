@@ -11,3 +11,8 @@ Fonctionnalité: Interface d'administration
   Scénario: Thème à jour
     Lorsque je navigue vers le thème EPFL 2018
     Alors je vois que le thème EPFL 2018 est à jour
+
+  Scénario: Les mu-plugins sont actifs
+    Lorsque je navigue vers la liste des mu-plugins
+    Alors je vois que le mu-plugin 'EPFL block white list' est présent
+    Alors je vois que le mu-plugin 'EPFL disable all automatic updates.' est présent

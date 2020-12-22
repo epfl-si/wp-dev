@@ -12,6 +12,7 @@ module.exports = function urls () {
     wp_admin: homesite + 'wp-admin',
     login: homesite + 'wp-login.php',
     pluginsList: homesite + 'wp-admin/plugins.php',
+    muPluginsList: homesite + 'wp-admin/plugins.php?plugin_status=mustuse',
     theme2018View: homesite + 'wp-admin/themes.php?theme=wp-theme-2018'
   }
 }
