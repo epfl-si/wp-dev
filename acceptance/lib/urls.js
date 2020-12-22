@@ -11,6 +11,7 @@ module.exports = function urls () {
     home: homesite,
     wp_admin: homesite + 'wp-admin',
     login: homesite + 'wp-login.php',
-    pluginsList: homesite + 'wp-admin/plugins.php'
+    pluginsList: homesite + 'wp-admin/plugins.php',
+    theme2018View: homesite + 'wp-admin/themes.php?theme=wp-theme-2018'
   }
 }

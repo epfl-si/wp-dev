@@ -10,13 +10,12 @@ const versionFromOnlinePluginIni = async url => {
     return versionNumber[1]
 }
 
-module.exports = function plugins () {
-    listPlugins = new Map()
+const versionFromOnlineFile = async url => {
+    const response = await fetch(url)
+    return await response.text()
+}
 
-    listPlugins.set('wp-gutenberg', {
-        fetcher: versionFromOnlinePluginIni,
-        url: 'https://raw.githubusercontent.com/epfl-si/wp-gutenberg-epfl/master/plugin.php'
-    })
-
-    return listPlugins
+module.exports = {
+    versionFromOnlinePluginIni,
+    versionFromOnlineFile
 }
