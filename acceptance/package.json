@@ -10,13 +10,13 @@
   "author": "EPFL IDEV-FSD <idev-fsd@groupes.epfl.ch>",
   "license": "ISC",
   "dependencies": {
-    "chrome-launcher": "^0.10.7",
+    "chrome-launcher": "^0.13.4",
     "cucumber": "^5.1.0",
     "is-docker": "^1.1.0",
     "lodash": "^4.17.20",
+    "node-fetch": "^2.6.1",
     "once": "^1.4.0",
     "puppeteer": "^5.5.0",
-    "request": "^2.88.2",
-    "node-fetch": "^2.6.1"
+    "request": "^2.88.2"
   }
 }

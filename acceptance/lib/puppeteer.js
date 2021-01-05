@@ -26,7 +26,7 @@ module.exports.launch = async function launch (world) {
       ['--no-sandbox', '--disable-setuid-sandbox'])
   } else {
     launchOpts.headless = false
-    launchOpts.slowMo = 5
+    launchOpts.slowMo = 15
   }
-return puppeteer.launch(launchOpts)
+  return puppeteer.launch(launchOpts)
 }
