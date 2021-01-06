@@ -11,8 +11,9 @@ Before(async function() {
 })
 
 After(async function(testCase) {
-    // Get screenshot for failing cases
-    if (testCase.result.status === Status.FAILED) {
+    // Get screenshot for some cases
+    if (process.env.WP_ACCEPTANCE_SCREENSHOT_ALWAYS  ||
+        testCase.result.status === Status.FAILED) {
         var stream = await this.page.screenshot()
         this.attach(stream, 'image/png')
     }
