@@ -14,9 +14,13 @@
     "cucumber": "^5.1.0",
     "is-docker": "^1.1.0",
     "lodash": "^4.17.20",
+    "module-alias": "^2.2.2",
     "node-fetch": "^2.6.1",
     "once": "^1.4.0",
     "puppeteer": "^5.5.0",
     "request": "^2.88.2"
+  },
+  "_moduleAliases": {
+    "@lib" : "lib/"
   }
 }

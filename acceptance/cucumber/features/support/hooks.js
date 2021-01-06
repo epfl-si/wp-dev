@@ -1,5 +1,7 @@
+require('module-alias/register')
+
 const { Before, After, Status } = require('cucumber'),
-    puppeteer = require('../../../lib/puppeteer')
+    puppeteer = require('@lib/puppeteer')
 
 Before(async function() {
     const browser = await puppeteer.launch();

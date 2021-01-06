@@ -1,6 +1,8 @@
+require('module-alias/register')
+
 const { setWorldConstructor, setDefaultTimeout } = require('cucumber'),
-    credentials = require('../../../lib/credentials'),
-    urls = require('../../../lib/urls')
+    credentials = require('@lib/credentials'),
+    urls = require('@lib/urls')
 
 
 function CustomWorld({attach, parameters}) {
