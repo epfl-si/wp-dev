@@ -4,7 +4,19 @@ Here you will find the tools to use the [`cucumber`](https://github.com/cucumber
 
 ## Getting Started
 
+### With a docker image
+
+Run the docker image in headless mode
+
+```bash
+npm run docker
+```
+
+
 ### Locally
+
+Run tests in a live Chromium instance on your `https://wp-httpd` local server
+
 1. Install dependencies:
 
 ```bash

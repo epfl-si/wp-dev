@@ -1,6 +1,6 @@
 {
   "name": "epfl-wordpress-acceptance",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Acceptance testing for EPFL's WordPress service",
   "scripts": {
     "docker": "docker run -it --rm -v $PWD/test-output:/test-output $(docker build -q .)",
