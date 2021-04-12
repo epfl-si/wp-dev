@@ -15,7 +15,7 @@ include .env
 	@echo _DOCKER_BUILT_IMAGES = $(DOCKER_BASE_IMAGE_NAME) $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_MGMT_IMAGE_DEPS = $(shell find wp-ops/docker/mgmt -type f | sed 's/\n/ /g') >> $@
-	@echo _DOCKER_HTTPD_IMAGE_DEPS = $(shell find wp-ops/docker/httpd -type f | sed 's/\n/ /g') >> $@
+	@echo _DOCKER_NGINX_IMAGE_DEPS = $(shell find wp-ops/docker/nginx -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 
 m = $(notdir $(MAKE))
@@ -42,7 +42,7 @@ help:
 	@echo '$(m) clean'
 	@echo
 	@echo '$(m) exec           Enter the management container'
-	@echo '$(m) httpd          Enter the Apache container'
+	@echo '$(m) nginx          Enter the nginx container'
 	@echo '$(m) mysql          Enter the MySQL container'
 	@echo
 	@echo '$(m) lnav           Improved error logs compilation through the terminal'
@@ -73,7 +73,7 @@ DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-all-images-built.stamp
 
 DOCKER_BASE_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/wp-base
-DOCKER_HTTPD_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/httpd
+DOCKER_NGINX_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/nginx
 DOCKER_MGMT_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/mgmt
 
 WP_MAJOR_VERSION = 6
@@ -90,7 +90,7 @@ CTAGS_TARGETS = volumes/wp/$(WP_MAJOR_VERSION)/*.php \
   $(WP_CONTENT_DIR)/mu-plugins
 
 _mgmt_container = `docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)"`
-_httpd_container = `docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)"`
+_nginx_container = `docker ps -q --filter "label=ch.epfl.wordpress.nginx.env=$(WP_ENV)"`
 
 _docker_exec_mgmt := docker exec --user www-data -it \
 	  -e WP_ENV=$(WP_ENV) \
@@ -103,7 +103,7 @@ vars:
 	@echo 'Environment-related vars:'
 	@echo '  WP_ENV=$(WP_ENV)'
 	@echo '  _mgmt_container=$(_mgmt_container)'
-	@echo '  _httpd_container=$(_httpd_container)'
+	@echo '  _nginx_container=$(_nginx_container)'
 	@echo '  CTAGS_TARGETS=$(CTAGS_TARGETS)'
 
 	@echo ''
@@ -133,7 +133,7 @@ vars:
 # if you wish.
 #
 # Code doesn't only get pulled from git either: volumes/wp is extracted
-# from the "httpd" Docker image, and we create a couple of symlinks too.
+# from the "nginx" Docker image, and we create a couple of symlinks too.
 
 .PHONY: checkout
 checkout: \
@@ -187,7 +187,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	mkdir -p volumes || true
 	docker run --rm --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
-	  $(DOCKER_HTTPD_IMAGE_NAME) \
+	  $(DOCKER_NGINX_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
@@ -327,7 +327,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 	touch $@
 
 .docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops \
-                                 $(_DOCKER_HTTPD_IMAGE_DEPS)
+                                 $(_DOCKER_NGINX_IMAGE_DEPS)
 	docker compose build $(DOCKER_BUILD_ARGS)
 	touch $@
 
@@ -424,9 +424,9 @@ exec:
 mysql:
 	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MYSQL_ROOT_PASSWORD -u root -h db'
 
-.PHONY: httpd
-httpd:
-	@docker exec -it $(_httpd_container) bash -l
+.PHONY: nginx
+nginx:
+	@docker exec -it $(_nginx_container) bash -l
 
 .PHONY: tail-errors
 tail-errors:

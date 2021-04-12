@@ -34,13 +34,13 @@ services:
     volumes:
       - /sessions
 
-  httpd:
+  nginx:
     privileged: true
     container_name: wp-httpd
-    build: wp-ops/docker/httpd
+    build: wp-ops/docker/nginx
     labels:
-      ch.epfl.wordpress.httpd.env: ${WP_ENV}
-    image: docker-registry.default.svc:5000/wwp-test/httpd
+      ch.epfl.wordpress.nginx.env: ${WP_ENV}
+    image: docker-registry.default.svc:5000/wwp-test/nginx
     volumes:
       # See README.md and Makefile for explanations on volumes
       - ./volumes/srv:/srv
@@ -50,7 +50,7 @@ services:
       - ./volumes/wp:/wp
       # Certificates are auto-generated when httpd first starts up.
       # For comfort, keep them across restarts
-      - ./volumes/ssl:/etc/apache2/ssl
+      - ./volumes/ssl:/etc/nginx/ssl
     links:
       - db:db
     # The `httpd` container only needs to know WP_ENV:
