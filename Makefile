@@ -148,6 +148,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-emploi \
   $(WP_CONTENT_DIR)/plugins/epfl-courses-se \
   $(WP_CONTENT_DIR)/plugins/epfl-coming-soon \
+  $(WP_CONTENT_DIR)/plugins/wpforms-epfl-payonline \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
@@ -175,7 +176,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
-	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,wp-gutenberg-epfl,epfl*,EPFL*} \
+	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
               /wp" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpvf - wp
 # Excluded directories are replaced with a git checkout of same.
@@ -280,6 +281,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-courses-se: $(WP_CONTENT_DIR)
 
 $(WP_CONTENT_DIR)/plugins/epfl-coming-soon: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-coming-soon)
+
+$(WP_CONTENT_DIR)/plugins/wpforms-epfl-payonline: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wpforms-epfl-payonline)
 
 $(WP_CONTENT_DIR)/mu-plugins: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-mu-plugins)
