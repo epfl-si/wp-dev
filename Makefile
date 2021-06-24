@@ -310,7 +310,7 @@ clean-images:
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout $(DOCKER_IMAGE_STAMPS)
+up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	$(MAKE) rootsite
 	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start)
@@ -346,6 +346,10 @@ gitstatus:
 .PHONY: gitpull
 gitpull:
 	@set -e; for dir in `$(_find_git_depots)`; do (cd $$dir; echo "$$(tput bold)$$dir$$(tput sgr0)"; git pull; echo); done
+
+volumes/srv/test:
+	mkdir -p "$@"
+	chmod 1777 "$@"
 
 ######################## Development Tasks ########################
 
