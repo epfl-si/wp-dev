@@ -10,7 +10,7 @@
   "author": "EPFL IDEV-FSD <idev-fsd@groupes.epfl.ch>",
   "license": "ISC",
   "dependencies": {
-    "chrome-launcher": "^0.10.5",
+    "chrome-launcher": "^0.14.0",
     "cucumber": "^5.1.0",
     "is-docker": "^1.1.0",
     "lodash": "^4.17.21",
