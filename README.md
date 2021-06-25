@@ -230,7 +230,7 @@ which (for historical reasons) is a Python-based utility that contains
 some WordPress plugins and mu-plugins.
 
 You can audit the development rig by yourselves if you type
-`find volumes/wp -type l -o -name .git`. Here is what you'll find:
+`find volumes/wp -type l -o -name .git -prune`. Here is what you'll find:
 
 | Path under `volumes/wp` | Implementation | Purpose |
 |-------------------------|---------|----------------|
