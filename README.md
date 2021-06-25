@@ -14,11 +14,10 @@ In this repository you will find:
    `127.0.0.1       wp-httpd`
 1. Clone the [repository](https://github.com/epfl-si/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
-1. Inspect subdirectories `wp-ops` and `volumes/wp/jahia2wp` and make
+1. Inspect subdirectories (`wp-ops` in particular) and make
    sure they are on the branches you wish to develop from.
-   - As of Q4 2019, the “mainstream” platform (the one being used in
-     production) is with `wp-ops` on `master` and `volumes/wp/jahia2wp`
-     on `release2018`
+   - As of Q2 2021, the “mainstream” platform (the one being used in
+     production) is with `wp-ops` on `master`.
 1. Type `make` to bring up the development stack.<br>
    💡 If working outside EPFL without VPN access, use instead <pre>make OUTSIDE_EPFL=1</pre>
 1. Type `make exec` to enter the so-called management container.
@@ -224,10 +223,7 @@ The intent of this volume is to allow developers to edit the source
 code of both the WordPress core, the "official" plug-ins and the
 plug-ins and themes authored by EPFL staff. The latter are
 additionally checked out as part of their original Git depots, so that
-developers can push their changes back upstream - That includes the
-[jahia2wp repository](https://github.com/epfl-si/jahia2wp),
-which (for historical reasons) is a Python-based utility that contains
-some WordPress plugins and mu-plugins.
+developers can push their changes back upstream.
 
 You can audit the development rig by yourselves if you type
 `find volumes/wp/5.* -type l -o -name .git -prune`. Here is what you'll find:
