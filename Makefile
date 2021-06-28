@@ -63,15 +63,10 @@ DOCKER_HTTPD_IMAGE_NAME = epflsi/os-wp-httpd
 DOCKER_MGMT_IMAGE_NAME = epflsi/os-wp-mgmt
 
 WP_CONTENT_DIR = volumes/wp/5/wp-content
-JAHIA2WP_DIR = volumes/wp/jahia2wp
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
 
-CTAGS_TARGETS_PYTHON = $(JAHIA2WP_DIR)/src \
-  $(JAHIA2WP_DIR)/functional_tests \
-  $(JAHIA2WP_DIR)/data
-
-CTAGS_TARGETS_PHP = volumes/wp/5/*.php \
+CTAGS_TARGETS = volumes/wp/5/*.php \
   volumes/wp/5/wp-admin \
   volumes/wp/5/wp-includes \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
@@ -127,7 +122,6 @@ vars:
 
 .PHONY: checkout
 checkout: \
-  $(JAHIA2WP_DIR) \
   $(WP_CONTENT_DIR) \
   $(WP_CONTENT_DIR)/plugins/accred \
   $(WP_CONTENT_DIR)/plugins/tequila \
@@ -168,7 +162,7 @@ volumes/usrlocalbin: .docker-all-images-built.stamp
 	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
 	touch $@
 
-$(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
@@ -177,46 +171,15 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp $(JAHIA2WP_DIR)
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
+	                 --exclude=/wp/*/wp-content/mu-plugins \
               /wp" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpvf - wp
-# Excluded directories are replaced with a git checkout of same.
-# Currently a number of plugins and mu-plugins reside in jahia2wp, for
-# historical reasons:
-	set -e -x; \
-	for linkable in \
-	    $(shell cd $(JAHIA2WP_DIR)/data/wp/wp-content; \
-	                  find themes plugins -mindepth 1 -maxdepth 1 -type d \
-                    -not -name epfl-menus \
-                    -not -name epfl-404 \
-                    -not -name EPFL-settings \
-                    -not -name epfl-scienceqa \
-                    -not -name EPFL-Content-Filter \
-                    -not -name epfl-intranet \
-                    -not -name epfl-restauration \
-                    -not -name EPFL-Library-Plugins \
-                    -not -name epfl-cache-control \
-                    -not -name epfl-remote-content-shortcode \
-                    -not -name epfl-emploi \
-                    -not -name epfl-courses-se \
-                    -not -name epfl-coming-soon \
-      ); \
-	do \
-	  rm -rf $(WP_CONTENT_DIR)/$$linkable; \
-	  ln -s ../../../jahia2wp/data/wp/wp-content/$$linkable \
-	    $(WP_CONTENT_DIR)/$$linkable; \
-	done
-	rm -rf $(WP_CONTENT_DIR)/mu-plugins
+# Excluded directories --exclude= above) are replaced with a git
+# checkout of same (next few targets below).
 	touch $@
 
-$(WP_CONTENT_DIR)/plugins: $(JAHIA2WP_DIR)
+$(WP_CONTENT_DIR)/plugins:
 	@mkdir -p $(dir $@) || true
-	ln -sf jahia2wp/data/wp/wp-content/$(notdir $@) $@
-
-# For historical reasons, some plugins still reside in a repository
-# called jahia2wp
-$(JAHIA2WP_DIR):
-	$(call git_clone, epfl-si/jahia2wp)
-	(cd $@; git checkout release2018)
 
 $(WP_CONTENT_DIR)/plugins/accred: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-sti/wordpress.plugin.accred)
@@ -440,7 +403,6 @@ tail-access:
 tail-sql:
 	./devscripts/mysql-general-log tail
 
-CTAGS_TARGETS = $(CTAGS_TARGETS_PYTHON) $(CTAGS_TARGETS_PHP)
 CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)
 tags: checkout
 	ctags $(CTAGS_FLAGS)
