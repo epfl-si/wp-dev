@@ -152,7 +152,7 @@ checkout: \
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
 
 volumes/usrlocalbin: .docker-all-images-built.stamp
-	mkdir $@ || true
+	mkdir -p $@ || true
 	docker run --rm  --name volumes-usrlocalbin-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_MGMT_IMAGE_NAME) \
@@ -166,7 +166,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
-	mkdir $@ || true
+	mkdir -p $@ || true
 	docker run --rm  --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
