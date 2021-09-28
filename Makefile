@@ -166,6 +166,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
+	mkdir $@ || true
 	docker run --rm  --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
