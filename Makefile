@@ -335,7 +335,10 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start)
+	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; \
+		npm install --silent --no-fund; \
+		npx browserslist@latest --update-db --silent; \
+		npm start)
 
 .PHONY: rootsite
 rootsite:
