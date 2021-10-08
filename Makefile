@@ -58,9 +58,9 @@ DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-base-image-built.stamp \
   .docker-all-images-built.stamp
 
-DOCKER_BASE_IMAGE_NAME = epflsi/os-wp-base
-DOCKER_HTTPD_IMAGE_NAME = epflsi/os-wp-httpd
-DOCKER_MGMT_IMAGE_NAME = epflsi/os-wp-mgmt
+DOCKER_BASE_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/wp-base
+DOCKER_HTTPD_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/httpd
+DOCKER_MGMT_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/mgmt
 
 WP_CONTENT_DIR = volumes/wp/5/wp-content
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
