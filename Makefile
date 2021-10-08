@@ -11,8 +11,8 @@ include .env
 # Figure out whether we clone over https or git+ssh (you need a GitHub
 # account set up with an ssh public key for the latter)
 	@echo _GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/) >> $@
-	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v epflsi | cut -d: -f2-) >> $@
-	@echo _DOCKER_BUILT_IMAGES = epflsi/wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep epflsi | cut -d: -f2-) >> $@
+	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-) >> $@
+	@echo _DOCKER_BUILT_IMAGES = $(DOCKER_BASE_IMAGE_NAME) $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_MGMT_IMAGE_DEPS = $(shell find wp-ops/docker/mgmt -type f | sed 's/\n/ /g') >> $@
 	@echo _DOCKER_HTTPD_IMAGE_DEPS = $(shell find wp-ops/docker/httpd -type f | sed 's/\n/ /g') >> $@
@@ -322,7 +322,7 @@ docker-build:
 
 .PHONY: clean-images
 clean-images:
-	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES) epflsi/os-wp-base; do docker rmi $$image || true; done
+	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES); do docker rmi $$image || true; done
 	docker image prune
 	rm -f .docker*.stamp
 
