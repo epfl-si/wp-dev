@@ -289,9 +289,11 @@ _S3_INSTALL_AUTO_FLAGS = \
    --s3-key-id=$(call _s3_secrets_build_query,key_id) \
    --s3-bucket-name=$(call _s3_secrets_build_query,bucket_name) \
    --s3-secret=$(shell export PATH=$(_S3_SUITCASE_EYAML_PATH):$$PATH; \
+      env EYAML_PRIVKEY="$$(keybase fs read $(_S3_KEYBASE_TEAM_DIR)/eyaml-privkey.pem)" \
+          EYAML_PUBKEY="$$(keybase fs read $(_S3_KEYBASE_TEAM_DIR)/eyaml-pubkey.pem)" \
       eyaml decrypt \
-            --pkcs7-private-key $(_S3_KEYBASE_TEAM_DIR)/eyaml-privkey.pem \
-            --pkcs7-public-key  $(_S3_KEYBASE_TEAM_DIR)/eyaml-pubkey.pem  \
+            --pkcs7-private-key-env-var EYAML_PRIVKEY \
+            --pkcs7-public-key-env-var EYAML_PUBKEY \
             -s "$(call _s3_secrets_build_query,secret)")
 
 .debug.s3:
