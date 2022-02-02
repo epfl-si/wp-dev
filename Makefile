@@ -286,6 +286,7 @@ _s3_secrets_build_query = $(shell perl -ne 'if (m/^build:/) { $$skipping = 0; } 
 
 _S3_INSTALL_AUTO_FLAGS = \
    --s3-endpoint-url=$(call _s3_secrets_build_query,endpoint_url) \
+   --s3-region=$(call _s3_secrets_build_query,region) \
    --s3-key-id=$(call _s3_secrets_build_query,key_id) \
    --s3-bucket-name=$(call _s3_secrets_build_query,bucket_name) \
    --s3-secret=$(shell export PATH=$(_S3_SUITCASE_EYAML_PATH):$$PATH; \
