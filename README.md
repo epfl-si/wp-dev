@@ -12,9 +12,7 @@ In this repository you will find:
 
 1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
    `127.0.0.1       wp-httpd`
-1. Be sure to have Node and npm version 14 available. [As of late 2021](https://github.com/WordPress/gutenberg/commits/trunk/.nvmrc), this is still the version that the WordPress team recommends.
-   - On Mac OS X: `brew install node@14`
-   - On other operating systems: ensure that the `npm` command in your `PATH` is of major version 14.
+1. Be sure to have Node version 14.15.1 *specifically* (and the corresponding npm version 8.4.1) available. [As of late 2021](https://github.com/WordPress/gutenberg/commits/trunk/.nvmrc), this is still the version that the WordPress team recommends. [nvm](https://github.com/nvm-sh/nvm) can be of help here. (`brew install node@14`, not so much — It would install a newer version that won't link with `node-sass@4.14.1`)
 1. Clone the [repository](https://github.com/epfl-si/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
 1. Inspect subdirectories (`wp-ops` in particular) and make
