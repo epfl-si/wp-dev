@@ -332,13 +332,14 @@ clean-images:
 ######################## Development Lifecycle #####################
 
 SITE_DIR := /srv/test/wp-httpd/htdocs
+NPM := $(shell env "PATH=/usr/local/opt/node@14/bin:$$PATH" which npm || echo npm)
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start)
+	(cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; $(NPM) install --silent --no-fund; $(NPM) start)
 
 .PHONY: rootsite
 rootsite:
