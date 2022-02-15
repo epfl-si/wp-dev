@@ -333,24 +333,13 @@ clean-images:
 ######################## Development Lifecycle #####################
 
 SITE_DIR := /srv/test/wp-httpd/htdocs
-NODE_VERSION := v14.15.1
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-# wp-gutenberg-epfl wants node-sass@4.14.1, which uses GYP in such a way
-# (right or wrong) that only this specific version of node will build / load
-# it (not e.g. v14.19.0 that `brew install node@14` installs):
-	@if ! ./devscripts/ensure-node-version.sh $(NODE_VERSION) ; then \
-	  echo >&2 "WARNING: node version $(NODE_VERSION) is required for React / Gutenberg" ; \
-	  echo >&2 "WARNING: development. Auto-rebuild of JS code is disabled." ; \
-	  echo >&2 'WARNING: Consider installing and using `nvm`.' ; \
-	  echo >&2 'WARNING: nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)' ; \
-	else \
-	  set -x; cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start; \
-	fi
+	cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
 .PHONY: rootsite
 rootsite:
