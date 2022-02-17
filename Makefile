@@ -413,6 +413,10 @@ tail-errors:
 tail-access:
 	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
 
+.PHONY: logs
+logs:
+	lnav volumes/srv/*/logs
+
 .PHONY: tail-sql
 tail-sql:
 	./devscripts/mysql-general-log tail
