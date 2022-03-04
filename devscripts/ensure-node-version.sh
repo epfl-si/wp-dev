@@ -9,7 +9,7 @@ if ! which node; then
 else
     node_version="$(node --version)"
     case "$node_version" in
-        "$1") exit 1 ;;
+        "$1") exit 0 ;;
         *) die "Incorrect node version - Expected: $1; actual: $node_version" ;;
     esac
 fi
