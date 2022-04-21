@@ -184,14 +184,10 @@ $(WP_CONTENT_DIR)/plugins:
 	@mkdir -p $(dir $@) || true
 
 $(WP_CONTENT_DIR)/plugins/accred: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-sti/wordpress.plugin.accred)
-# TODO: unfork!
-	(cd $@; git checkout vpsi)
+	$(call git_clone, epfl-si/wordpress.plugin.accred)
 
 $(WP_CONTENT_DIR)/plugins/tequila: $(WP_CONTENT_DIR)
-	$(call git_clone, epfl-sti/wordpress.plugin.tequila)
-# TODO: unfork!
-	(cd $@; git checkout vpsi)
+	$(call git_clone, epfl-si/wordpress.plugin.tequila)
 
 $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-gutenberg-epfl)
