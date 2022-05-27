@@ -62,13 +62,14 @@ DOCKER_BASE_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/wp-base
 DOCKER_HTTPD_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/httpd
 DOCKER_MGMT_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/mgmt
 
-WP_CONTENT_DIR = volumes/wp/5/wp-content
+WP_MAJOR_VERSION = 6
+WP_CONTENT_DIR = volumes/wp/$(WP_MAJOR_VERSION)/wp-content
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
 
-CTAGS_TARGETS = volumes/wp/5/*.php \
-  volumes/wp/5/wp-admin \
-  volumes/wp/5/wp-includes \
+CTAGS_TARGETS = volumes/wp/$(WP_MAJOR_VERSION)/*.php \
+  volumes/wp/$(WP_MAJOR_VERSION)/wp-admin \
+  volumes/wp/$(WP_MAJOR_VERSION)/wp-includes \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/plugins/epfl-* \
   $(WP_CONTENT_DIR)/plugins/polylang \
