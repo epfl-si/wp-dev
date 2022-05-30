@@ -275,7 +275,7 @@ pull:
 	touch $@
 
 ifdef OUTSIDE_EPFL
-_DEFAULT_INSTALL_AUTO_FLAGS := --exclude=wp-media-folder --exclude=wpforms
+_DEFAULT_INSTALL_AUTO_FLAGS := --exclude=wp-media-folder --exclude=wpforms --exclude=wpforms-surveys-polls
 else
 _DEFAULT_INSTALL_AUTO_FLAGS = $(_S3_INSTALL_AUTO_FLAGS)   # Below
 endif
