@@ -362,13 +362,13 @@ rootsite:
 	    new-wp-site --debug;                                                \
 	    for subdir in plugins mu-plugins; do                                \
 	      if [ ! -e wp-content/$$subdir ]; then                             \
-	        ln -s ../wp/wp-content/$$subdir wp-content/$$subdir;            \
+	        ln -sfn ../wp/wp-content/$$subdir wp-content/$$subdir;          \
 	      fi;                                                               \
 	    done;                                                               \
 	    mkdir -p $(SITE_DIR)/wp-content/themes;                             \
 	    for subtheme in wp-theme-2018 wp-theme-light; do                    \
 	      if [ ! -e wp-content/themes/$$subtheme ]; then                    \
-	        ln -s ../../wp/wp-content/themes/wp-theme-2018.git/$$subtheme   \
+	        ln -sfn ../../wp/wp-content/themes/wp-theme-2018.git/$$subtheme \
 	        wp-content/themes/$$subtheme;                                   \
 	      fi;                                                               \
 	    done;                                                               \
