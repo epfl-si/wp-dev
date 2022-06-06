@@ -416,6 +416,10 @@ tail-access:
 
 .PHONY: logs
 logs:
+	docker-compose logs -f --tail=5
+
+.PHONY: lnav
+lnav:
 	@$(_docker_exec_mgmt) bash -c 'lnav /srv/*/logs'
 
 .PHONY: tail-sql
