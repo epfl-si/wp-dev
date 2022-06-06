@@ -347,6 +347,7 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	  echo >&2 "WARNING: node version $(NODE_VERSION) is required for React / Gutenberg" ; \
 	  echo >&2 "WARNING: development. Auto-rebuild of JS code is disabled." ; \
 	  echo >&2 'WARNING: Consider installing and using `nvm`.' ; \
+	  echo >&2 'WARNING: nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)' ; \
 	else \
 	  set -x; cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start; \
 	fi
