@@ -379,7 +379,7 @@ rootsite:
 down:
 	docker-compose down
 
-_find_git_depots := find . \( -path ./volumes/srv -prune -false \) -o -name .git -prune |xargs -n 1 dirname
+_find_git_depots := find . \( -path ./volumes/srv -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
 .PHONY: gitstatus
 gitstatus:
 	@set -e; for dir in `$(_find_git_depots)`; do (cd $$dir; echo "$$(tput bold)$$dir$$(tput sgr0)"; git status -uno; echo); done
