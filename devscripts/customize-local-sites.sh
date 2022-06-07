@@ -49,7 +49,7 @@ wp_admin_password_admin () {
     docker_mgmt_cmd "$(cat <<SET_ADMIN_PASSWORD
 set -e -x
 cd /srv/test/wp-httpd/htdocs/$site
-wp user update admin --user_pass=admin
+wp user update admin --user_pass=password
 SET_ADMIN_PASSWORD
 )"
 }
@@ -74,7 +74,7 @@ fi
 
 ## Without tequila ?
 echo ""
-echo -n "Do you want to desactivate Tequila feature on the loaded sites (user/password will be admin/admin) (y/n)?"
+echo -n "Do you want to desactivate Tequila feature on the loaded sites (user/password will be admin/password) (y/n)?"
 read answer
 
 # TODO: make this flexible (split $1, reverse)
