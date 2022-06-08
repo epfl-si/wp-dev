@@ -35,8 +35,7 @@ CREATE_SITE_SCRIPT
 cat <<'POPULATE_SITE_SCRIPT'
 for symlinkdir in wp-content/plugins wp-content/mu-plugins wp-content/themes; do
     mkdir -p "$symlinkdir" || true
-    rm -f "$symlinkdir"/*
-    (cd "$symlinkdir"; ln -s ../../wp/"$symlinkdir"/* .)
+    (cd "$symlinkdir"; ln -s ../../wp/"$symlinkdir"/* . || true)
 done
 
 POPULATE_SITE_SCRIPT
