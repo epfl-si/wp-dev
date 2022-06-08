@@ -1,6 +1,6 @@
 #!/bin/sh
 
-WP_VERSION=5
+: ${WP_VERSION:=5}
 
 set -e -x
 scriptdir="$(dirname "$0")"
