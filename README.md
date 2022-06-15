@@ -8,6 +8,9 @@ In this repository you will find:
 
 # Install and Usage
 
+## Prerequiste
+- Have `eyaml` version 3.2.0. You can get it by installing [the Ansible suitcase](https://github.com/epfl-si/ansible.suitcase)
+
 ## Initial Setup
 
 1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
@@ -32,13 +35,17 @@ cd wp-httpd/htdocs</pre>
 
 ### Copy From Production
 
-This is the easiest way. Assuming you have production access, run <pre>./devscripts/copy-enac-from-prod.sh</pre> to copy a subset of the production serving tree of `www.epfl.ch` into your wp-dev checkout. It offers you this sites:
+This is the easiest way, as you get all the DB, without the media. Assuming you have production access, from outside the container, run 
+<pre>export WP_VERSION=5 && ./devscripts/copy-enac-from-prod.sh</pre> 
+(Change WP_VERSION value if you import a different site version)
+
+It will to copy a subset of the production serving tree of `www.epfl.ch` into your wp-dev checkout :
 - https://wp-httpd/
 - https://wp-httpd/schools
 - https://wp-httpd/schools/enac
 - https://wp-httpd/schools/enac/education
 
-You can, optionally, run <pre>./devscripts/customize-local-sites.sh</pre>. You will be asked if you want to activate debug mode or get back to standard authentification on the copied sites.
+Then, you can, optionally, run <pre>./devscripts/customize-local-sites.sh</pre>. You will be asked if you want to activate debug mode or get back to standard authentification on the copied sites.
 
 ### Empty Site
 
@@ -56,14 +63,6 @@ either the `wp` command-line tool (for a “vanilla” WordPress site) or the [`
 1. Tack `/wp-admin` to the end of the URL to get at the login screen
 1. Log in with the `administrator` account (scroll back in your Terminal looking for `Admin password:` to get at the password)
 1. Because of production-specific reverse-proxy shenanigans, you will be redirected to port 8443 at some point. Just edit the URL to get rid of the `:8443` part.
-
-### wp-gutenberg-epfl activation
-
-Once you have at least one site up and running, you can convert it to WordPress 5 by typing
-
-```
-make wp5 SITE_DIR=/srv/test/wp-httpd/htdocs/vpsi-next
-```
 
 ## Day-To-Day Operations
 
