@@ -344,7 +344,7 @@ rootsite:
 	    set -e -x;                                                          \
 	    mkdir -p $(SITE_DIR) || true;                                       \
 	    cd $(SITE_DIR);                                                     \
-	    new-wp-site --debug;                                                \
+	    export WORDPRESS_VERSION=$(WP_MAJOR_VERSION); new-wp-site --debug;  \
 	    for subdir in plugins mu-plugins; do                                \
 	      if [ ! -e wp-content/$$subdir ]; then                             \
 	        ln -sfn ../wp/wp-content/$$subdir wp-content/$$subdir;          \
