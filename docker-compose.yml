@@ -54,6 +54,7 @@ services:
     # The `httpd` container only needs to know WP_ENV:
     environment:
       - WP_ENV=${WP_ENV}
+      - SMTP_SECRET=${SMTP_SECRET}
     ports:
       - "${WP_PORT_HTTP}:8080"
       - "${WP_PORT_HTTPS}:8443"
