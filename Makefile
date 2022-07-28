@@ -332,6 +332,7 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
+	$(source_smtp_secrets); \
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
@@ -377,6 +378,12 @@ gitpull:
 volumes/srv/test:
 	mkdir -p "$@"
 	chmod 1777 "$@"
+
+# SMTP secret
+define source_smtp_secrets
+	. /keybase/team/epfl_wp_test/service-noreply-wwp.sh; \
+	export SMTP_SECRET
+endef
 
 ######################## Development Tasks ########################
 
