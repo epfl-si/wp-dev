@@ -336,7 +336,9 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-	cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
+	echo "To develop the admin part of wp-gutenberg-epfl, install nvm"
+	echo "launch nvm install 14, then start the dev with:"
+	echo "cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start"
 
 .PHONY: rootsite
 rootsite:
