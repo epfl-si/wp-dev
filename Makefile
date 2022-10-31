@@ -160,7 +160,8 @@ volumes/usrlocalbin: .docker-all-images-built.stamp
 	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
 	  | $(_HOST_TAR_X) -Cvolumes/usrlocalbin -xpvf -
 	rm -f volumes/usrlocalbin/new-wp-site
-	ln -s /wp-ops/docker/mgmt/new-wp-site.sh volumes/usrlocalbin/new-wp-site
+	(echo '#!/bin/sh'); echo 'exec /wp-ops/docker/mgmt/new-wp-site.sh "$@"' > volumes/usrlocalbin/new-wp-site
+	chmod 755 volumes/usrlocalbin/new-wp-site
 	touch $@
 
 $(WP_CONTENT_DIR): .docker-all-images-built.stamp
