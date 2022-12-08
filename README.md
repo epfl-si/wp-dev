@@ -163,6 +163,14 @@ and you can activate and follow the generate query log with
 make tail-sql
 ```
 
+### Reset administrator password
+
+```
+make exec
+cd /srv/test/wp-httpd/htdocs/
+wp user update admin --password=tototutu1234
+```
+
 ### Backup / Restore
 
 `make backup` will create a `wordpress-state.tgz` containing all the
