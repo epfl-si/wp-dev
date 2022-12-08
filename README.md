@@ -165,11 +165,11 @@ make tail-sql
 
 ### Reset administrator password
 
-```
-make exec
+1. Enter the so-called “management” container with <pre>make exec</pre>
+2. Type the following commands (💡 change the password as you please):<pre>
 cd /srv/test/wp-httpd/htdocs/
-wp user update admin --password=tototutu1234
-```
+wp user update admin --user_pass=tototutu1234
+</pre>
 
 ### Backup / Restore
 
