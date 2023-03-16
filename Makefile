@@ -30,6 +30,7 @@ help:
 	@echo '                    Be sure to review ../README.md for'
 	@echo '                    preliminary steps (entry in /etc/hosts,'
 	@echo '                    .env file and more)'
+	@echo '$(m) gutenberg      Start the building and Hotserver for Gutenberg developments'
 	@echo
 	@echo '$(m) stop           Stop the development environment'
 	@echo '$(m) down           Bring down the development environment'
@@ -339,9 +340,16 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker-compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-	echo "To develop the admin part of wp-gutenberg-epfl, install nvm"
-	echo "launch nvm install 14, then start the dev with:"
-	echo "cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start"
+	echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
+	echo "install nvm and run 'make gutenberg'"
+
+nvm:
+	. ${NVM_DIR}/nvm.sh && nvm install 14;
+
+.PHONY: gutenberg
+gutenberg:
+	$(MAKE) nvm
+	cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
 .PHONY: rootsite
 rootsite:
