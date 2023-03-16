@@ -31,6 +31,7 @@ help:
 	@echo '                    preliminary steps (entry in /etc/hosts,'
 	@echo '                    .env file and more)'
 	@echo
+	@echo '$(m) stop           Stop the development environment'
 	@echo '$(m) down           Bring down the development environment'
 	@echo '$(m) clean'
 	@echo
@@ -364,6 +365,10 @@ rootsite:
 	    wp theme activate wp-theme-2018 ;                                   \
 	    wp user update admin --user_pass=password;                          \
 	    '
+
+.PHONY: stop
+stop:
+	docker-compose stop
 
 .PHONY: down
 down:
