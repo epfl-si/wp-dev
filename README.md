@@ -15,7 +15,6 @@ In this repository you will find:
 
 1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:
    `127.0.0.1       wp-httpd`
-1. Be sure to have Node version 14.15.1 *specifically* (and the corresponding npm version 8.4.1) available. [As of late 2021](https://github.com/WordPress/gutenberg/commits/trunk/.nvmrc), this is still the version that the WordPress team recommends. [nvm](https://github.com/nvm-sh/nvm) can be of help here. (`brew install node@14`, not so much — It would install a newer version that won't link with `node-sass@4.14.1`)
 1. Clone the [repository](https://github.com/epfl-si/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
    💡 If working outside EPFL without VPN access, use instead <pre>make checkout OUTSIDE_EPFL=1</pre>
@@ -26,10 +25,7 @@ In this repository you will find:
 1. Type `make` to bring up the development stack.<br>
    💡 If working outside EPFL without VPN access, use instead <pre>make OUTSIDE_EPFL=1</pre>
 1. Type `make exec` to enter the so-called management container.
-1. Within the management container, type  <pre>
-cd /srv/${WP_ENV}/
-mkdir -p wp-httpd/htdocs
-cd wp-httpd/htdocs</pre>
+1. Have [nvm](https://github.com/nvm-sh/nvm) installed and type `make gutenberg` to start using the wp-gutenberg-epfl plugin 
 
 ## Populate the Serving Tree
 
