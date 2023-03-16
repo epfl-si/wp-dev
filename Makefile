@@ -344,7 +344,7 @@ clean-images:
 
 ######################## Development Lifecycle #####################
 
-SITE_DIR := /srv/test/wp-httpd/htdocs
+SITE_DIR := /srv/www/wp-httpd/htdocs
 
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
