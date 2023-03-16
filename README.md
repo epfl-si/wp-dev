@@ -18,6 +18,7 @@ In this repository you will find:
 1. Be sure to have Node version 14.15.1 *specifically* (and the corresponding npm version 8.4.1) available. [As of late 2021](https://github.com/WordPress/gutenberg/commits/trunk/.nvmrc), this is still the version that the WordPress team recommends. [nvm](https://github.com/nvm-sh/nvm) can be of help here. (`brew install node@14`, not so much — It would install a newer version that won't link with `node-sass@4.14.1`)
 1. Clone the [repository](https://github.com/epfl-si/wp-dev)
 1. Type `make checkout` to download and setup all the required codebases
+   💡 If working outside EPFL without VPN access, use instead <pre>make checkout OUTSIDE_EPFL=1</pre>
 1. Inspect subdirectories (`wp-ops` in particular) and make
    sure they are on the branches you wish to develop from.
    - As of Q2 2021, the “mainstream” platform (the one being used in
