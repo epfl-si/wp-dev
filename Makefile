@@ -39,6 +39,7 @@ help:
 	@echo
 	@echo '$(m) httpd          Enter the Apache container'
 	@echo
+	@echo '$(m) lnav           Improved error logs compilation through the terminal'
 	@echo "$(m) tail-access    Follow the tail of Apache's access resp."
 	@echo '$(m) tail-errors    error logs through the terminal'
 	@echo
