@@ -9,6 +9,11 @@
 # If we don't currently have an IP address (for instance we are in the
 # bus), and --ensure is passed as the first command-line argument, set
 # up an IP address.
+#
+# ⚠ Firewalls can get in the way! Here is how to allow all traffic from
+# Docker containers into your local ports on Ubuntu:
+#
+#   ufw allow in from 172.16.0.0/12
 
 . "$(dirname "$0")"/functions.sh
 
