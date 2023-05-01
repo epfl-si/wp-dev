@@ -26,7 +26,7 @@ help:
 	@echo '$(m) help           Show this message'
 	@echo
 	@echo '$(m) up             Start up a local WordPress instance'
-	@echo '                    with docker-compose for development.'
+	@echo '                    with docker compose for development.'
 	@echo '                    Be sure to review ../README.md for'
 	@echo '                    preliminary steps (entry in /etc/hosts,'
 	@echo '                    .env file and more)'
@@ -316,7 +316,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 
 .docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops \
                                  $(_DOCKER_HTTPD_IMAGE_DEPS)
-	docker-compose build $(DOCKER_BUILD_ARGS)
+	docker compose build $(DOCKER_BUILD_ARGS)
 	touch $@
 
 .PHONY: docker-build
@@ -337,7 +337,7 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 .PHONY: up
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	$(source_smtp_secrets); \
-	docker-compose up -d
+	docker compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
 	echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
@@ -377,11 +377,11 @@ rootsite:
 
 .PHONY: stop
 stop:
-	docker-compose stop
+	docker compose stop
 
 .PHONY: down
 down:
-	docker-compose down
+	docker compose down
 
 _find_git_depots := find . \( -path ./volumes/srv -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
 .PHONY: gitstatus
@@ -426,7 +426,7 @@ tail-access:
 
 .PHONY: logs
 logs:
-	docker-compose logs -f --tail=5
+	docker compose logs -f --tail=5
 
 .PHONY: lnav
 lnav:

@@ -6,7 +6,7 @@
 # which ensures that all required images are built, and code
 # repositories are checked out.
 #
-# docker-compose automatically sources the .env file if it exists
+# docker compose automatically sources the .env file if it exists
 # (see https://docs.docker.com/compose/environment-variables/#the-env-file);
 # this is what makes the ${VARIABLE} expansions below work.
 
