@@ -371,8 +371,8 @@ rootsite:
 	        wp-content/themes/$$subtheme;                                   \
 	      fi;                                                               \
 	    done;                                                               \
-	    wp theme activate wp-theme-2018 ;                                   \
-	    wp user update admin --user_pass=password;                          \
+	    wp theme activate wp-theme-2018;                                    \
+	    wp user update admin --user_pass=secret;                            \
 	    '
 
 .PHONY: stop

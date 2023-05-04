@@ -49,7 +49,7 @@ wp_admin_password_admin () {
     docker_mgmt_cmd "$(cat <<SET_ADMIN_PASSWORD
 set -e -x
 cd /srv/test/wp-httpd/htdocs/$site
-wp user update admin --user_pass=password
+wp user update admin --user_pass=secret
 SET_ADMIN_PASSWORD
 )"
 }
