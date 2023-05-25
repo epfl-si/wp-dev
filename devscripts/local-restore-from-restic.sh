@@ -49,7 +49,7 @@ restic -r s3:https://s3.epfl.ch/svc0041-df3298778888f91b2b62cf913f4c8c74/backup/
 # Import the DB
 docker exec --user www-data -i wp-local-mgmt-1 bash -c "wp --path=/srv/test/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} db import /srv/test/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql"
 
-# Ensure that URLs are correct with serach-replace
+# Ensure that URLs are correct with search-replace
 docker exec --user www-data -i wp-local-mgmt-1 bash -c "wp --path=/srv/test/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} search-replace ${SITE_ORIGINAL_URL} https://wp-httpd/${RESTORED_SITE_DIR_NAME}"
 
 # Set the admin password to "secret"
