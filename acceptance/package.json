@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "chrome-launcher": "^0.14.0",
-    "cucumber": "^5.1.0",
+    "cucumber": "^6.0.7",
     "is-docker": "^1.1.0",
     "lodash": "^4.17.21",
     "once": "^1.4.0",
