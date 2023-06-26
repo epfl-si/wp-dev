@@ -15,6 +15,7 @@ version: '3'
 services:
 
   db:
+    container_name: wp-db
     image: mariadb:10.9.4
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -24,12 +25,13 @@ services:
       - /var/lib/mysql
 
   phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      environment:
+    container_name: wp-pma
+    image: phpmyadmin/phpmyadmin
+    environment:
       - PMA_ARBITRARY=1
-      ports:
+    ports:
       - ${WP_PORT_PHPMA}:80
-      volumes:
+    volumes:
       - /sessions
 
   httpd:
@@ -60,6 +62,7 @@ services:
       - "${WP_PORT_HTTPS}:8443"
 
   mgmt:
+    container_name: wp-mgmt
     labels:
       ch.epfl.wordpress.mgmt.env: ${WP_ENV}
     image: docker-registry.default.svc:5000/wwp-test/mgmt
