@@ -402,7 +402,7 @@ volumes/srv/test:
 
 # SMTP secret
 define source_smtp_secrets
-	eval $$(keybase fs read /keybase/team/epfl_wp_test/service-noreply-wwp.sh) ; \
+	eval $$(keybase fs read /keybase/team/epfl_wp_test/service-noreply-wwp.sh|grep SMTP_SECRET) ; \
 	export SMTP_SECRET
 endef
 
