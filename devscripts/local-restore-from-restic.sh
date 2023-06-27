@@ -51,7 +51,8 @@ restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSI
 docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} db import /srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql"
 
 # Ensure that URLs are correct with search-replace
-docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} search-replace ${SITE_ORIGINAL_URL} https://wp-httpd/${RESTORED_SITE_DIR_NAME}"
+#  - see https://stackoverflow.com/a/9018877/960623 for the ${DIR%/} that remove the trailing slash
+docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} search-replace ${SITE_ORIGINAL_URL%/} https://wp-httpd/${RESTORED_SITE_DIR_NAME%/}"
 
 # Set the admin password to "secret"
 docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} user update admin --user_pass=secret"
