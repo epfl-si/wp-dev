@@ -25,11 +25,16 @@ help:
 	@echo
 	@echo '$(m) help           Show this message'
 	@echo
+	@echo '$(m) checkout       Checkout wp-ops, WP Thems and Plugins. Use'
+	@echo '                        make checkout OUTSIDE_EPFL=1'
+	@echo "                    for a minimal version that doesn't need EPFL accesses"
+	@echo
 	@echo '$(m) up             Start up a local WordPress instance'
 	@echo '                    with docker compose for development.'
 	@echo '                    Be sure to review ../README.md for'
 	@echo '                    preliminary steps (entry in /etc/hosts,'
 	@echo '                    .env file and more)'
+	@echo
 	@echo '$(m) gutenberg      Start the building and Hotserver for Gutenberg developments'
 	@echo
 	@echo '$(m) stop           Stop the development environment'
@@ -37,8 +42,8 @@ help:
 	@echo '$(m) clean'
 	@echo
 	@echo '$(m) exec           Enter the management container'
-	@echo
 	@echo '$(m) httpd          Enter the Apache container'
+	@echo '$(m) mysql          Enter the MySQL container'
 	@echo
 	@echo '$(m) lnav           Improved error logs compilation through the terminal'
 	@echo "$(m) tail-access    Follow the tail of Apache's access resp."
@@ -47,9 +52,15 @@ help:
 	@echo '$(m) tail-sql       Activate and follow the MySQL general'
 	@echo '                    query log'
 	@echo
+	@echo '$(m) pull           Refresh the Docker images'
+	@echo '$(m) clean-images   Prune the Docker images'
+	@echo '$(m) docker-build   Build the Docker images'
+	@echo
 	@echo '$(m) backup         Backup the whole state (incl. MySQL)'
 	@echo '                    to wordpress-state.tgz'
 	@echo '$(m) restore        Restore from wordpress-state.tgz'
+	@echo
+	@echo '$(m) vars           Summarize the vars from the dot env file'
 
 # Default values, can be overridden either on the command line of make
 # or in .env
@@ -81,7 +92,7 @@ CTAGS_TARGETS = volumes/wp/$(WP_MAJOR_VERSION)/*.php \
 _mgmt_container = `docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)"`
 _httpd_container = `docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(WP_ENV)"`
 
-_docker_exec_mgmt :=  docker exec --user www-data -it  \
+_docker_exec_mgmt := docker exec --user www-data -it \
 	  -e WP_ENV=$(WP_ENV) \
 	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
 	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
@@ -158,7 +169,7 @@ git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB
 
 volumes/usrlocalbin: .docker-all-images-built.stamp
 	mkdir -p $@ || true
-	docker run --rm  --name volumes-usrlocalbin-extractor \
+	docker run --rm --name volumes-usrlocalbin-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_MGMT_IMAGE_NAME) \
 	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
@@ -173,13 +184,13 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
 	mkdir -p volumes || true
-	docker run --rm  --name volumes-wp-extractor \
+	docker run --rm --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
-              /wp" \
+	            /wp" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpf - wp
 # Excluded directories --exclude= above) are replaced with a git
 # checkout of same (next few targets below).
@@ -344,8 +355,8 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	docker compose up -d
 	./devscripts/await-mysql-ready
 	$(MAKE) rootsite
-	echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
-	echo "install nvm and run 'make gutenberg'"
+	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
+	@echo "install nvm and run 'make gutenberg'"
 
 nvm:
 	. ${NVM_DIR}/nvm.sh && nvm install 14;
