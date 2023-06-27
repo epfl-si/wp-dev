@@ -10,7 +10,6 @@
 # TODO:
 #  - ensure that everythings is here (keybase, restic, etc.)
 #  - improve wp-veritas to be able to fetch `ansibleHost` with a query
-#  - not chmod 777
 #
 
 set -e -x
@@ -38,9 +37,6 @@ docker exec --user www-data -i ${_mgmt_container} bash -c "mkdir -p /srv/${WP_EN
 
 # Initilialize the new site
 docker exec --user www-data -i ${_mgmt_container} bash -c "cd /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}; new-wp-site --debug"
-
-# How to deal with local user right knowing that it's www-data in the container, this is very dirty
-sudo chmod 777 -R ${scriptdir}/../volumes/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}/wp-content
 
 # Restore the backup directly in the new site's folder
 restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/files restore latest \
