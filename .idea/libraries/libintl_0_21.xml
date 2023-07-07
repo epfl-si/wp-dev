@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="libintl-0.21">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/share/maven-repo/org/gnu/gettext/libintl/0.21/libintl-0.21.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

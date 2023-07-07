@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="bundle">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/share/jitsi/lib/bundle/commons-logging.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/share/jitsi/lib/bundle/log4j.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

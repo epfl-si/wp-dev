@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="thezip1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python-libs/lib/python3.10/site-packages/ansible_collections/community/aws/tests/unit/plugins/modules/fixtures/thezip.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

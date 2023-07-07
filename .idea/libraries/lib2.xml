@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/lib/oracle/19.3/client64/lib/ottclasses.zip!/" />
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/lib/oracle/19.3/client64/lib/ojdbc8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/lib/oracle/19.3/client64/lib/xstreams.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

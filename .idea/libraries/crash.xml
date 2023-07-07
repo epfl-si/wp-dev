@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="crash">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/share/apport/testsuite/crash.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

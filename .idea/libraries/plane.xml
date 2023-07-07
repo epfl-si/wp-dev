@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="plane">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python-libs/lib/python3.10/site-packages/ansible_collections/community/windows/tests/integration/targets/win_xml/files/plane.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
