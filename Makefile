@@ -359,7 +359,7 @@ up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	@echo "install nvm and run 'make gutenberg'"
 
 nvm:
-	. ${NVM_DIR}/nvm.sh && nvm install 14;
+	. ${NVM_DIR}/nvm.sh && nvm install 14 && npm install -g npm@6.14.18;
 
 .PHONY: gutenberg
 gutenberg:
