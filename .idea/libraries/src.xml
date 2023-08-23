@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="src">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/lib/jvm/openjdk-11/src.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

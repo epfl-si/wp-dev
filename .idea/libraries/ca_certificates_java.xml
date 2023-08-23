@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="ca-certificates-java">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python/share/ca-certificates-java/ca-certificates-java.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

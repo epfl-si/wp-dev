@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="hello_world">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python-libs/lib/python3.10/site-packages/ansible_collections/community/aws/tests/integration/targets/aws_secret/files/hello_world.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

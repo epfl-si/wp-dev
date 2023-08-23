@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="wt">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/wp-ops/ansible/ansible-deps-cache/python-libs/lib/python3.10/site-packages/ansible_collections/community/network/tests/unit/plugins/modules/network/radware/wt.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
