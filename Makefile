@@ -159,6 +159,7 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-coming-soon \
   $(WP_CONTENT_DIR)/plugins/wpforms-epfl-payonline \
   $(WP_CONTENT_DIR)/plugins/epfl-diploma-verification \
+  $(WP_CONTENT_DIR)/plugins/epfl-partner-universities \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
@@ -273,6 +274,9 @@ $(POLYLANG_CLI_DIR):
 
 $(WP_CONTENT_DIR)/plugins/epfl-diploma-verification: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-diploma-verification)
+
+$(WP_CONTENT_DIR)/plugins/epfl-partner-universities: $(WP_CONTENT_DIR)
+	$(call git_clone, epfl-si/wp-plugin-epfl-partner-universities)
 
 wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
