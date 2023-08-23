@@ -4,4 +4,5 @@ wp-ops/
 .make.vars
 .docker*.stamp
 .idea/
+wp-dev.iml
 wordpress-state.tgz
