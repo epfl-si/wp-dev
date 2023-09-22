@@ -26,8 +26,8 @@ help:
 	@echo '$(m) help           Show this message'
 	@echo
 	@echo '$(m) checkout       Checkout wp-ops, WP Thems and Plugins. Use'
-	@echo '                        make checkout OUTSIDE_EPFL=1'
-	@echo "                    for a minimal version that doesn't need EPFL accesses"
+	@echo '                        make checkout MINIMAL=1'
+	@echo "                    for a minimal version that doesn't need ISAS-FSD accesses"
 	@echo
 	@echo '$(m) up             Start up a local WordPress instance'
 	@echo '                    with docker compose for development.'
@@ -159,7 +159,6 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-coming-soon \
   $(WP_CONTENT_DIR)/plugins/wpforms-epfl-payonline \
   $(WP_CONTENT_DIR)/plugins/epfl-diploma-verification \
-  $(WP_CONTENT_DIR)/plugins/epfl-partner-universities \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
@@ -293,7 +292,7 @@ pull:
 	for image in $(_DOCKER_PULLED_IMAGES); do docker pull $$image; done
 	touch $@
 
-ifdef OUTSIDE_EPFL
+ifdef MINIMAL
 _DEFAULT_INSTALL_AUTO_FLAGS := --exclude=wp-media-folder --exclude=wpforms --exclude=wpforms-surveys-polls
 else
 _DEFAULT_INSTALL_AUTO_FLAGS = $(_S3_INSTALL_AUTO_FLAGS)   # Below

@@ -30,7 +30,7 @@ From here you can either choose to fetch the *whole stack* (meaning you have
 access to the secrets and the EPFL network) or choose the *minimal install*.
 
 1. Minimal installation can be acheived with  
-   `make checkout OUTSIDE_EPFL=1`.
+   `make checkout MINIMAL=1`.
 
 For the complete install (which will get all the plugins and themes), follow
 theses steps:
@@ -45,8 +45,8 @@ theses steps:
 1. Edit your `/etc/hosts` or platform equivalent and set up a line like this:  
    `127.0.0.1       wp-httpd`
 1. Type `make` to bring up the development stack.  
-   💡 If working outside EPFL without VPN access, use instead  
-   `make OUTSIDE_EPFL=1`
+   💡 If working outside EPFL and/or without VPN access, use instead  
+   `make MINIMAL=1`
 1. Type `make exec` to enter the so-called management container.
 1. Have [nvm](https://github.com/nvm-sh/nvm) installed and type `make gutenberg`
    to start using the [wp-gutenberg-epfl] plugin.
