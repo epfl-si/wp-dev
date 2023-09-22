@@ -10,15 +10,21 @@ participate in wordpress development at EPFL. Concisely, it will brings the dev
 
 ## Prerequistes
 
-The prerequisites are a *nix operating system with Git and Docker. Secrets are
-mainly handled with [Keybase], which mean you will need access to the relevant 
-teams. Some of them need [eyaml], but this can be handled by the [Ansible
-suitcase].
+The prerequisites are a *nix operating system with Git and Docker (or
+WSL; a “plain Windows®” clone made with e.g. git bash will **not**
+work).
 
+If you want to be able to push your changes to production or otherwise
+operate the [wp-ops](https://github.com/epfl-si/wp-ops) repository,
+you will need to install [Keybase] and obtain membership to the
+relevant teams. Some of these tasks need [eyaml], but this can be
+handled by the [Ansible suitcase].
 
 ## Initial setup
 
-1. Clone the [wp-dev] repository.
+1. Clone the [wp-dev] repository. <br> ⚠ A “plain” Git clone on a
+   Windows® filesystem will **not** work, because shell scripts are
+   not executable in such an environment.
 
 From here you can either choose to fetch the *whole stack* (meaning you have 
 access to the secrets and the EPFL network) or choose the *minimal install*.
