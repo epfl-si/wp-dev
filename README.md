@@ -47,7 +47,7 @@ theses steps:
 1. Type `make` to bring up the development stack.  
    💡 If working outside EPFL and/or without VPN access, use instead  
    `make MINIMAL=1`
-1. Type `make exec` to enter the so-called management container.
+1. Type `make exec` to enter the so-called management container.<br>💡 For some tasks (e.g. using the `wp` command-line tool), you should first change into the directory at the top of the project hierarchy:<pre>cd /srv/test/wp-httpd/htdocs/</pre>
 1. Have [nvm](https://github.com/nvm-sh/nvm) installed and type `make gutenberg`
    to start using the [wp-gutenberg-epfl] plugin.
 
