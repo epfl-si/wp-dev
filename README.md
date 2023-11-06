@@ -103,7 +103,7 @@ directory of this repo, run (for instance):
 SITE_ORIGINAL_URL=https://www.epfl.ch/campus/services/website/canari-wpforms/ \
 SITE_ANSIBLE_IDENTIFIER=www__campus__services__website__canari_wpforms \
 RESTORED_SITE_DIR_NAME=canari-wpforms \
-./local-restore-from-restic.sh
+./devscripts/local-restore-from-restic.sh
 ```
 
 
@@ -306,7 +306,7 @@ You can audit the development rig by yourselves if you type
 [Ansible suitcase]: https://github.com/epfl-si/ansible.suitcase
 [eyaml]: https://github.com/voxpupuli/hiera-eyaml
 [Keybase]: https://keybase.io
-[local-restore-from-restic.sh]: ./devscripts/local-resotre-from-restic.sh
+[local-restore-from-restic.sh]: ./devscripts/local-restore-from-restic.sh
 [`new-wp-site.sh`]: https://github.com/epfl-si/wp-ops/blob/master/docker/mgmt/new-wp-site.sh
 [wp-dev]: https://github.com/epfl-si/wp-dev
 [wp-ops]: https://github.com/epfl-si/wp-ops
