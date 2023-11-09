@@ -85,3 +85,9 @@ services:
       - ./wp-ops:/wp-ops
     ports:
       - "${WP_PORT_SSHD}:22"
+
+  menu-api:
+    container_name: menu-api
+    build: menu-api
+    env_file:
+      - menu-api/.env
