@@ -162,6 +162,7 @@ checkout: \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
+  menu-api \
   wp-ops \
   volumes/usrlocalbin
 
@@ -280,6 +281,9 @@ $(WP_CONTENT_DIR)/plugins/epfl-partner-universities: $(WP_CONTENT_DIR)
 wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
+
+menu-api:
+	$(call git_clone, epfl-si/wp-menu-api)
 
 ################ Building or pulling Docker images ###############
 
