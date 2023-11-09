@@ -57,6 +57,7 @@ services:
     environment:
       - WP_ENV=${WP_ENV}
       - SMTP_SECRET=${SMTP_SECRET}
+      - MENU_API_SERVER=http://192.168.200.5/    # See README.md on how to make that IP work!
     ports:
       - "${WP_PORT_HTTP}:8080"
       - "${WP_PORT_HTTPS}:8443"
@@ -90,4 +91,4 @@ services:
     container_name: menu-api
     build: menu-api
     env_file:
-      - menu-api/.env
+      - menu-api/.env.test
