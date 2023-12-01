@@ -90,5 +90,3 @@ services:
   menu-api:
     container_name: menu-api
     build: menu-api
-    env_file:
-      - menu-api/.env.test
