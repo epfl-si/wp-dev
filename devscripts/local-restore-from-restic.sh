@@ -39,9 +39,8 @@ docker exec --user www-data -i ${_mgmt_container} bash -c "mkdir -p /srv/${WP_EN
 docker exec --user www-data -i ${_mgmt_container} bash -c "cd /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}; new-wp-site --debug"
 
 # Restore the backup directly in the new site's folder
-restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/files restore latest \
-            --include="/wp-content" \
-            --target ${scriptdir}/../volumes/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}/
+restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/files dump latest /wp-content \
+   | docker exec --user www-data -i ${_mgmt_container} tar -C/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} -xpvf -
 
 # Import the DB
 docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} db import /srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql"
