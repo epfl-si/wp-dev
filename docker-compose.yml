@@ -90,3 +90,11 @@ services:
   menu-api:
     container_name: menu-api
     build: menu-api
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./rules.yml:/etc/prometheus/rules.yml"
+    ports:
+      - "9090:9090"
