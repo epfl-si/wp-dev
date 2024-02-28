@@ -1,0 +1,12 @@
+route:
+  receiver: menu_api-telegram
+  repeat_interval: 5m
+
+receivers:
+  - name: 'menu_api-telegram'
+    telegram_configs:
+      - bot_token: {{ TOKEN_ID }}
+        api_url: https://api.telegram.org
+        chat_id: -4121653975
+        send_resolved: true
+        parse_mode: 'HTML'

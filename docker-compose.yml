@@ -22,7 +22,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - /var/lib/mysql
+      - ./volumes/mysql:/var/lib/mysql
 
   phpmyadmin:
     container_name: wp-pma
@@ -108,3 +108,13 @@ services:
       - '3000:3000'
     volumes:
       - grafana-storage:/var/lib/grafana
+
+  alert-manager:
+    image: prom/alertmanager
+    volumes:
+      - "./alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+    ports:
+      - "9093:9093"
+volumes:
+  grafana-storage: {}
+  alertmanager-data:
