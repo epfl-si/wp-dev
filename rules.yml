@@ -5,15 +5,11 @@ groups:
       - alert: RefreshFileCountAlert
         expr: sum by(job) (menu_api_total_refresh_files) < 3
         for: 10s
-        labels:
-          severity: page
-          sendto: telegram
-          app: menu-api
         annotations:
           summary: Refresh Files less than 3
-          description: "Only the following files exist:\n 
+          description: "Only the following files exist:
             {{ range query \"menu_api_total_refresh_files\" }}
-              {{ .Labels.fileName }} {{ .Value }} \n
+              \n {{ .Labels.fileName }} {{ .Value }} 
             {{ end }}"
 
   - name: menu-api - Total WP-Veritas sites less than 690
@@ -22,15 +18,11 @@ groups:
       - alert: TotalWPVeritasSites
         expr: menu_api_total_WPV_sites < 690
         for: 10s
-        labels:
-          severity: page
-          sendto: telegram
-          app: menu-api
         annotations:
           summary: Total WP-Veritas sites less than 690
           description: "
             {{ range query \"menu_api_total_WPV_sites\" }}
-              {{ .Value }} \n
+              {{ .Value }}
             {{ end }} retrieved sites from https://wp-veritas.epfl.ch/. The total should be ~690 sites."
 
   - name: menu-api - External detached menus found
@@ -39,13 +31,9 @@ groups:
       - alert: TotalExternalDetachedMenus
         expr: count(menu_api_error_count{message="External detached menu found", url!="undefined"}) > 0
         for: 10s
-        labels:
-          severity: page
-          sendto: telegram
-          app: menu-api
         annotations:
           summary: External detached menus found
           description: "Here the list of the external menus:
             {{ range query \"menu_api_error_count{message='External detached menu found', url!='undefined'}\" }}
-              {{ .Labels.url }} \n
+              \n {{ .Labels.url }} 
             {{ end }} "
