@@ -112,6 +112,7 @@ services:
     image: prom/alertmanager
     volumes:
       - "./alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+      - "./alertmanager/templates/menu-api.tmpl:/etc/alertmanager/templates/menu-api.tmpl"
     ports:
       - "9093:9093"
 volumes:

@@ -1,6 +1,7 @@
 route:
   receiver: menu_api-telegram
   repeat_interval: 5m
+  group_by: [alertname]
 
 receivers:
   - name: 'menu_api-telegram'
@@ -9,4 +10,7 @@ receivers:
         api_url: https://api.telegram.org
         chat_id: -4121653975
         send_resolved: true
-        parse_mode: 'HTML'
+        parse_mode: 'Markdown'
+
+templates:
+  - '/etc/alertmanager/templates/menu-api.tmpl'
