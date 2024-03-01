@@ -1,0 +1,19 @@
+{{ define "telegram.default.message" }}
+{{ if eq .Status "firing" }}
+🔥 **Firing** 🔥
+{{ else if eq .Status "resolved" }}
+✅ **Resolved** ✅
+{{ end }}
+{{ range .Alerts }}
+*Title*: **{{ .Annotations.summary }}**
+*Description*: {{ .Annotations.description }}
+{{ if eq .Status "firing" }}
+*Start Date:* {{ .StartsAt.Format "2006-01-02 15:04:05 MST"}}
+{{ else if eq .Status "resolved" }}
+*Start Date:* {{ .StartsAt.Format "2006-01-02 15:04:05 MST"}}
+*Resolved Date:* {{ .EndsAt.Format "2006-01-02 15:04:05 MST"}}
+{{ end }}
+
+{{ end }}
+
+{{ end }}
