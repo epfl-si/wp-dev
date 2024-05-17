@@ -340,7 +340,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 .PHONY: docker-build
 docker-build:
 	rm -f .docker*built.stamp
-	$(MAKE) .docker-all-images-built.stamp DOCKER_BUILD_ARGS=$(DOCKER_BUILD_ARGS) DOCKER_BASE_BUILD_ARGS=$(DOCKER_BASE_BUILD_ARGS)
+	$(MAKE) .docker-all-images-built.stamp
 
 .PHONY: clean-images
 clean-images:
