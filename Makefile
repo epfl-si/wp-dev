@@ -280,6 +280,7 @@ $(WP_CONTENT_DIR)/plugins/epfl-partner-universities: $(WP_CONTENT_DIR)
 
 wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
+	cd wp-ops; git checkout feature/nginx
 	$(MAKE) -C wp-ops checkout
 
 menu-api:
