@@ -18,7 +18,7 @@ services:
     container_name: wp-db
     image: mariadb:10.9.4
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     ports:
       - 3306:3306
     volumes:

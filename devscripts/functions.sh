@@ -11,14 +11,14 @@ die () {
     exit 1
 }
 
-dockermysql () {
+dockermariadb () {
     local dockerbash="docker compose exec -T db bash -c"
     case "$1" in
-        mysql|mysqldump)
+        mariadb|mysqldump)
             local cmd="$1"; shift
             case "$#" in
-                0) $dockerbash "$cmd -p\$MYSQL_ROOT_PASSWORD" ;;
-                *) $dockerbash "$cmd -p\$MYSQL_ROOT_PASSWORD $*" ;;
+                0) $dockerbash "$cmd -p\$MARIADB_ROOT_PASSWORD" ;;
+                *) $dockerbash "$cmd -p\$MARIADB_ROOT_PASSWORD $*" ;;
             esac ;;
         *)
             $dockerbash "$*" ;;
