@@ -94,7 +94,7 @@ _nginx_container = `docker ps -q --filter "label=ch.epfl.wordpress.nginx.env=$(W
 
 _docker_exec_mgmt := docker exec --user www-data -it \
 	  -e WP_ENV=$(WP_ENV) \
-	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
+	  -e MARIADB_ROOT_PASSWORD=$(MARIADB_ROOT_PASSWORD) \
 	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
 	  $(_mgmt_container)
 
@@ -108,7 +108,7 @@ vars:
 
 	@echo ''
 	@echo DB-related vars:
-	@echo '  MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD)'
+	@echo '  MARIADB_ROOT_PASSWORD=$(MARIADB_ROOT_PASSWORD)'
 	@echo '  MYSQL_DB_HOST=$(MYSQL_DB_HOST)'
 	@echo '  MYSQL_SUPER_USER=$(MYSQL_SUPER_USER)'
 	@echo '  MYSQL_SUPER_PASSWORD=$(MYSQL_SUPER_PASSWORD)'
@@ -351,7 +351,7 @@ SITE_DIR := /srv/www/wp-httpd/htdocs
 up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
 	$(source_smtp_secrets); \
 	docker compose up -d
-	./devscripts/await-mysql-ready
+	./devscripts/await-mariadb-ready
 	$(MAKE) rootsite
 	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
 	@echo "install nvm and run 'make gutenberg'"
@@ -423,7 +423,7 @@ exec:
 
 .PHONY: mysql
 mysql:
-	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MYSQL_ROOT_PASSWORD -u root -h db'
+	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MARIADB_ROOT_PASSWORD -u root -h db'
 
 .PHONY: nginx
 nginx:
