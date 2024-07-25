@@ -38,7 +38,8 @@ theses steps:
 *  If you don't have `eyaml` version 3.2.0 on your system, you need first to
    run `make wp-ops` (which will clone the [wp-ops] repository) and launch the
    `wpsible` command to initialize the [Ansible suitcase]: from the `wp-ops`
-   directory, run `./ansible/wpsible --check`.
+   directory, run `./ansible/wpsible --check`. Or install it with `gem install 
+   hiera-eyaml`.
 *  If you have `eyaml` version 3.2.0, jump to the next step.
 
 1. Run `make checkout` to download and setup all the required codebases.
