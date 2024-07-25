@@ -213,7 +213,7 @@ password are in the `.env` file, as the values of the
 As far as command-line access is concerned, you can access a superuser
 MySQL prompt by typing
 ```bash
-docker exec -it wp-local_db_1 bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
+docker exec -it wp-local_db_1 bash -c 'mysql -p$MARIADB_ROOT_PASSWORD'
 ```
 
 and you can activate and follow the generate query log with
