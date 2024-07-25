@@ -16,7 +16,7 @@ services:
 
   db:
     container_name: wp-db
-    image: mariadb:10.9.4
+    image: mariadb:11.4
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     ports:
