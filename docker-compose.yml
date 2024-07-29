@@ -43,7 +43,7 @@ services:
     image: docker-registry.default.svc:5000/wwp-test/nginx
     volumes:
       # See README.md and Makefile for explanations on volumes
-      - ./volumes/srv/www:/www-data
+      - ./volumes/srv/test:/wp-data
       # Unlike production, /wp is editable from outside the Docker
       # container, and contains the "live" code (in the form of
       # Git checkouts; see Makefile)
