@@ -144,7 +144,6 @@ checkout: \
   $(WP_CONTENT_DIR)/plugins/epfl-menus \
   $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
   $(WP_CONTENT_DIR)/themes/wp-theme-light \
-  $(WP_CONTENT_DIR)/themes/wp-theme-breadcrumb \
   $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl \
   $(WP_CONTENT_DIR)/plugins/epfl-404 \
   $(WP_CONTENT_DIR)/plugins/EPFL-settings \
@@ -190,7 +189,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	docker run --rm --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
 	  $(DOCKER_HTTPD_IMAGE_NAME) \
-	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light,wp-theme-breadcrumb} \
+	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
 	            /wp" \
@@ -219,9 +218,6 @@ $(WP_CONTENT_DIR)/themes/wp-theme-2018: $(WP_CONTENT_DIR)/themes/wp-theme-2018.g
 
 $(WP_CONTENT_DIR)/themes/wp-theme-light: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
 	ln -sf wp-theme-2018.git/wp-theme-light $@
-
-$(WP_CONTENT_DIR)/themes/wp-theme-breadcrumb: $(WP_CONTENT_DIR)/themes/wp-theme-2018.git
-	ln -sf wp-theme-2018.git/wp-theme-breadcrumb $@
 
 $(WP_CONTENT_DIR)/plugins/epfl-menus: $(WP_CONTENT_DIR)
 	$(call git_clone, epfl-si/wp-plugin-epfl-menus)
@@ -392,7 +388,7 @@ rootsite:
 	      fi;                                                               \
 	    done;                                                               \
 	    mkdir -p $(SITE_DIR)/wp-content/themes;                             \
-	    for subtheme in wp-theme-2018 wp-theme-light wp-theme-breadcrumb; do                    \
+	    for subtheme in wp-theme-2018 wp-theme-light; do                    \
 	      if [ ! -e wp-content/themes/$$subtheme ]; then                    \
 	        ln -sfn ../../wp/wp-content/themes/wp-theme-2018.git/$$subtheme \
 	        wp-content/themes/$$subtheme;                                   \
