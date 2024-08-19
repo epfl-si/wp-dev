@@ -191,6 +191,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
+	                 --exclude=/wp/nginx-entrypoint \
 	            /wp; sleep 10" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpf - wp
 # Excluded directories --exclude= above) are replaced with a git

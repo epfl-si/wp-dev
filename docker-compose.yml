@@ -51,6 +51,10 @@ services:
       # Certificates are auto-generated when httpd first starts up.
       # For comfort, keep them across restarts
       - ./volumes/ssl:/etc/nginx/ssl
+      # nginx entrypoint and configuration enbugging
+      - ./wp-ops/docker/nginx:/wp/nginx-entrypoint
+      - ./wp-ops/docker/nginx/conf.d:/etc/nginx/conf.d
+
     links:
       - db:db
     # The `httpd` container only needs to know WP_ENV:
