@@ -59,14 +59,17 @@ EOF
         xdebug.remote_autostart=on
         xdebug.remote_host=$(myip)
 EOF
-            ;;
         esac
+        $dockerexec sh -c \
+                    "sed -i '/\/etc\/nginx\/conf.d/a fastcgi_read_timeout 3600s;' /etc/nginx/nginx.conf"
         ;;
     stop)
         $dockerexec sh -c \
             'rm -f /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini'
+        $dockerexec sh -c \
+                    "sed -i '/fastcgi_read_timeout 3600s/d' /etc/nginx/nginx.conf"
         ;;
     *) usage ;;
 esac
 
-$dockerexec sh -c 'killall -HUP php-fpm${PHP_VERSION}'
+$dockerexec /etc/init.d/nginx reload
