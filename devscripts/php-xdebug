@@ -44,7 +44,7 @@ case "$1" in
             # Linux is ok with the xdebug remote_connect_back strategy
             Linux)
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
+                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_connect_back=on
@@ -54,7 +54,7 @@ EOF
             *)
                 myip --ensure
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
+                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_host=$(myip)
@@ -64,9 +64,9 @@ EOF
         ;;
     stop)
         $dockerexec sh -c \
-            'rm -f /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini'
+            'rm -f /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini'
         ;;
     *) usage ;;
 esac
 
-$dockerexec apache2ctl graceful
+$dockerexec sh -c 'killall -HUP php-fpm${PHP_VERSION}'
