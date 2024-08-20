@@ -13,7 +13,7 @@ scrape_configs:
     static_configs:
       - targets:
           - prometheus:9090
-  - job_name: menu-api
+  - job_name: menu-api-siblings
     static_configs:
       - targets:
-          - menu-api:3001
+          - menu-api-siblings:3001
