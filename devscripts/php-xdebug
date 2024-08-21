@@ -13,6 +13,24 @@ Usage:
    php-xdebug start
    php-xdebug stop
 
+Here is a suitable configuration for Visual Studio Code's `launch.json`:
+
+  {
+      "version": "0.2.0",
+      "configurations": [
+          {
+              "name": "Listen for Xdebug",
+              "type": "php",
+              "request": "launch",
+              "port": 9000,
+              "pathMappings": {
+                "/wp": "${workspaceRoot}/volumes/wp",
+                "/wp/nginx-entrypoint": "${workspaceRoot}/wp-ops/docker/nginx"
+              }
+          }
+      ]
+  }
+
 See https://gist.github.com/chadrien/c90927ec2d160ffea9c4
 and also (if you use IntelliJ IDEA)
 https://www.jetbrains.com/help/idea/configuring-xdebug.html
