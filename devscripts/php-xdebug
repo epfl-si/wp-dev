@@ -61,7 +61,7 @@ EOF
 EOF
         esac
         $dockerexec sh -c \
-                    "sed -i '/\/etc\/nginx\/conf.d/a fastcgi_read_timeout 3600s;' /etc/nginx/nginx.conf"
+                    "grep 'fastcgi_read_timeout 3600s' /etc/nginx/nginx.conf || sed -i '/\/etc\/nginx\/conf.d/a fastcgi_read_timeout 3600s;' /etc/nginx/nginx.conf"
         ;;
     stop)
         $dockerexec sh -c \
