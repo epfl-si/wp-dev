@@ -91,3 +91,5 @@ EOF
 esac
 
 $dockerexec /etc/init.d/nginx reload
+$dockerexec sh -c 'killall -HUP php-fpm${PHP_VERSION}'
+
