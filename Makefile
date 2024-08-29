@@ -296,9 +296,7 @@ pull:
 	for image in $(_DOCKER_PULLED_IMAGES); do docker pull $$image; done
 	touch $@
 
-ifdef MINIMAL
-_DEFAULT_INSTALL_AUTO_FLAGS := --exclude=wp-media-folder --exclude=wpforms --exclude=wpforms-surveys-polls
-else
+ifndef MINIMAL
 _DEFAULT_INSTALL_AUTO_FLAGS = $(_S3_INSTALL_AUTO_FLAGS)   # Below
 endif
 
