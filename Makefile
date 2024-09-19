@@ -162,8 +162,8 @@ checkout: \
   $(WP_CONTENT_DIR)/mu-plugins \
   $(WP_CLI_DIR) \
   $(POLYLANG_CLI_DIR) \
-  menu-api \
   wp-ops \
+  wp-ops/docker/menu-api \
   volumes/usrlocalbin
 
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
@@ -282,8 +282,9 @@ wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
 
-wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
-	./wp-ops/ansible/wpsible -t nothing
+wp-ops/docker/menu-api: wp-ops
+	$(call git_clone, epfl-si/wp-menu-api $@)
+menu-api: wp-ops/docker/menu-api
 
 ################ Building or pulling Docker images ###############
 
@@ -321,7 +322,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 .debug.s3:
 	-@echo $(_S3_INSTALL_AUTO_FLAGS)
 
-.docker-base-image-built.stamp: wp-ops/ansible/ansible-deps-cache/bin/eyaml $(_DOCKER_BASE_IMAGE_DEPS)
+.docker-base-image-built.stamp: wp-ops/ansible/ansible-deps-cache/bin/eyaml menu-api $(_DOCKER_BASE_IMAGE_DEPS)
 	[ -d wp-ops/docker/wp-base ] && \
 	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
 	touch $@

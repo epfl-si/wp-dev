@@ -88,4 +88,4 @@ services:
 
   menu-api:
     container_name: menu-api
-    build: menu-api
+    build: wp-ops/docker/menu-api
