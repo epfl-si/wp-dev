@@ -25,9 +25,9 @@ S3_BUCKET_NAME="${S3_BUCKET_NAME:-svc0041-b80382f4fba20c6c1d9dc1bebefc5583}"
 
 export AWS_DEFAULT_REGION=us-east-1 # This is the default
 # Retrieve AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID and RESTIC_PASSWORD from keybase
-export AWS_SECRET_ACCESS_KEY=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A2 '\[backup-wwp\]' | grep aws_secret_access_key | sed 's/aws_secret_access_key = //')
-export AWS_ACCESS_KEY_ID=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A2 '\[backup-wwp\]' | grep aws_access_key_id | sed 's/aws_access_key_id = //')
-export RESTIC_PASSWORD=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A3 '\[backup-wwp\]' | grep restic_password | sed 's/restic_password = //')
+export AWS_SECRET_ACCESS_KEY=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A4 '\[backup-wwp\]' | grep aws_secret_access_key | sed 's/aws_secret_access_key = //')
+export AWS_ACCESS_KEY_ID=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A4 '\[backup-wwp\]' | grep aws_access_key_id | sed 's/aws_access_key_id = //')
+export RESTIC_PASSWORD=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A4 '\[backup-wwp\]' | grep restic_password | sed 's/restic_password = //')
 
 # Get the latest DB backup from S3
 restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/sql dump latest db-backup.sql > ${scriptdir}/../volumes/srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql
