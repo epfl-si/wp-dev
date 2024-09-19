@@ -21,7 +21,7 @@ _mgmt_container="$(docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=${WP_
 SITE_ORIGINAL_URL="${SITE_ORIGINAL_URL:-https://www.epfl.ch/campus/services/website/canari/}"
 SITE_ANSIBLE_IDENTIFIER="${SITE_ANSIBLE_IDENTIFIER:-www__campus__services__website__canari}"
 RESTORED_SITE_DIR_NAME="${RESTORED_SITE_DIR_NAME:-canari}"
-S3_BUCKET_NAME="${S3_BUCKET_NAME:-svc0041-df3298778888f91b2b62cf913f4c8c74}"
+S3_BUCKET_NAME="${S3_BUCKET_NAME:-svc0041-b80382f4fba20c6c1d9dc1bebefc5583}"
 
 export AWS_DEFAULT_REGION=us-east-1 # This is the default
 # Retrieve AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID and RESTIC_PASSWORD from keybase
