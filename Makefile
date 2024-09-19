@@ -94,8 +94,8 @@ _httpd_container = `docker ps -q --filter "label=ch.epfl.wordpress.httpd.env=$(W
 
 _docker_exec_mgmt := docker exec --user www-data -it \
 	  -e WP_ENV=$(WP_ENV) \
-	  -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
+	  -e MARIADB_ROOT_PASSWORD=$(MARIADB_ROOT_PASSWORD) \
+	  -e MARIADB_DB_HOST=$(MARIADB_DB_HOST) \
 	  $(_mgmt_container)
 
 .PHONY: vars
@@ -108,10 +108,10 @@ vars:
 
 	@echo ''
 	@echo DB-related vars:
-	@echo '  MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD)'
-	@echo '  MYSQL_DB_HOST=$(MYSQL_DB_HOST)'
-	@echo '  MYSQL_SUPER_USER=$(MYSQL_SUPER_USER)'
-	@echo '  MYSQL_SUPER_PASSWORD=$(MYSQL_SUPER_PASSWORD)'
+	@echo '  MARIADB_ROOT_PASSWORD=$(MARIADB_ROOT_PASSWORD)'
+	@echo '  MARIADB_DB_HOST=$(MARIADB_DB_HOST)'
+	@echo '  MARIADB_SUPER_USER=$(MARIADB_SUPER_USER)'
+	@echo '  MARIADB_SUPER_PASSWORD=$(MARIADB_SUPER_PASSWORD)'
 
 	@echo ''
 	@echo 'Wordpress-related vars:'
@@ -430,7 +430,7 @@ exec:
 
 .PHONY: mysql
 mysql:
-	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MYSQL_ROOT_PASSWORD -u root -h db'
+	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MARIADB_ROOT_PASSWORD -u root -h db'
 
 .PHONY: httpd
 httpd:
