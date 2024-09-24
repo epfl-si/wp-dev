@@ -22,7 +22,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - /var/lib/mysql
+      - ./volumes/mariadb:/var/lib/mysql
 
   phpmyadmin:
     container_name: wp-pma
