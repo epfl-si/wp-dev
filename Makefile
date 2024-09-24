@@ -282,9 +282,10 @@ wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
 
+.PHONY: menu-api
+menu-api: wp-ops/docker/menu-api
 wp-ops/docker/menu-api: wp-ops
 	$(call git_clone, epfl-si/wp-menu-api $@)
-menu-api: wp-ops/docker/menu-api
 
 ################ Building or pulling Docker images ###############
 
