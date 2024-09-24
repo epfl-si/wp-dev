@@ -282,8 +282,8 @@ wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
 	$(MAKE) -C wp-ops checkout
 
-menu-api:
-	$(call git_clone, epfl-si/wp-menu-api)
+wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
+	./wp-ops/ansible/wpsible -t nothing
 
 ################ Building or pulling Docker images ###############
 
@@ -321,15 +321,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 .debug.s3:
 	-@echo $(_S3_INSTALL_AUTO_FLAGS)
 
-.docker-base-image-built.stamp: wp-ops $(_DOCKER_BASE_IMAGE_DEPS)
-	@if PATH=$(_S3_SUITCASE_EYAML_PATH):$$PATH which eyaml; then : ; else \
-	  echo >&2 "eyaml command needed to decipher build-time secrets."; \
-	  echo >&2 "Please either install ruby and the hiera-eyaml gem,"; \
-	  echo >&2 "or deploy your Ansible suitcase: "; \
-	  echo >&2 ; \
-	  echo >&2 "   ./wp-ops/ansible/wpsible -t nothing"; \
-	fi
-
+.docker-base-image-built.stamp: wp-ops/ansible/ansible-deps-cache/bin/eyaml $(_DOCKER_BASE_IMAGE_DEPS)
 	[ -d wp-ops/docker/wp-base ] && \
 	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
 	touch $@
