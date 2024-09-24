@@ -91,4 +91,4 @@ services:
     build: wp-ops/docker/menu-api
     volumes:
       - ./wp-ops/docker/menu-api/menu-api-config.yaml:/config/menu-api-config.yaml
-      - ./wp-ops/docker/menu-api/data:/data
+      - ./wp-ops/docker/menu-api/data:/app/data
