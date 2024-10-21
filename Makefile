@@ -164,6 +164,7 @@ checkout: \
   $(POLYLANG_CLI_DIR) \
   menu-api \
   wp-ops \
+  wp-operator \
   volumes/usrlocalbin
 
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
@@ -286,6 +287,10 @@ wp-ops:
 
 wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
 	./wp-ops/ansible/wpsible -t nothing
+
+wp-operator:
+	$(call git_clone, epfl-si/wp-operator)
+
 
 ################ Building or pulling Docker images ###############
 
