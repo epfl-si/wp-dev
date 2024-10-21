@@ -281,7 +281,7 @@ $(WP_CONTENT_DIR)/plugins/epfl-partner-universities: $(WP_CONTENT_DIR)
 
 wp-ops:
 	$(call git_clone, epfl-si/wp-ops)
-	cd wp-ops; git checkout feature/nginx
+	cd wp-ops; git checkout WPN
 	$(MAKE) -C wp-ops checkout
 
 wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
