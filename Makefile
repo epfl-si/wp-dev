@@ -14,8 +14,6 @@ include .env
 	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-) >> $@
 	@echo _DOCKER_BUILT_IMAGES = $(DOCKER_BASE_IMAGE_NAME) $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
-	@echo _DOCKER_MGMT_IMAGE_DEPS = $(shell find wp-ops/docker/mgmt -type f | sed 's/\n/ /g') >> $@
-	@echo _DOCKER_NGINX_IMAGE_DEPS = $(shell find wp-ops/docker/nginx -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 
 m = $(notdir $(MAKE))
@@ -73,8 +71,6 @@ DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-all-images-built.stamp
 
 DOCKER_BASE_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/wp-base
-DOCKER_NGINX_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/nginx
-DOCKER_MGMT_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/mgmt
 
 WP_MAJOR_VERSION = 6
 WP_CONTENT_DIR = volumes/wp/$(WP_MAJOR_VERSION)/wp-content
@@ -164,22 +160,9 @@ checkout: \
   $(POLYLANG_CLI_DIR) \
   menu-api \
   wp-ops \
-  wp-operator \
-  volumes/usrlocalbin
+  wp-operator
 
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
-
-volumes/usrlocalbin: .docker-all-images-built.stamp
-	mkdir -p $@ || true
-	docker run --rm --name volumes-usrlocalbin-extractor \
-	  --entrypoint /bin/bash \
-	  $(DOCKER_MGMT_IMAGE_NAME) \
-	  -c "tar -C/usr/local/bin --exclude=new-wp-site -clf - ." \
-	  | $(_HOST_TAR_X) -Cvolumes/usrlocalbin -xpvf -
-	rm -f volumes/usrlocalbin/new-wp-site
-	(echo '#!/bin/sh'); echo 'exec /wp-ops/docker/mgmt/new-wp-site.sh "$@"' > volumes/usrlocalbin/new-wp-site
-	chmod 755 volumes/usrlocalbin/new-wp-site
-	touch $@
 
 $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
@@ -188,7 +171,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	mkdir -p volumes || true
 	docker run --rm --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
-	  $(DOCKER_NGINX_IMAGE_NAME) \
+	  $(DOCKER_BASE_IMAGE_NAME) \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
@@ -333,8 +316,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
 	touch $@
 
-.docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops \
-                                 $(_DOCKER_NGINX_IMAGE_DEPS)
+.docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops
 	docker compose build $(DOCKER_BUILD_ARGS)
 	touch $@
 
