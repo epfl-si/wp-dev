@@ -56,34 +56,6 @@ _docker_exec_mgmt := docker exec --user www-data -it \
 	  -e MYSQL_DB_HOST=$(MYSQL_DB_HOST) \
 	  $(_mgmt_container)
 
-.PHONY: vars
-vars:
-	@echo 'Environment-related vars:'
-	@echo '  WP_ENV=$(WP_ENV)'
-	@echo '  _mgmt_container=$(_mgmt_container)'
-	@echo '  _nginx_container=$(_nginx_container)'
-	@echo '  CTAGS_TARGETS=$(CTAGS_TARGETS)'
-
-	@echo ''
-	@echo DB-related vars:
-	@echo '  MARIADB_ROOT_PASSWORD=$(MARIADB_ROOT_PASSWORD)'
-	@echo '  MYSQL_DB_HOST=$(MYSQL_DB_HOST)'
-	@echo '  MYSQL_SUPER_USER=$(MYSQL_SUPER_USER)'
-	@echo '  MYSQL_SUPER_PASSWORD=$(MYSQL_SUPER_PASSWORD)'
-
-	@echo ''
-	@echo 'Wordpress-related vars:'
-	@echo '  WP_VERSION=$(WP_VERSION)'
-	@echo '  WP_ADMIN_USER=$(WP_ADMIN_USER)'
-	@echo '  WP_ADMIN_EMAIL=$(WP_ADMIN_EMAIL)'
-	@echo '  WP_PORT_HTTP=$(WP_PORT_HTTP)'
-	@echo '  WP_PORT_HTTPS=$(WP_PORT_HTTPS)'
-
-	@echo ''
-	@echo 'WPManagement-related vars:'
-	@echo '  WP_PORT_PHPMA=$(WP_PORT_PHPMA)'
-	@echo '  WP_PORT_SSHD=$(WP_PORT_SSHD)'
-
 ######################## Pulling code ##########################
 #
 # As a matter of taste, we'd rather have Makefile-driven `git clone`s
