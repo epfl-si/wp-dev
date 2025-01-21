@@ -31,8 +31,12 @@ ensure_php_xdebug_installed () {
          'test -f /etc/php/$PHP_VERSION/mods-available/xdebug.ini';
     then
         $dockerexec apt update
-        $dockerexec apt install php-xdebug
+        $dockerexec sh -c 'apt install php$PHP_VERSION-xdebug'
     fi
+}
+
+ensure_phpinfo_allowed () {
+  $dockerexec sh -c 'sed -i "s/^disable_functions/; disable_functions/" /etc/php/$PHP_VERSION/apache2/conf.d/95-epfl.ini'
 }
 
 set -e
@@ -40,14 +44,15 @@ set -e
 case "$1" in
     start)
         ensure_php_xdebug_installed
+        ensure_phpinfo_allowed
         case "$(uname -s)" in
             # Linux is ok with the xdebug remote_connect_back strategy
             Linux)
                 $dockerexec sh -c \
                     'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
-        xdebug.remote_enable=on
-        xdebug.remote_autostart=on
-        xdebug.remote_connect_back=on
+        xdebug.mode=debug
+        xdebug.start_with_request=yes
+        xdebug.discover_client_host=yes
 EOF
             ;;
             # Darwin is not, so use the current ip strategy
@@ -55,9 +60,9 @@ EOF
                 myip --ensure
                 $dockerexec sh -c \
                     'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
-        xdebug.remote_enable=on
-        xdebug.remote_autostart=on
-        xdebug.remote_host=$(myip)
+        xdebug.mode=debug
+        xdebug.start_with_request=yes
+        xdebug.client_host=$(myip)
 EOF
             ;;
         esac
