@@ -16,49 +16,11 @@ include .env
 	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 
-m = $(notdir $(MAKE))
 .PHONY: help
-help:
-	@echo 'Usage:'
-	@echo
-	@echo '$(m) help           Show this message'
-	@echo
-	@echo '$(m) checkout       Checkout wp-ops, WP Thems and Plugins. Use'
-	@echo '                        make checkout MINIMAL=1'
-	@echo "                    for a minimal version that doesn't need ISAS-FSD accesses"
-	@echo
-	@echo '$(m) up             Start up a local WordPress instance'
-	@echo '                    with docker compose for development.'
-	@echo '                    Be sure to review ../README.md for'
-	@echo '                    preliminary steps (entry in /etc/hosts,'
-	@echo '                    .env file and more)'
-	@echo
-	@echo '$(m) gutenberg      Start the building and Hotserver for Gutenberg developments'
-	@echo
-	@echo '$(m) stop           Stop the development environment'
-	@echo '$(m) down           Bring down the development environment'
-	@echo '$(m) clean'
-	@echo
-	@echo '$(m) exec           Enter the management container'
-	@echo '$(m) nginx          Enter the nginx container'
-	@echo '$(m) mysql          Enter the MySQL container'
-	@echo
-	@echo '$(m) lnav           Improved error logs compilation through the terminal'
-	@echo "$(m) tail-access    Follow the tail of Apache's access resp."
-	@echo '$(m) tail-errors    error logs through the terminal'
-	@echo
-	@echo '$(m) tail-sql       Activate and follow the MySQL general'
-	@echo '                    query log'
-	@echo
-	@echo '$(m) pull           Refresh the Docker images'
-	@echo '$(m) clean-images   Prune the Docker images'
-	@echo '$(m) docker-build   Build the Docker images'
-	@echo
-	@echo '$(m) backup         Backup the whole state (incl. MySQL)'
-	@echo '                    to wordpress-state.tgz'
-	@echo '$(m) restore        Restore from wordpress-state.tgz'
-	@echo
-	@echo '$(m) vars           Summarize the vars from the dot env file'
+help: ## Display this help.
+# The '##@' marker creates sections in the help  message, and '##' at the end
+# of the name of a rule (after its dependencies, if any) documents it.
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 # Default values, can be overridden either on the command line of make
 # or in .env
@@ -132,7 +94,10 @@ vars:
 # from the "nginx" Docker image, and we create a couple of symlinks too.
 
 .PHONY: checkout
-checkout: \
+checkout: ## Checkout wp-ops, WP Thems and Plugins
+	$(MAKE) .checkout
+
+.checkout: \
   $(WP_CONTENT_DIR) \
   $(WP_CONTENT_DIR)/plugins/accred \
   $(WP_CONTENT_DIR)/plugins/tequila \
@@ -278,7 +243,7 @@ wp-operator:
 ################ Building or pulling Docker images ###############
 
 .PHONY: pull
-pull:
+pull:  ## Refresh the Docker images
 	rm -f .docker-images-pulled.stamp
 	$(MAKE) .docker-images-pulled.stamp
 
@@ -321,12 +286,12 @@ _S3_INSTALL_AUTO_FLAGS = \
 	touch $@
 
 .PHONY: docker-build
-docker-build:
+docker-build:  ## Build the Docker images locally
 	rm -f .docker*built.stamp
 	$(MAKE) .docker-all-images-built.stamp
 
 .PHONY: clean-images
-clean-images:
+clean-images:  ## Prune the Docker images
 	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES); do docker rmi $$image || true; done
 	docker image prune
 	rm -f .docker*.stamp
@@ -336,7 +301,7 @@ clean-images:
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test
+up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test  ## Start up a local WordPress instance
 	$(source_smtp_secrets); \
 	docker compose up -d
 	./devscripts/await-mariadb-ready
@@ -348,7 +313,7 @@ nvm:
 	. ${NVM_DIR}/nvm.sh && nvm install 20;
 
 .PHONY: gutenberg
-gutenberg:
+gutenberg:  ## Start the development server for Gutenberg
 	$(MAKE) nvm
 	cd $(WP_CONTENT_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
@@ -377,11 +342,11 @@ rootsite:
 	    '
 
 .PHONY: stop
-stop:
+stop:  ## Stop the local WordPress instance
 	docker compose stop
 
 .PHONY: down
-down:
+down:  ## Stop the local WordPress instance and delete its containers
 	docker compose down
 
 _find_git_depots := find . \( -path ./volumes/srv -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
@@ -406,23 +371,23 @@ endef
 ######################## Development Tasks ########################
 
 .PHONY: exec
-exec:
+exec:  ## Enter the management container
 	@$(_docker_exec_mgmt) bash -l
 
 .PHONY: mysql
-mysql:
+mysql:  ## Run a MySQL command-line client
 	@$(_docker_exec_mgmt) bash -c 'mysql -p$$MARIADB_ROOT_PASSWORD -u root -h db'
 
 .PHONY: nginx
-nginx:
+nginx:  ## Enter the nginx container
 	@docker exec -it $(_nginx_container) bash -l
 
 .PHONY: tail-errors
-tail-errors:
+tail-errors:  ## Follow the Apache error log
 	tail -F volumes/srv/*/logs/error_log.*.`date +%Y%m%d`
 
 .PHONY: tail-access
-tail-access:
+tail-access:  ## Follow the Apache access log
 	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
 
 .PHONY: logs
@@ -434,14 +399,17 @@ lnav:
 	@$(_docker_exec_mgmt) bash -c 'lnav /srv/*/logs'
 
 .PHONY: tail-sql
-tail-sql:
+tail-sql:  ## Activate and follow the MySQL general query log
 	./devscripts/mysql-general-log tail
 
+########################################################################
+##@ Developer Support
+
 CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)
-tags: checkout
+tags: checkout  ## Index the source code in vim format
 	ctags $(CTAGS_FLAGS)
 
-TAGS: checkout
+TAGS: checkout  ## Index the source code in Emacs ”etags” format
 	ctags -e $(CTAGS_FLAGS)
 
 .phony: backup
@@ -452,10 +420,11 @@ backup:
 restore:
 	./devscripts/backup-restore restore wordpress-state.tgz
 
-######################## Cleaning up ##########################
+########################################################################
+##@ Cleanup
 
 .PHONY: clean
-clean: down clean-images
+clean: down clean-images  ## Prune the Docker images
 	rm -f .make.vars TAGS tags
 
 .PHONY: mrproper
