@@ -220,27 +220,6 @@ wp-operator:
 	$(call git_clone, epfl-si/wp-operator)
 	cd wp-operator; git checkout main
 
-.PHONY: wpn
-wpn: ## Build wp-base then wp-nginx and wp-php and push them
-ifeq ($(VER),)
-	$(error Need a value for VER, e.g., make wpn VER=001)
-endif
-
-	set -e -x; \
-	echo "Build wp-nginx:2025-$(VER) & wp-php:2025-$(VER)" ; \
-	docker build -t wp-base \
-		--build-arg AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID \
-		--build-arg AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
-		wp-ops/docker/wp-base ; \
-	docker build -t quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) \
-		wp-ops/docker/wordpress-nginx ; \
-	docker build -t quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) \
-		wp-ops/docker/wordpress-php ; \
-	docker push quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) ; \
-	docker push quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) ; \
-	echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
-
-
 ################ Building or pulling Docker images ###############
 
 .PHONY: pull
@@ -306,6 +285,27 @@ clean-images:  ## Prune the Docker images
 	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES); do docker rmi $$image || true; done
 	docker image prune
 	rm -f .docker*.stamp
+
+.PHONY: wpn
+wpn: ## Build wp-base then wp-nginx and wp-php and push them
+ifeq ($(VER),)
+	$(error Need a value for VER, e.g., make wpn VER=001)
+endif
+
+	set -e -x; \
+	echo "Build wp-nginx:2025-$(VER) & wp-php:2025-$(VER)" ; \
+	docker build -t wp-base \
+		--build-arg AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID \
+		--build-arg AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
+		wp-ops/docker/wp-base ; \
+	docker build -t quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) \
+		wp-ops/docker/wordpress-nginx ; \
+	docker build -t quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) \
+		wp-ops/docker/wordpress-php ; \
+	docker push quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) ; \
+	docker push quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) ; \
+	echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
+
 
 ######################## Development Lifecycle #####################
 
