@@ -392,7 +392,7 @@ restore:
 ##@ Cleanup
 
 .PHONY: clean
-clean: down clean-images  ## Prune the Docker images
+clean: down clean-images  ## Tear down generated files and Docker-side state
 	rm -f .make.vars TAGS tags
 
 .PHONY: mrproper
