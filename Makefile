@@ -266,7 +266,6 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
 up: checkout docker-build volumes/srv/test  ## Start up a local WordPress instance
-	$(source_smtp_secrets); \
 	docker compose up -d
 	./devscripts/await-mariadb-ready
 	$(MAKE) rootsite
@@ -325,12 +324,6 @@ gitpull:
 volumes/srv/test:
 	mkdir -p "$@"
 	chmod 1777 "$@"
-
-# SMTP secret
-define source_smtp_secrets
-	eval $$(keybase fs read /keybase/team/epfl_wp_test/service-noreply-wwp.sh|grep SMTP_SECRET) ; \
-	export SMTP_SECRET
-endef
 
 ######################## Development Tasks ########################
 
