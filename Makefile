@@ -209,7 +209,7 @@ wp-operator:
 .PHONY: wpn
 wpn: ## Build wp-base then wp-nginx and wp-php and push them
 ifeq ($(VER),)
-	$(error Need a value for VER, e.g., make wpn-base VER=001)
+	$(error Need a value for VER, e.g., make wpn VER=001)
 endif
 
 	set -e -x; \
