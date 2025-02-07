@@ -238,23 +238,33 @@ clean-images:  ## Prune the Docker images
 	for image in $$docker_pulled_images $$docker_built_images ; do docker rmi $$image || true; done
 	docker image prune
 
+define expand_ver
+case "$(VER)" in \
+  202[456789]-*) ver="$(VER)" ;; \
+  *) ver="$$(date +%Y)-$(VER)" ;; \
+esac
+endef
+
 .PHONY: wpn
-wpn: ## Build the wp-nginx and wp-php images and push them
+wpn: ## Build the wp-nginx and wp-php images
 ifeq ($(VER),)
 	$(error Need a value for VER, e.g., make wpn VER=001)
 endif
 	@$(ensure_wp_base)
 
-	case "$(VER)" in \
-	  202[456789]-*) ver="$(VER)" ;; \
-	  *) ver="$$(date +%Y)-$(VER)" ;; \
-	esac; \
+	@$(expand_ver); \
+	echo "Building wp-nginx:$$ver & wp-php:$$ver" ; \
 	set -e -x; \
-	echo "Build wp-nginx:$$ver & wp-php:$$ver" ; \
 	docker build -t quay-its.epfl.ch/svc0041/wp-nginx:$$ver \
 		wp-ops/docker/wordpress-nginx ; \
 	docker build -t quay-its.epfl.ch/svc0041/wp-php:$$ver \
-		wp-ops/docker/wordpress-php ; \
+		wp-ops/docker/wordpress-php
+
+.PHONY: wpn-push
+wpn-push: ## Push the wp-nginx and wp-php images
+	@$(expand_ver); \
+	echo "Pushing wp-nginx:$$ver & wp-php:$$ver" ; \
+	set -e -x; \
 	docker push quay-its.epfl.ch/svc0041/wp-nginx:$$ver ; \
 	docker push quay-its.epfl.ch/svc0041/wp-php:$$ver ; \
 	echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
