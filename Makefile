@@ -15,6 +15,22 @@ include .env
 	@echo _DOCKER_BUILT_IMAGES = wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
 	@echo _WPBASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
+	@keybase fs read /keybase/team/epfl_wp_test/s3-assets-credentials.sh >> $@
+	@if ! grep AWS_ACCESS_KEY_ID $@ > /dev/null; then \
+	   echo >&2 "##############################################################" ;    \
+	   echo >&2 "#" ;                                                                 \
+	   echo >&2 "# WARNING: keybase failure; built Docker images" ;                   \
+	   echo >&2 "# will be missing the plugins hosted on EPFL's Scality S3" ;         \
+	   echo >&2 "# servers." ;                                                        \
+	   echo >&2 "#" ;                                                                 \
+	   echo >&2 "# Assuming you have access to these, please review the error" ;      \
+	   echo >&2 "# messages above to troubleshoot." ;                                 \
+	   echo >&2 "#" ;                                                                 \
+	   echo >&2 "##############################################################" ;    \
+	   echo >&2 "Press Return to continue:" ;                                         \
+	   read;                                                                          \
+	 fi
+
 
 .PHONY: help
 help: ## Display this help.
@@ -212,7 +228,6 @@ endif
 
 	set -e -x; \
 	echo "Build wp-nginx:2025-$(VER) & wp-php:2025-$(VER)" ; \
-	. /keybase/team/epfl_wp_test/s3-assets-credentials.sh ; \
 	docker build -t wp-base \
 		--build-arg AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID \
 		--build-arg AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
