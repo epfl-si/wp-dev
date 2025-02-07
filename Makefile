@@ -39,14 +39,6 @@ WP_CONTENT_DIR = volumes/wp/$(WP_MAJOR_VERSION)/wp-content
 WP_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/wp-cli
 POLYLANG_CLI_DIR = volumes/wp/wp-cli/vendor/epfl-si/polylang-cli
 
-CTAGS_TARGETS = volumes/wp/$(WP_MAJOR_VERSION)/*.php \
-  volumes/wp/$(WP_MAJOR_VERSION)/wp-admin \
-  volumes/wp/$(WP_MAJOR_VERSION)/wp-includes \
-  $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
-  $(WP_CONTENT_DIR)/plugins/epfl-* \
-  $(WP_CONTENT_DIR)/plugins/polylang \
-  $(WP_CONTENT_DIR)/mu-plugins
-
 _mgmt_container = `docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=$(WP_ENV)"`
 _nginx_container = `docker ps -q --filter "label=ch.epfl.wordpress.nginx.env=$(WP_ENV)"`
 
@@ -405,6 +397,15 @@ tail-sql:  ## Activate and follow the MySQL general query log
 ##@ Developer Support
 
 CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)
+
+CTAGS_TARGETS = volumes/wp/$(WP_MAJOR_VERSION)/*.php \
+  volumes/wp/$(WP_MAJOR_VERSION)/wp-admin \
+  volumes/wp/$(WP_MAJOR_VERSION)/wp-includes \
+  $(WP_CONTENT_DIR)/themes/wp-theme-2018 \
+  $(WP_CONTENT_DIR)/plugins/epfl-* \
+  $(WP_CONTENT_DIR)/plugins/polylang \
+  $(WP_CONTENT_DIR)/mu-plugins
+
 tags: checkout  ## Index the source code in vim format
 	ctags $(CTAGS_FLAGS)
 
