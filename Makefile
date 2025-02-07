@@ -244,14 +244,18 @@ ifeq ($(VER),)
 endif
 	@$(ensure_wp_base)
 
+	case "$(VER)" in \
+	  202[456789]-*) ver="$(VER)" ;; \
+	  *) ver="$$(date +%Y)-$(VER)" ;; \
+	esac; \
 	set -e -x; \
-	echo "Build wp-nginx:2025-$(VER) & wp-php:2025-$(VER)" ; \
-	docker build -t quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) \
+	echo "Build wp-nginx:$$ver & wp-php:$$ver" ; \
+	docker build -t quay-its.epfl.ch/svc0041/wp-nginx:$$ver \
 		wp-ops/docker/wordpress-nginx ; \
-	docker build -t quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) \
+	docker build -t quay-its.epfl.ch/svc0041/wp-php:$$ver \
 		wp-ops/docker/wordpress-php ; \
-	docker push quay-its.epfl.ch/svc0041/wp-nginx:2025-$(VER) ; \
-	docker push quay-its.epfl.ch/svc0041/wp-php:2025-$(VER) ; \
+	docker push quay-its.epfl.ch/svc0041/wp-nginx:$$ver ; \
+	docker push quay-its.epfl.ch/svc0041/wp-php:$$ver ; \
 	echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
 
 
