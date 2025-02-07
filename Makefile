@@ -115,9 +115,10 @@ $(WP_CONTENT_DIR):
 	                 --exclude=/wp/nginx-entrypoint \
 	            /wp; sleep 10" \
 	  | $(_HOST_TAR_X) -Cvolumes -xpf - wp
-# Excluded directories --exclude= above) are replaced with a git
-# checkout of same (next few targets below).
 	touch $@
+
+# Directories excluded from unpacking (--exclude=, above) are replaced with a git
+# checkout of same, thanks to the following targets:
 
 $(WP_CONTENT_DIR)/plugins:
 	@mkdir -p $(dir $@) || true
