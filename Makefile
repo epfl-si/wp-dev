@@ -12,8 +12,8 @@ include .env
 # account set up with an ssh public key for the latter)
 	@echo _GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/) >> $@
 	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-) >> $@
-	@echo _DOCKER_BUILT_IMAGES = $(DOCKER_BASE_IMAGE_NAME) $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
-	@echo _DOCKER_BASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
+	@echo _DOCKER_BUILT_IMAGES = wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
+	@echo _WPBASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 
 .PHONY: help
@@ -31,8 +31,6 @@ WP_PORT_HTTPS ?= 443
 DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
   .docker-base-image-built.stamp \
   .docker-all-images-built.stamp
-
-DOCKER_BASE_IMAGE_NAME = docker-registry.default.svc:5000/wwp-test/wp-base
 
 WP_MAJOR_VERSION = 6
 WP_CONTENT_DIR = volumes/wp/$(WP_MAJOR_VERSION)/wp-content
@@ -100,7 +98,7 @@ $(WP_CONTENT_DIR): .docker-all-images-built.stamp
 	mkdir -p volumes || true
 	docker run --rm --name volumes-wp-extractor \
 	  --entrypoint /bin/bash \
-	  $(DOCKER_BASE_IMAGE_NAME) \
+	  wp-base \
 	  -c "tar -clf - --exclude=/wp/*/wp-content/themes/{wp-theme-2018,wp-theme-light} \
 	                 --exclude=/wp/*/wp-content/plugins/{accred,tequila,enlighter,*epfl*,*EPFL*} \
 	                 --exclude=/wp/*/wp-content/mu-plugins \
@@ -266,7 +264,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 .debug.s3:
 	-@echo $(_S3_INSTALL_AUTO_FLAGS)
 
-.docker-base-image-built.stamp: wp-ops $(_DOCKER_BASE_IMAGE_DEPS)
+.docker-base-image-built.stamp: wp-ops $(_WPBASE_IMAGE_DEPS)
 	@if PATH=$(_S3_SUITCASE_EYAML_PATH):$$PATH which eyaml; then : ; else \
 	  echo >&2 "eyaml command needed to decipher build-time secrets."; \
 	  echo >&2 "Please either install ruby and the hiera-eyaml gem,"; \
@@ -276,7 +274,7 @@ _S3_INSTALL_AUTO_FLAGS = \
 	fi
 
 	[ -d wp-ops/docker/wp-base ] && \
-	  docker build -t $(DOCKER_BASE_IMAGE_NAME) $(DOCKER_BASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
+	  docker build -t wp-base $(WPBASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
 	touch $@
 
 .docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops
