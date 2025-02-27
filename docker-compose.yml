@@ -1,28 +1,68 @@
 # docker-compose.yml for running a local copy of the WordPress stack
 #
-# Unlike the real thing, there is no Varnish (but there is phpmyadmin)
-#
-# This docker-compose.yml file works hand-to-hand with the Makefie,
-# which ensures that all required images are built, and code
-# repositories are checked out.
+#                           WORK IN PROGRESS
 #
 # docker compose automatically sources the .env file if it exists
 # (see https://docs.docker.com/compose/environment-variables/#the-env-file);
 # this is what makes the ${VARIABLE} expansions below work.
-
-version: '3'
-
+#
 services:
 
-  db:
+  mariadb:
     container_name: wp-db
-    image: mariadb:11.4
+    # https://quay-its.epfl.ch/repository/svc0041/mariadb
+    image: quay-its.epfl.ch/svc0041/mariadb:11.4.4
     environment:
-      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-secret}
+      - MARIADB_USER=${MARIADB_USER:-wp}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-secret}
+      - MARIADB_DATABASE=${MARIADB_DATABASE:-wordpress}
     ports:
       - 3306:3306
     volumes:
       - ./volumes/mariadb:/var/lib/mysql
+
+  php:
+    container_name: wp-php
+    # https://quay-its.epfl.ch/repository/svc0041/wp-php
+    image: quay-its.epfl.ch/svc0041/wp-php:2025-033
+    volumes:
+      # For now, obtained by running
+      # sudo docker cp wp-php:/wp volumes/wp
+      - ./volumes/wp:/wp
+      - ./volumes/fpm-socket:/run/php-fpm
+      # A PHP file (wp-nonces.php) containing these secret keys:
+      # https://api.wordpress.org/secret-key/1.1/salt/
+      - ./volumes/wp-nonces:/wp-nonces
+
+  nginx:
+    container_name: wp-nginx
+    # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
+    image: quay-its.epfl.ch/svc0041/wp-nginx:2025-033
+    ports:
+      - 80:80
+    volumes:
+      - ./volumes/wp:/wp
+      - ./volumes/fpm-socket:/run/php-fpm
+      - ./nginx-dev.conf:/etc/nginx/nginx.conf
+    command:
+      - /usr/bin/nginx
+      - -c
+      - /etc/nginx/nginx.conf
+
+  menu-api:
+    container_name: wp-menu-api
+    # build: menu-api
+    # https://quay-its.epfl.ch/repository/svc0041/menu-api
+    image: quay-its.epfl.ch/svc0041/menu-api:2025-016
+
+  clinic:
+    container_name: wp-clinic
+    # https://quay-its.epfl.ch/repository/svc0041/ubuntu
+    image: quay-its.epfl.ch/svc0041/ubuntu
+    command: ["sleep","infinity"]
+    volumes:
+      - ./volumes/wp:/wp
 
   phpmyadmin:
     container_name: wp-pma
@@ -30,10 +70,6 @@ services:
     environment:
       - PMA_ARBITRARY=1
     ports:
-      - ${WP_PORT_PHPMA}:80
+      - ${WP_PORT_PHPMA:-8080}:80
     volumes:
       - /sessions
-
-  menu-api:
-    container_name: menu-api
-    build: menu-api
