@@ -188,6 +188,8 @@ gutenberg: ## Start the development server for Gutenberg
 run/nginx/nginx-dev.conf:
 	# FIXME nginx configuration should be generated. Alors we need a way to
 	# generate a couple of websites in it.
+	mkdir -p run/nginx || true
+	chmod 1777 run/nginx || true
 	cp nginx-dev.conf run/nginx/nginx-dev.conf
 
 run/wp-nonces/wp-nonces.php:
