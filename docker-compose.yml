@@ -67,6 +67,10 @@ services:
     # build: menu-api
     # https://quay-its.epfl.ch/repository/svc0041/menu-api
     image: quay-its.epfl.ch/svc0041/menu-api:${WP_MENUAPI_IMAGE_VERSION:-2025-016}
+    ports:
+      - 3001:3001
+    volumes:
+      - ./menu-api/menu-api-config.yaml:/config/menu-api-config.yaml
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
