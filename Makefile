@@ -72,7 +72,6 @@ checkout: ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
 
 
 $(WP_SRC_DIR):
-	$(ensure_wp_base)
 	# TODO ensure wp-php
 	-rm -f $(WP_SRC_DIR)
 	mkdir -p "$@" || true
