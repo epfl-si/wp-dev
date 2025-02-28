@@ -48,6 +48,7 @@ services:
     image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-033}
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ./src:/wp
       - ./run/sockets:/run/php-fpm

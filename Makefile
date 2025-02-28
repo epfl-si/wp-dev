@@ -194,15 +194,15 @@ run/wp-nonces/wp-nonces.php:
 	curl -s https://api.wordpress.org/secret-key/1.1/salt/ >> run/wp-nonces/wp-nonces.php
 
 # https://stackoverflow.com/a/41366949/960623
-run/certs: run/certs/wordpress.localhost.crt run/certs/wordpress.localhost.key
+run/certs:
 	mkdir -p $@ || true
 	chmod 1777 $@ || true
-	openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 \
-	  -days 3650 -nodes \
+	# openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 \
+	openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
 	  -keyout run/certs/wordpress.localhost.key \
 	  -out run/certs/wordpress.localhost.crt \
-	  -subj "/CN=wordpress.localhost" \
-	  -addext "subjectAltName=DNS:wordpress.localhost,DNS:*.example.com,IP:10.0.0.1"
+	  -subj "/CN=wordpress.localhost"
+	  # -addext "subjectAltName=DNS:wordpress.localhost,DNS:*.example.com,IP:10.0.0.1"
 
 # .PHONY: rootsite
 # rootsite:
