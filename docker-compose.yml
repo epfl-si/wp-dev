@@ -6,12 +6,13 @@
 # (see https://docs.docker.com/compose/environment-variables/#the-env-file);
 # this is what makes the ${VARIABLE} expansions below work.
 #
+
 services:
 
   mariadb:
     container_name: wp-db
     # https://quay-its.epfl.ch/repository/svc0041/mariadb
-    image: quay-its.epfl.ch/svc0041/mariadb:11.4.4
+    image: quay-its.epfl.ch/svc0041/mariadb:${WP_MARIADB_IMAGE_VERSION:-11.4.4}
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-secret}
       - MARIADB_USER=${MARIADB_USER:-wp}
@@ -20,49 +21,62 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./volumes/mariadb:/var/lib/mysql
+      - ./var/mariadb:/var/lib/mysql
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
 
   php:
     container_name: wp-php
     # https://quay-its.epfl.ch/repository/svc0041/wp-php
-    image: quay-its.epfl.ch/svc0041/wp-php:2025-033
+    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-033}
     volumes:
       # For now, obtained by running
-      # sudo docker cp wp-php:/wp volumes/wp
-      - ./volumes/wp:/wp
-      - ./volumes/fpm-socket:/run/php-fpm
+      # sudo docker cp wp-php:/wp/. src/
+      - ./src:/wp/6
+      - ./run/sockets:/run/php-fpm
       # A PHP file (wp-nonces.php) containing these secret keys:
       # https://api.wordpress.org/secret-key/1.1/salt/
-      - ./volumes/wp-nonces:/wp-nonces
+      - ./run/wp-nonces:/wp-nonces
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
 
   nginx:
     container_name: wp-nginx
     # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
-    image: quay-its.epfl.ch/svc0041/wp-nginx:2025-033
+    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-033}
     ports:
       - 80:80
     volumes:
-      - ./volumes/wp:/wp
-      - ./volumes/fpm-socket:/run/php-fpm
-      - ./nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./src:/wp
+      - ./run/sockets:/run/php-fpm
+      - ./run/nginx/nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./run/certs:/etc/nginx/ssl
     command:
       - /usr/bin/nginx
       - -c
       - /etc/nginx/nginx.conf
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
 
   menu-api:
     container_name: wp-menu-api
     # build: menu-api
     # https://quay-its.epfl.ch/repository/svc0041/menu-api
-    image: quay-its.epfl.ch/svc0041/menu-api:2025-016
+    image: quay-its.epfl.ch/svc0041/menu-api:${WP_MENUAPI_IMAGE_VERSION:-2025-016}
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
 
-  clinic:
-    container_name: wp-clinic
-    # https://quay-its.epfl.ch/repository/svc0041/ubuntu
-    image: quay-its.epfl.ch/svc0041/ubuntu
-    command: ["sleep","infinity"]
-    volumes:
-      - ./volumes/wp:/wp
+  # clinic:
+  #   container_name: wp-clinic
+  #   # https://quay-its.epfl.ch/repository/svc0041/ubuntu
+  #   image: quay-its.epfl.ch/svc0041/ubuntu
+  #   command: ["sleep","infinity"]
+  #   volumes:
+  #     - volumes/wp:/wp
 
   phpmyadmin:
     container_name: wp-pma
@@ -70,6 +84,7 @@ services:
     environment:
       - PMA_ARBITRARY=1
     ports:
-      - ${WP_PORT_PHPMA:-8080}:80
-    volumes:
-      - /sessions
+      - ${WP_PHPMA_PORT:-8080}:80
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"

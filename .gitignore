@@ -1,7 +1,14 @@
-volumes/
+# These are used as Docker's volumes
+src/
+run/
+var/
+
+# Other repositories cloned here
 wp-ops/
 menu-api/
 wp-operator/
+
+# 
 .env
 .make.vars
 .docker*.stamp
