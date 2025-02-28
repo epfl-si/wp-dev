@@ -12,7 +12,7 @@ die () {
 }
 
 dockermariadb () {
-    local dockerbash="docker compose exec -T db bash -c"
+    local dockerbash="docker compose exec -T mariadb bash -c"
     case "$1" in
         mariadb|mysqldump)
             local cmd="$1"; shift
