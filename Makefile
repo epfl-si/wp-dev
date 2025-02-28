@@ -170,7 +170,7 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout run/nginx/nginx-dev.conf run/wp-nonces/wp-nonces.php run/certs docker-build src ## Start up a local WordPress instance
+up: checkout run/nginx/nginx-dev.conf run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
 	docker compose up -d
 	./devscripts/await-mariadb-ready
 	# $(MAKE) rootsite
