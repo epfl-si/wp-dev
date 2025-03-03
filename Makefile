@@ -39,7 +39,7 @@ help: ## Display this help
 
 # The '##@' marker creates sections in the help message, and '##' at the end
 # of the name of a rule (after its dependencies, if any) documents it.
-	@awk 'BEGIN {FS = ":.*##"; printf "\n\033[1mUsage\033[0m\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\n\033[1mUsage\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 .PHONY: all
 all: checkout git-pull up
@@ -68,7 +68,6 @@ checkout: ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
   wp-ops \
   wp-operator \
   menu-api
-
 
 $(WP_SRC_DIR):
 	# TODO ensure wp-php
@@ -124,13 +123,6 @@ docker-build: ## Build the Docker images locally
 	@$(ensure_wp_base)
 	docker compose build $(DOCKER_BUILD_ARGS)
 
-.PHONY: clean-images
-clean-images: ## Prune the Docker images
-	docker_pulled_images="$$(cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-)"; \
-	docker_built_images="wp-base $$(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-)"; \
-	for image in $$docker_pulled_images $$docker_built_images ; do docker rmi $$image || true; done
-	docker image prune
-
 define expand_ver
 case "$(VER)" in \
   202[456789]-*) ver="$(VER)" ;; \
@@ -176,20 +168,20 @@ up: checkout run/nginx/nginx.conf run/wp-nonces/wp-nonces.php run/certs src ## S
 	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
 	@echo "install nvm and run 'make gutenberg'"
 
-nvm:
-	. ${NVM_DIR}/nvm.sh && nvm install 20;
-
-.PHONY: gutenberg
-gutenberg: ## Start the development server for Gutenberg
-	$(MAKE) nvm
-	cd $(WP_SRC_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
-
 run/nginx/nginx.conf: nginx-dev.conf
 	# FIXME nginx configuration should be generated. Alors we need a way to
 	# generate a couple of websites in it.
 	mkdir -p run/nginx || true
 	chmod 1777 run/nginx || true
 	cp $< $@
+
+run/nginx-entrypoint/nginx-entrypoint.php:
+	mkdir -p nginx-entrypoint || true
+	chmod 1777 nginx-entrypoint || true
+	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
+	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL) sleep 100
+	# Copy the latest version of WordPress from the image
+	docker cp wp-php-4-wp-extractor:/wp/nginx-entrypoint/nginx-entrypoint.php $@
 
 run/wp-nonces/wp-nonces.php:
 	mkdir -p run/wp-nonces || true
@@ -242,6 +234,14 @@ stop: ## Stop the local WordPress instance
 down: ## Stop the local WordPress instance and delete its containers
 	docker compose down
 
+nvm:
+	. ${NVM_DIR}/nvm.sh && nvm install 20;
+
+.PHONY: gutenberg
+gutenberg: ## Start the development server for Gutenberg
+	$(MAKE) nvm
+	cd $(WP_SRC_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
+
 
 ########################################################################
 ##@ Daily Business
@@ -250,32 +250,52 @@ down: ## Stop the local WordPress instance and delete its containers
 exec: ## Enter the management container
 	@$(_docker_exec_clinic) bash -l
 
-.PHONY: mysql
-mysql: ## Run a MariDB command-line client
-	@$(_docker_exec_clinic) bash -c 'mariadb -p$$MARIADB_ROOT_PASSWORD -u root -h mariadb'
-
 .PHONY: nginx
 nginx: ## Enter the nginx container
 	@docker exec -it wp-nginx bash -l
 
-.PHONY: tail-errors
-tail-errors: ## Follow the Apache error log
-	tail -F volumes/srv/*/logs/error_log.*.`date +%Y%m%d`
+.PHONY: php
+php: ## Enter the PHP container
+	@docker exec -it wp-php bash -l
 
-.PHONY: tail-access
-tail-access: ## Follow the Apache access log
-	tail -F volumes/srv/*/logs/access_log.*.`date +%Y%m%d`
+.PHONY: mariadb
+mariadb: ## Run a MariaDB command-line client
+	@$(_docker_exec_clinic) bash -c 'mariadb -p$$MARIADB_ROOT_PASSWORD -u root -h mariadb'
+
+.PHONY: wp-menu-api
+wp-menu-api: ## Enter the menu-api container
+	@docker exec -it wp-menu-api bash -l
+
+
+########################################################################
+##@ Backup / Restore
+
+.PHONY: backup
+backup: ## Backup the current state
+	./devscripts/backup-restore backup wordpress-state.tgz
+
+.PHONY: restore
+restore: ## Restore the current state
+	./devscripts/backup-restore restore wordpress-state.tgz
+
+
+########################################################################
+##@ Observe
 
 .PHONY: logs
-logs:
+logs: ## Follow the docker compose's log
 	docker compose logs -f --tail=5
+
+.PHONY: tail-errors
+tail-errors: ## Follow the nginx error log
+	docker compose logs -f --tail=5 nginx
 
 .PHONY: lnav
 lnav:
 	@$(_docker_exec_clinic) bash -c 'lnav /srv/*/logs'
 
 .PHONY: tail-sql
-tail-sql: ## Activate and follow the MySQL general query log
+tail-sql: ## Activate and follow the MariaDB general query log
 	./devscripts/mysql-general-log tail
 
 
@@ -298,24 +318,23 @@ tags: checkout ## Index the source code in vim format
 TAGS: checkout ## Index the source code in Emacs ”etags” format
 	ctags -e $(CTAGS_FLAGS)
 
-.PHONY: backup
-backup:
-	./devscripts/backup-restore backup wordpress-state.tgz
-
-.PHONY: restore
-restore:
-	./devscripts/backup-restore restore wordpress-state.tgz
-
 
 ########################################################################
 ##@ Cleanup
+
+.PHONY: clean-images
+clean-images: ## Prune the Docker images
+	docker_pulled_images="$$(cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-)"; \
+	docker_built_images="wp-base $$(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-)"; \
+	for image in $$docker_pulled_images $$docker_built_images ; do docker rmi $$image || true; done
+	docker image prune
 
 .PHONY: clean
 clean: down clean-images ## Tear down generated files and Docker-side state
 	rm -f .make.vars TAGS tags
 
 .PHONY: mrproper
-mrproper: down
+mrproper: down ## Mr. Clean will clean your whole house and everything that's in it!
 	# TODO: do you really really want to delete
 	# TODO: OS compliant
 	sudo rm -rf $(WP_SRC_DIR) run var
