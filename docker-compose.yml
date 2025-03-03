@@ -1,4 +1,20 @@
 # docker-compose.yml for running a local copy of the WordPress stack
+#
+# Note this docker-compose.yml will consumes the following environment
+# variables (set them in a .env or on the command line):
+#
+#   MARIADB_ROOT_PASSWORD     The MariaDB's root password, default to `secret`
+#   MARIADB_USER              The MariaDB's user, default to `wp`
+#   MARIADB_PASSWORD          The MariaDB's user's password, default to `secret`
+#   MARIADB_DATABASE          The MariaDB's database, default to `wordpress`
+#
+#   WP_MARIADB_IMAGE_VERSION  MariaDB docker image version, default to `11.4.4`
+#   WP_PHP_IMAGE_VERSION      wp-php docker image version
+#   WP_NGINX_IMAGE_VERSION    wp-nginx docker image version
+#   WP_MENUAPI_IMAGE_VERSION  wp-menu-api docker image version
+#
+#   WP_PHPMA_PORT             Port to access PHPMyAdmin, default to `8080`
+#
 
 services:
 
