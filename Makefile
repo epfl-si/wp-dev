@@ -176,8 +176,6 @@ run/nginx/nginx.conf: nginx-dev.conf
 	cp $< $@
 
 run/nginx-entrypoint/nginx-entrypoint.php:
-	mkdir -p nginx-entrypoint || true
-	chmod 1777 nginx-entrypoint || true
 	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
 	@docker rm -f wp-php-4-wp-extractor 2>/dev/null || true
 	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL) sleep 100
