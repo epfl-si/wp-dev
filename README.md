@@ -2,9 +2,58 @@
   WordPress@EPFL: the development environment
 </h1>
 
-> In this repository you will find everything a developer needs to get started or 
-participate in wordpress development at EPFL. Concisely, it will brings the dev
-> and ops part of the development stack to your laptop.
+> In this repository you will find everything a developer needs to get started
+> or participate in wordpress development at EPFL. Concisely, it will brings the
+> dev and ops part of the development stack to your laptop.
+
+
+# TL;DR
+
+```sh
+git clone -b WPN git@github.com:epfl-si/wp-dev wp-dev
+cd wp-dev
+make up
+```
+
+Now head to https://wordpress.localhost.
+
+Use `make help` to learn more about the commands you will need along the way.
+
+
+# Overview
+
+This will deploy a WordPress development environnement using docker and docker
+compose.
+
+Inside the `wp-dev` directory, you will get:
+
+- Other repositories that are needed:
+   - `menu-api`: https://github.com/epfl-si/menu-api
+   - `wp-operator`: https://github.com/epfl-si/wp-operator
+   - `wp-ops`: https://github.com/epfl-si/wp-ops
+
+- Directories used as mount point inside docker:
+   - `run`: everything for the running part, surch as nginx's configuration,
+            WordPress' nonces, TLS certificates or sockets shared between PHP
+            and nginx.
+   - `src`: sources of the WordPress that runs in the environment. Also includes
+            plugins and themes, as the folder is copied from the "production"
+            image.
+   - `var`: contains the MariaDB's store and the "wp-uploads" folder, both
+            used as volumes.
+
+- A [docker-compose.yml](./docker-compose.yml), containing the following
+  services:
+   - `mariadb`:    the MariaDB Server
+   - `php`:        the FastCGI Process Manager for PHP
+   - `nginx`:      the webserver
+   - `menu-api`:   the API's for the menus (breadcrumb and side menus)
+   - `phpmyadmin`: a client (avalaible at https://localhost:8080) to connect to
+                   the MariaDB.
+
+- A [Makefile](./Makefile), on which you should rely for every operation that
+  you'll need to run this environment (see §TL;DR).
+
 
 # Installation and usage
 
