@@ -1,11 +1,4 @@
 # docker-compose.yml for running a local copy of the WordPress stack
-#
-#                           WORK IN PROGRESS
-#
-# docker compose automatically sources the .env file if it exists
-# (see https://docs.docker.com/compose/environment-variables/#the-env-file);
-# this is what makes the ${VARIABLE} expansions below work.
-#
 
 services:
 
