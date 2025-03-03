@@ -39,7 +39,7 @@ services:
       # https://api.wordpress.org/secret-key/1.1/salt/
       - ./run/wp-nonces:/wp-nonces
       # The nginx-entry point
-      - ./run/nginx-entrypoint:/nginx-entrypoint
+      - ./run/nginx-entrypoint:/wp/nginx-entrypoint
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
