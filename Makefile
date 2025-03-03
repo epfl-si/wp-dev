@@ -194,7 +194,6 @@ run/wp-nonces/wp-nonces.php:
 run/certs:
 	mkdir -p $@ || true
 	chmod 1777 $@ || true
-	# openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 \
 	openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
 	  -keyout run/certs/wordpress.localhost.key \
 	  -out run/certs/wordpress.localhost.crt \
