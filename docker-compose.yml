@@ -50,7 +50,8 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./src:/wp
+      - ./src:/wp/6
+      - ./var/wp-data:/wp-data
       - ./run/sockets:/run/php-fpm
       - ./run/nginx/nginx-dev.conf:/etc/nginx/nginx.conf
       - ./run/certs:/etc/nginx/ssl
