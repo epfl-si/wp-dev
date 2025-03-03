@@ -1,5 +1,4 @@
-
-include .env
+-include .env
 
 -include .make.vars
 
@@ -209,6 +208,7 @@ run/certs:
 	  -out run/certs/wordpress.localhost.crt \
 	  -subj "/CN=wordpress.localhost"
 	  # -addext "subjectAltName=DNS:wordpress.localhost,DNS:*.example.com,IP:10.0.0.1"
+	chmod 666 run/certs/wordpress.localhost*
 
 # .PHONY: rootsite
 # rootsite:
@@ -315,5 +315,7 @@ clean: down clean-images ## Tear down generated files and Docker-side state
 	rm -f .make.vars TAGS tags
 
 .PHONY: mrproper
-mrproper: clean
-	rm -rf $(WP_SRC_DIR)
+mrproper: down
+	# TODO: do you really really want to delete
+	# TODO: OS compliant
+	sudo rm -rf $(WP_SRC_DIR) run var
