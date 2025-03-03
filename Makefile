@@ -161,7 +161,7 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout run/nginx/nginx.conf run/nginx-entrypoint/nginx-entrypoint.php run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
+up: checkout run/nginx/nginx.conf var/wp-data run/nginx-entrypoint/nginx-entrypoint.php run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
 	docker compose up -d
 	./devscripts/await-mariadb-ready
 	# $(MAKE) rootsite
@@ -200,6 +200,10 @@ run/certs:
 	  -subj "/CN=wordpress.localhost"
 	  # -addext "subjectAltName=DNS:wordpress.localhost,DNS:*.example.com,IP:10.0.0.1"
 	chmod 666 run/certs/wordpress.localhost*
+
+var/wp-data:
+	mkdir -p $@ || true
+	chmod 1777 $@ || true
 
 # .PHONY: rootsite
 # rootsite:
