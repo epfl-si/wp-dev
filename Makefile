@@ -170,7 +170,7 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout run/nginx/nginx-dev.conf run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
+up: checkout run/nginx/nginx.conf run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
 	docker compose up -d
 	./devscripts/await-mariadb-ready
 	# $(MAKE) rootsite
@@ -185,13 +185,12 @@ gutenberg: ## Start the development server for Gutenberg
 	$(MAKE) nvm
 	cd $(WP_SRC_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
-.PHONY: run/nginx/nginx-dev.conf
-run/nginx/nginx-dev.conf:
+run/nginx/nginx.conf: nginx-dev.conf
 	# FIXME nginx configuration should be generated. Alors we need a way to
 	# generate a couple of websites in it.
 	mkdir -p run/nginx || true
-	sudo chmod 1777 run/nginx || true
-	sudo cp nginx-dev.conf run/nginx/nginx-dev.conf
+	chmod 1777 run/nginx || true
+	cp $< $@
 
 run/wp-nonces/wp-nonces.php:
 	mkdir -p run/wp-nonces || true
