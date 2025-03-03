@@ -161,7 +161,7 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout run/nginx/nginx.conf var/wp-data run/nginx-entrypoint/nginx-entrypoint.php run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
+up: checkout run/nginx/nginx.conf var/wp-data run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
 	docker compose up -d
 	./devscripts/await-mariadb-ready
 	# $(MAKE) rootsite
@@ -174,13 +174,6 @@ run/nginx/nginx.conf: nginx-dev.conf
 	mkdir -p run/nginx || true
 	chmod 1777 run/nginx || true
 	cp $< $@
-
-run/nginx-entrypoint/nginx-entrypoint.php:
-	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
-	@docker rm -f wp-php-4-wp-extractor 2>/dev/null || true
-	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL) sleep 100
-	# Copy the latest version of WordPress from the image
-	docker cp wp-php-4-wp-extractor:/wp/nginx-entrypoint/ $$(dirname $@)
 
 run/wp-nonces/wp-nonces.php:
 	mkdir -p run/wp-nonces || true

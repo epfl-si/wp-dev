@@ -47,8 +47,8 @@ services:
       # A PHP file (wp-nonces.php) containing these secret keys:
       # https://api.wordpress.org/secret-key/1.1/salt/
       - ./run/wp-nonces:/wp-nonces
-      # The nginx-entry point
-      - ./run/nginx-entrypoint:/wp/nginx-entrypoint
+      # Our nginx-specific entry point
+      - ./wp-ops/docker/wordpress-php:/wp/nginx-entrypoint
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
