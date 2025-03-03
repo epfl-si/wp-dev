@@ -335,6 +335,20 @@ clean: down clean-images ## Tear down generated files and Docker-side state
 
 .PHONY: mrproper
 mrproper: down ## Mr. Clean will clean your whole house and everything that's in it!
-	# TODO: do you really really want to delete
-	# TODO: OS compliant
-	sudo rm -rf $(WP_SRC_DIR) run var
+	@echo "Do you want to proceed with the action? This will remove everything. [y/n]: "
+	@read answer; \
+	if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
+		echo "Whiping everything..."; \
+		OS=$$(uname -s); \
+		if [ "$$OS" = "Linux" ]; then \
+			echo "This is a Linux system"; \
+			sudo rm -rf $(WP_SRC_DIR) run var; \
+		elif [ "$$OS" = "Darwin" ]; then \
+			echo "This is a macOS system"; \
+			rm -rf $(WP_SRC_DIR) run var; \
+		else \
+			echo "This OS is not supported"; \
+		fi \
+	else \
+		echo "Action canceled."; \
+	fi
