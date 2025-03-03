@@ -21,7 +21,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./var/mariadb:/var/lib/mysql
+      - mariadb-data:/var/lib/mysql
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
@@ -99,3 +99,4 @@ services:
 
 volumes:
    phpfpm-socket:
+   mariadb-data:
