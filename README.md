@@ -63,6 +63,13 @@ The prerequisites are a *nix operating system with Git and Docker (or
 WSL; a “plain Windows®” clone made with e.g. git bash will **not**
 work).
 
+Your docker daemon should be logged into
+the [EPFL images repository](https://quay-its.epfl.ch/organization/svc0041).
+Modifiy and run this command to log in:
+```sh
+docker login -u your-username -p your-password quay-its.epfl.ch
+```
+
 If you want to be able to push your changes to production or otherwise
 operate the [wp-ops](https://github.com/epfl-si/wp-ops) repository,
 you will need to install [Keybase] and obtain membership to the
