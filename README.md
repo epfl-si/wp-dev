@@ -65,7 +65,7 @@ work).
 
 Your docker daemon should be logged into
 the [EPFL images repository](https://quay-its.epfl.ch/organization/svc0041).
-Modifiy and run this command to log in:
+Modify and run this command to log in:
 ```sh
 docker login -u your-username -p your-password quay-its.epfl.ch
 ```
