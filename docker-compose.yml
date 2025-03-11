@@ -106,6 +106,27 @@ services:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
 
+  operator:
+    container_name: wp-operator
+    # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
+    image: quay-its.epfl.ch/svc0041/wp-operator:latest
+    volumes:
+      - ./src:/wp/6
+      - ./var/wp-data:/wp-data
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >-
+        set -e -x;
+        apt -qy update;
+        apt -qy install strace;
+        sleep 36000
+    environment:
+      - WP_CLI_ALLOW_ROOT=1
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
+
 volumes:
    phpfpm-socket:
    mariadb-data:
