@@ -148,7 +148,7 @@ endif
 .PHONY: wpn-push
 wpn-push: ## Push the wordpress-nginx and wordpress-php images
 	@$(expand_ver); \
-	@echo "Pushing wp-nginx:$$ver & wp-php:$$ver"
+	echo "Pushing wp-nginx:$$ver & wp-php:$$ver"; \
 	set -e -x; \
 	  docker push quay-its.epfl.ch/svc0041/wp-nginx:$$ver ; \
 	  docker push quay-its.epfl.ch/svc0041/wp-php:$$ver
