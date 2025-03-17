@@ -154,6 +154,24 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 	  docker push quay-its.epfl.ch/svc0041/wp-php:$$ver
 	@echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
 
+.PHONY: build-apache-redirector
+build-apache-redirector: ## Build the apache-redirector image
+ifeq ($(VER),)
+	$(error Need a value for VER, e.g., make build-apache-redirector VER=001)
+endif
+	@$(expand_ver); \
+	echo "Building apache-redirector:$$ver"; \
+	set -e -x; \
+	docker build -t quay-its.epfl.ch/svc0041/apache-redirector:$$ver \
+		wp-ops/docker/apache-redirector ;
+
+.PHONY: push-apache-redirector
+push-apache-redirector: ## Build the apache-redirector image
+	@$(expand_ver); \
+	echo "Pushing apache-redirector:$$ver"; \
+	set -e -x; \
+	docker push quay-its.epfl.ch/svc0041/apache-redirector:$$ver
+
 
 ########################################################################
 ##@ Development Lifecycle
