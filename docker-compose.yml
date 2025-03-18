@@ -38,7 +38,7 @@ services:
   php:
     container_name: wp-php
     # https://quay-its.epfl.ch/repository/svc0041/wp-php
-    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-033}
+    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-047}
     volumes:
       # Created by Makefile:
       - ./src:/wp/6
@@ -56,7 +56,7 @@ services:
   nginx:
     container_name: wp-nginx
     # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
-    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-033}
+    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-047}
     ports:
       - 80:80
       - 443:443
@@ -78,7 +78,7 @@ services:
     container_name: wp-menu-api
     # build: menu-api
     # https://quay-its.epfl.ch/repository/svc0041/menu-api
-    image: quay-its.epfl.ch/svc0041/menu-api:${WP_MENUAPI_IMAGE_VERSION:-2025-016}
+    image: quay-its.epfl.ch/svc0041/menu-api:${WP_MENUAPI_IMAGE_VERSION:-2025-020}
     ports:
       - 3001:3001
     volumes:
