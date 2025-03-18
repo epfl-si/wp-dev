@@ -211,6 +211,10 @@ var/wp-data:
 stop: ## Stop the local WordPress instance
 	docker compose stop
 
+.PHONY: rm
+rm: ## Remove the containers by name
+	docker rm -f wp-db wp-menu-api wp-nginx wp-php wp-php wp-pma
+
 .PHONY: down
 down: ## Stop the local WordPress instance and delete its containers
 	docker compose down
