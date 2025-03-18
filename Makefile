@@ -60,14 +60,7 @@ _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 # from the "wp-base" Docker image.
 
 .PHONY: checkout
-checkout: ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
-	$(MAKE) .checkout
-
-.checkout: \
-  $(WP_SRC_DIR) \
-  wp-ops \
-  wp-operator \
-  menu-api
+checkout: $(WP_SRC_DIR) wp-ops wp-operator menu-api ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
 
 $(WP_SRC_DIR):
 	# TODO ensure wp-php
