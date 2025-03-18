@@ -40,8 +40,7 @@ services:
     # https://quay-its.epfl.ch/repository/svc0041/wp-php
     image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-033}
     volumes:
-      # For now, obtained by running
-      # sudo docker cp wp-php:/wp/. src/
+      # Created by Makefile:
       - ./src:/wp/6
       - phpfpm-socket:/run/php-fpm
       # A PHP file (wp-nonces.php) containing these secret keys:
