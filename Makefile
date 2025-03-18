@@ -175,6 +175,8 @@ up: checkout run/nginx/nginx.conf var/wp-data run/wp-nonces/wp-nonces.php run/ce
 	./devscripts/await-mariadb-ready
 	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
 	@echo "install nvm and run 'make gutenberg'"
+	@echo
+	xdg-open https://wordpress.localhost
 
 run/nginx/nginx.conf: nginx-dev.conf
 	# FIXME nginx configuration should be generated. Also we need a way to
