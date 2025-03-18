@@ -215,30 +215,6 @@ var/wp-data:
 	mkdir -p $@ || true
 	chmod 1777 $@ || true
 
-# .PHONY: rootsite
-# rootsite:
-# 	@$(_docker_exec_clinic) bash -c 'wp --path=$(SITE_DIR) eval "1;"' ||    \
-# 	  $(_docker_exec_clinic) bash -c '                                      \
-# 	    set -e -x;                                                          \
-# 	    mkdir -p $(SITE_DIR) || true;                                       \
-# 	    cd $(SITE_DIR);                                                     \
-# 	    export WORDPRESS_VERSION=$(WP_MAJOR_VERSION); new-wp-site --debug;  \
-# 	    for subdir in plugins mu-plugins; do                                \
-# 	      if [ ! -e wp-content/$$subdir ]; then                             \
-# 	        ln -sfn ../wp/wp-content/$$subdir wp-content/$$subdir;          \
-# 	      fi;                                                               \
-# 	    done;                                                               \
-# 	    mkdir -p $(SITE_DIR)/wp-content/themes;                             \
-# 	    for subtheme in wp-theme-2018 wp-theme-light; do                    \
-# 	      if [ ! -e wp-content/themes/$$subtheme ]; then                    \
-# 	        ln -sfn ../../wp/wp-content/themes/wp-theme-2018.git/$$subtheme \
-# 	        wp-content/themes/$$subtheme;                                   \
-# 	      fi;                                                               \
-# 	    done;                                                               \
-# 	    wp theme activate wp-theme-2018;                                    \
-# 	    wp user update admin --user_pass=secret;                            \
-# 	    '
-
 .PHONY: stop
 stop: ## Stop the local WordPress instance
 	docker compose stop
