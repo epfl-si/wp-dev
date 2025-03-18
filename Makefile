@@ -175,7 +175,6 @@ SITE_DIR := /srv/test/wp-httpd/htdocs
 up: checkout run/nginx/nginx.conf var/wp-data run/wp-nonces/wp-nonces.php run/certs src ## Start up a local WordPress instance
 	docker compose up -d
 	./devscripts/await-mariadb-ready
-	# $(MAKE) rootsite
 	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
 	@echo "install nvm and run 'make gutenberg'"
 
