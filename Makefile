@@ -187,7 +187,7 @@ up: checkout run/nginx/nginx.conf var/wp-data run/wp-nonces/wp-nonces.php run/ce
 	@echo "install nvm and run 'make gutenberg'"
 
 run/nginx/nginx.conf: nginx-dev.conf
-	# FIXME nginx configuration should be generated. Alors we need a way to
+	# FIXME nginx configuration should be generated. Also we need a way to
 	# generate a couple of websites in it.
 	mkdir -p run/nginx || true
 	chmod 1777 run/nginx || true
