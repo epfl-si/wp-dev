@@ -45,7 +45,8 @@ help: ## Display this help
 all: checkout git-pull up
 
 WP_MAJOR_VERSION = 6
-WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php:2025-033
+WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php
+WP_PHP_IMAGE_TAG := $(or $(WP_PHP_IMAGE_VERSION),'2025-047')
 
 _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 
@@ -67,7 +68,7 @@ src:
 	mkdir -p "$@" || true
 	chmod 1777 "$@" || true
 	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
-	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL) sleep 100
+	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL):$(WP_PHP_IMAGE_TAG) sleep 100
 	# Copy the latest version of WordPress from the image
 	docker cp wp-php-4-wp-extractor:/wp/$(WP_MAJOR_VERSION)/. src
 	touch $@
