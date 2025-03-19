@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Runs `curl` against Quay, using a suitable bearer token. Can even fill in the protocol and URL part!
+#
+# Example:
+#
+#    ./devscripts/curl-authenticated-quay /v2/svc0041/wp-php/tags/list
+
 set -e
 
 : ${QUAY_SERVER:=quay-its.epfl.ch}
