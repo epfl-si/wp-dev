@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e
+
+: ${QUAY_SERVER:=quay-its.epfl.ch}
+: ${DOCKER_CONFIG_JSON:=$HOME/.docker/config.json}
+
+set_basic_auth_vars () {
+    case "$(jq -r ".credsStore" < "$DOCKER_CONFIG_JSON")" in
+         osxkeychain)
+             local secret="$(security find-internet-password -s "${QUAY_SERVER}" -g 2>&1)"
+             DOCKER_USERNAME="$(echo "$secret" | sed -ne 's/.*"acct"<blob>="\(.*\)".*/\1/p')"
+             DOCKER_PASSWORD="$(echo "$secret" | sed -ne 's/password: "\(.*\)"/\1/p')"
+             ;;
+         *)
+             local basic_auth="$(jq -r ".auths[\"$QUAY_SERVER\"].auth | @base64d" < "$DOCKER_CONFIG_JSON")"
+             DOCKER_USERNAME="$(echo "$basic_auth" | cut -d: -f1)"
+             DOCKER_PASSWORD="$(echo "$basic_auth" | cut -d: -f2)"
+             ;;
+    esac
+}
+
+token () {
+    local scope="$1"
+
+    set_basic_auth_vars
+
+    curl -s -u "$DOCKER_USERNAME:$DOCKER_PASSWORD" "https://$QUAY_SERVER/v2/auth?service=$QUAY_SERVER&scope=$scope" | jq -r ".token"
+}
+
+declare -a curl_args
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+        /v2/*)
+            repo="$(echo "$1" |cut -d/ -f3-4)"
+            curl_args+=(-H "Authorization: Bearer $(token "repository:$repo:pull")" "https://$QUAY_SERVER$1")
+            shift ;;
+        *)
+          curl_args+=("$1")
+          shift ;;
+    esac
+done
+
+exec curl "${curl_args[@]}"
