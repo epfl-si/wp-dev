@@ -22,7 +22,7 @@ set_basic_auth_vars () {
          *)
              local basic_auth="$(jq -r ".auths[\"$QUAY_SERVER\"].auth | @base64d" < "$DOCKER_CONFIG_JSON")"
              DOCKER_USERNAME="$(echo "$basic_auth" | cut -d: -f1)"
-             DOCKER_PASSWORD="$(echo "$basic_auth" | cut -d: -f2)"
+             DOCKER_PASSWORD="$(echo "$basic_auth" | cut -d: -f2-)"
              ;;
     esac
 }
