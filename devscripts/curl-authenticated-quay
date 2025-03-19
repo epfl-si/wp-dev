@@ -12,6 +12,7 @@ set -e
 : ${DOCKER_CONFIG_JSON:=$HOME/.docker/config.json}
 
 set_basic_auth_vars () {
+    if [ -n "$DOCKER_USERNAME" -a -n "$DOCKER_PASSWORD" ]; then return; fi
     case "$(jq -r ".credsStore" < "$DOCKER_CONFIG_JSON")" in
          osxkeychain)
              local secret="$(security find-internet-password -s "${QUAY_SERVER}" -g 2>&1)"
@@ -31,7 +32,14 @@ token () {
 
     set_basic_auth_vars
 
-    curl -s -u "$DOCKER_USERNAME:$DOCKER_PASSWORD" "https://$QUAY_SERVER/v2/auth?service=$QUAY_SERVER&scope=$scope" | jq -r ".token"
+    local tok="$(curl -s -u "$DOCKER_USERNAME:$DOCKER_PASSWORD" "https://$QUAY_SERVER/v2/auth?service=$QUAY_SERVER&scope=$scope" | jq -r ".token")"
+    case "$tok" in
+          ""|null)
+              echo >&2 "Unable to authenticate to https://$QUAY_SERVER/v2/auth."
+              echo >&2 "Please try:    docker login $QUAY_SERVER"
+              exit 1 ;;
+          *) echo "$tok" ;;
+    esac
 }
 
 declare -a curl_args
