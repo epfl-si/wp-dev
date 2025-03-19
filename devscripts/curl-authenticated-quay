@@ -36,7 +36,12 @@ token () {
     case "$tok" in
           ""|null)
               echo >&2 "Unable to authenticate to https://$QUAY_SERVER/v2/auth."
+              echo >&2
               echo >&2 "Please try:    docker login $QUAY_SERVER"
+              echo >&2
+              echo >&2 "💡 Don't use your GASPAR password for this! Use the one found"
+              echo >&2 "💡 at $QUAY_SERVER → your avatar (top right corner) → Account Settings →"
+              echo >&2 "💡 Docker CLI Password."
               exit 1 ;;
           *) echo "$tok" ;;
     esac
