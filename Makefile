@@ -45,7 +45,6 @@ help: ## Display this help
 all: checkout git-pull up
 
 WP_MAJOR_VERSION = 6
-WP_SRC_DIR = src
 WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php:2025-033
 
 _docker_exec_clinic := docker exec --user www-data -it wp-clinic
@@ -60,17 +59,17 @@ _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 # from the "wp-base" Docker image.
 
 .PHONY: checkout
-checkout: $(WP_SRC_DIR) wp-ops wp-operator menu-api ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
+checkout: src wp-ops wp-operator menu-api ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
 
-$(WP_SRC_DIR):
+src:
 	# TODO ensure wp-php
-	-rm -f $(WP_SRC_DIR)
+	-rm -f src
 	mkdir -p "$@" || true
 	chmod 1777 "$@" || true
 	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
 	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL) sleep 100
 	# Copy the latest version of WordPress from the image
-	docker cp wp-php-4-wp-extractor:/wp/$(WP_MAJOR_VERSION)/. $(WP_SRC_DIR)
+	docker cp wp-php-4-wp-extractor:/wp/$(WP_MAJOR_VERSION)/. src
 	touch $@
 
 _find_git_depots := find . \( -path ./volumes -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
@@ -218,7 +217,7 @@ nvm:
 .PHONY: gutenberg
 gutenberg: ## Start the development server for Gutenberg
 	$(MAKE) nvm
-	cd $(WP_SRC_DIR)/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
+	cd src/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
 
 ########################################################################
@@ -282,13 +281,13 @@ tail-sql: ## Activate and follow the MariaDB general query log
 
 CTAGS_FLAGS = --exclude=node_modules $(EXTRA_CTAGS_FLAGS) -R $(CTAGS_TARGETS)
 
-CTAGS_TARGETS = $(WP_SRC_DIR)/*.php \
-  $(WP_SRC_DIR)/wp-admin \
-  $(WP_SRC_DIR)/wp-includes \
-  $(WP_SRC_DIR)/themes/wp-theme-2018 \
-  $(WP_SRC_DIR)/plugins/epfl-* \
-  $(WP_SRC_DIR)/plugins/polylang \
-  $(WP_SRC_DIR)/mu-plugins
+CTAGS_TARGETS = src/*.php \
+  src/wp-admin \
+  src/wp-includes \
+  src/themes/wp-theme-2018 \
+  src/plugins/epfl-* \
+  src/plugins/polylang \
+  src/mu-plugins
 
 tags: checkout ## Index the source code in vim format
 	ctags $(CTAGS_FLAGS)
@@ -320,10 +319,10 @@ mrproper: down ## Mr. Clean will clean your whole house and everything that's in
 		OS=$$(uname -s); \
 		if [ "$$OS" = "Linux" ]; then \
 			echo "This is a Linux system"; \
-			sudo rm -rf $(WP_SRC_DIR) run var; \
+			sudo rm -rf src run var; \
 		elif [ "$$OS" = "Darwin" ]; then \
 			echo "This is a macOS system"; \
-			rm -rf $(WP_SRC_DIR) run var; \
+			rm -rf src run var; \
 		else \
 			echo "This OS is not supported"; \
 		fi \
