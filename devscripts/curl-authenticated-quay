@@ -61,4 +61,4 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-exec curl "${curl_args[@]}"
+exec curl -s "${curl_args[@]}"
