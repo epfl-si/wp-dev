@@ -24,20 +24,6 @@
 	  echo >&2 "Press Return to continue:" ;                                      \
 	  read;                                                                       \
 	fi
-	@keybase fs read /keybase/team/epfl_wp_test/quay-its.sh >> $@
-	@if ! grep QUAY_TOKEN= $@ > /dev/null; then \
-	  echo >&2 "##############################################################" ; \
-	  echo >&2 "#" ;                                                              \
-	  echo >&2 "# WARNING: keybase failure; can not retrieve the Quay token" ;    \
-	  echo >&2 "#          in /keybase/team/epfl_wp_test/quay-its.sh" ;           \
-	  echo >&2 "#" ;                                                              \
-	  echo >&2 "# Assuming you have access to it, please review the error" ;      \
-	  echo >&2 "# messages above to troubleshoot." ;                              \
-	  echo >&2 "#" ;                                                              \
-	  echo >&2 "##############################################################" ; \
-	  echo >&2 "Press Return to continue:" ;                                      \
-	  read;                                                                       \
-	fi
 
 
 .PHONY: help
@@ -58,17 +44,15 @@ help: ## Display this help
 .PHONY: all
 all: checkout git-pull up
 
-# Get the latest image tag from the https://quay-its.epfl.ch API.
-# Usage: $(call _get_latest_image_tag, wp-php)
-_get_latest_image_tag = @curl -s -X GET "https://quay-its.epfl.ch/api/v1/repository/svc0041/$(strip $(1))/tag/" \
- 						-H "Authorization: Bearer $(QUAY_TOKEN)" | \
-						jq -r '.tags | to_entries | max_by(.value.last_modified) | .value.name'
 
 WP_MAJOR_VERSION = 6
 WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php
-# Use the WP_PHP_IMAGE_VERSION if defined or default to the latest wp-php image
-# tag found on https://quay-its.epfl.ch
-WP_PHP_IMAGE_TAG := $(or $(WP_PHP_IMAGE_VERSION),$(call _get_latest_image_tag, wp-php))
+# Get the latest image tag from the https://quay-its.epfl.ch API.
+_get_latest_image_tag = ./devscripts/curl-authenticated-quay /v2/svc0041/wp-php/tags/list | \
+                        jq -r '.tags | map(select(test("^[0-9]{4}-[0-9]{3}$$"))) | last'
+# Set WP_PHP_IMAGE_VERSION in a `.env` file to have precedence on the 
+# _get_latest_image_tag script.
+WP_PHP_IMAGE_TAG := $(or $(WP_PHP_IMAGE_VERSION),$(shell $(_get_latest_image_tag)))
 
 _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 
