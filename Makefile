@@ -53,6 +53,9 @@ _get_latest_image_tag = ./devscripts/curl-authenticated-quay /v2/svc0041/wp-php/
 # Set WP_PHP_IMAGE_VERSION in a `.env` file to have precedence on the 
 # _get_latest_image_tag script.
 WP_PHP_IMAGE_TAG := $(or $(WP_PHP_IMAGE_VERSION),$(shell $(_get_latest_image_tag)))
+# Export WP_PHP_IMAGE_VERSION & WP_NGINX_IMAGE_VERSION variables for docker compose
+export WP_PHP_IMAGE_VERSION=${WP_PHP_IMAGE_TAG}
+export WP_NGINX_IMAGE_VERSION=${WP_PHP_IMAGE_TAG}
 
 _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 
