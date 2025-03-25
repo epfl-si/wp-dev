@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Find all .git/config files in subdirectories
+find "$1" -type f -path '*/.git/config' | while read -r config_file; do
+    # Check if the file contains the URL to replace
+    if grep -q 'url = https://github.com/epfl-si/' "$config_file"; then
+        echo "Updating $config_file to use a SSH URL"
+        # Use sed to replace the URL
+        sed -i 's|url = https://github.com/epfl-si/|url = git@github.com:epfl-si/|g' "$config_file"
+    fi
+done
+
+echo "Checked that epfl-si repositories use an SSH URL."
