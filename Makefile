@@ -71,6 +71,8 @@ src:
 	# Copy the latest version of WordPress from the image
 	docker cp wp-php-4-wp-extractor:/wp/$(WP_MAJOR_VERSION)/. src
 	touch $@
+	# Ensure "epfl-si" repositories' remote URLs are SSH URL
+	./devscripts/ensure-git-ssh-url ./src
 
 _find_git_depots := find . \( -path ./volumes -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
 .PHONY: git-status
