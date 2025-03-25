@@ -43,6 +43,7 @@ services:
       # Created by Makefile:
       - ./src:/wp/6
       - phpfpm-socket:/run/php-fpm
+      - ./var/wp-data:/wp-data
       # A PHP file (wp-nonces.php) containing these secret keys:
       # https://api.wordpress.org/secret-key/1.1/salt/
       - ./run/wp-nonces:/wp-nonces
