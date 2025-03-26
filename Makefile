@@ -153,7 +153,11 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 	set -e -x; \
 	  docker push quay-its.epfl.ch/svc0041/wp-nginx:$$ver ; \
 	  docker push quay-its.epfl.ch/svc0041/wp-php:$$ver
-	@echo "Now's probably a good time to run ./ansible/wpsible -t wp.web"
+	@$(expand_ver); \
+	echo "\nNow's probably a good time to run ./ansible/wpsible -t wp.web;"; \
+	echo "Edit wp-ops/ansible/roles/wordpress-namespace/vars/image-vars.yml,"; \
+	echo "or use an extra var: -e \"nginx_deployment_images_tag='$$ver'\""; \
+	echo "to change the images version.";
 
 .PHONY: build-apache-redirector
 build-apache-redirector: ## Build the apache-redirector image
