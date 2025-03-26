@@ -19,6 +19,11 @@ set_basic_auth_vars () {
              DOCKER_USERNAME="$(echo "$secret" | sed -ne 's/.*"acct"<blob>="\(.*\)".*/\1/p')"
              DOCKER_PASSWORD="$(echo "$secret" | sed -ne 's/password: "\(.*\)"/\1/p')"
              ;;
+         secretservice)
+             local secret="$(echo "${QUAY_SERVER}" | docker-credential-secretservice get)"
+             DOCKER_USERNAME="$(echo "$secret" | jq -r '.Username')"
+             DOCKER_PASSWORD="$(echo "$secret" | jq -r '.Secret')"
+             ;;
          *)
              local basic_auth="$(jq -r ".auths[\"$QUAY_SERVER\"].auth | @base64d" < "$DOCKER_CONFIG_JSON")"
              DOCKER_USERNAME="$(echo "$basic_auth" | cut -d: -f1)"
