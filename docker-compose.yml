@@ -66,7 +66,7 @@ services:
       - phpfpm-socket:/run/php-fpm
       - ./run/nginx:/etc/nginx/conf
       - ./run/certs:/etc/nginx/ssl
-    command:
+    entrypoint:
       - /usr/bin/nginx
       - -c
       - /etc/nginx/conf/nginx.conf
