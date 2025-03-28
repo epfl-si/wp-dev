@@ -9,6 +9,7 @@
 # account set up with an ssh public key for the latter)
 	@echo _GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/) >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
+	@echo _OPENURL = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "xdg-open" ; else echo "open"; fi) >> $@
 	@keybase fs read /keybase/team/epfl_wp_test/s3-assets-credentials.sh >> $@
 	@if ! grep AWS_ACCESS_KEY_ID $@ > /dev/null; then \
 	  echo >&2 "##############################################################" ; \
@@ -186,7 +187,7 @@ up: checkout run/nginx/nginx.conf var/wp-data run/wp-nonces/wp-nonces.php run/ce
 	@echo "If you have want to use the wp-gutenberg-epfl plugin or to dev on Gutenberg,"
 	@echo "install nvm and run 'make gutenberg'"
 	@echo
-	xdg-open https://wordpress.localhost
+	$(_OPENURL) https://wordpress.localhost
 
 run/nginx/nginx.conf: nginx-dev.conf
 	# FIXME nginx configuration should be generated. Also we need a way to
