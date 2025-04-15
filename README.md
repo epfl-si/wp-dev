@@ -2,9 +2,59 @@
   WordPress@EPFL: the development environment
 </h1>
 
-> In this repository you will find everything a developer needs to get started or 
-participate in wordpress development at EPFL. Concisely, it will brings the dev
-> and ops part of the development stack to your laptop.
+> In this repository, you will find everything a developer needs to get started
+> or participate in WordPress development at EPFL. Concisely, it will bring the
+> dev and ops parts of the development stack to your laptop.
+
+
+# TL;DR
+
+```sh
+git clone git@github.com:epfl-si/wp-dev wp-dev
+cd wp-dev
+make up
+```
+
+It will deploy different services and you should be able to access a WordPress
+site on https://wordpress.localhost.
+
+Use `make help` to learn more about the commands you will need along the way.
+
+
+# Overview
+
+This will deploy a WordPress development environment using docker and docker
+compose.
+
+Inside the `wp-dev` directory, you will get:
+
+- Other repositories that are needed:
+   - `menu-api`: https://github.com/epfl-si/menu-api
+   - `wp-operator`: https://github.com/epfl-si/wp-operator
+   - `wp-ops`: https://github.com/epfl-si/wp-ops
+
+- Directories used as mount points inside docker:
+   - `run`: everything for the running part, such as nginx's configuration,
+            WordPress' nonces, TLS certificates or sockets shared between PHP
+            and nginx.
+   - `src`: sources of the WordPress that runs in the environment. Also includes
+            plugins and themes, as the folder is copied from the "production"
+            image.
+   - `var`: contains the MariaDB's store and the "wp-uploads" folder, both
+            used as volumes.
+
+- A [docker-compose.yml](./docker-compose.yml), containing the following
+  services:
+   - `mariadb`:    the MariaDB Server
+   - `php`:        the FastCGI Process Manager for PHP
+   - `nginx`:      the webserver
+   - `menu-api`:   the API's for the menus (breadcrumb and side menus)
+   - `phpmyadmin`: a client (available at https://localhost:8080) to connect to
+                   the MariaDB.
+
+- A [Makefile](./Makefile), on which you should rely for every operation that
+  you'll need to run this environment (see §TL;DR).
+
 
 # Installation and usage
 
@@ -13,6 +63,13 @@ participate in wordpress development at EPFL. Concisely, it will brings the dev
 The prerequisites are a *nix operating system with Git and Docker (or
 WSL; a “plain Windows®” clone made with e.g. git bash will **not**
 work).
+
+Your docker daemon should be logged into
+the [EPFL images repository](https://quay-its.epfl.ch/organization/svc0041).
+Modify and run this command to log in:
+```sh
+docker login -u your-username -p your-password quay-its.epfl.ch
+```
 
 If you want to be able to push your changes to production or otherwise
 operate the [wp-ops](https://github.com/epfl-si/wp-ops) repository,
@@ -213,7 +270,7 @@ password are in the `.env` file, as the values of the
 As far as command-line access is concerned, you can access a superuser
 MySQL prompt by typing
 ```bash
-docker exec -it wp-local_db_1 bash -c 'mysql -p$MYSQL_ROOT_PASSWORD'
+docker exec -it wp-local_db_1 bash -c 'mysql -p$MARIADB_ROOT_PASSWORD'
 ```
 
 and you can activate and follow the generate query log with

@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Runs `curl` against Quay, using a suitable bearer token. Can even fill in the protocol and URL part!
+#
+# Example:
+#
+#    ./devscripts/curl-authenticated-quay /v2/svc0041/wp-php/tags/list
+
+set -e
+
+: ${QUAY_SERVER:=quay-its.epfl.ch}
+: ${DOCKER_CONFIG_JSON:=$HOME/.docker/config.json}
+
+set_basic_auth_vars () {
+    if [ -n "$DOCKER_USERNAME" -a -n "$DOCKER_PASSWORD" ]; then return; fi
+    case "$(jq -r ".credsStore" < "$DOCKER_CONFIG_JSON")" in
+         osxkeychain)
+             local secret="$(security find-internet-password -s "${QUAY_SERVER}" -g 2>&1)"
+             DOCKER_USERNAME="$(echo "$secret" | sed -ne 's/.*"acct"<blob>="\(.*\)".*/\1/p')"
+             DOCKER_PASSWORD="$(echo "$secret" | sed -ne 's/password: "\(.*\)"/\1/p')"
+             ;;
+         secretservice)
+             local secret="$(echo "${QUAY_SERVER}" | docker-credential-secretservice get)"
+             DOCKER_USERNAME="$(echo "$secret" | jq -r '.Username')"
+             DOCKER_PASSWORD="$(echo "$secret" | jq -r '.Secret')"
+             ;;
+         *)
+             local basic_auth="$(jq -r ".auths[\"$QUAY_SERVER\"].auth | @base64d" < "$DOCKER_CONFIG_JSON")"
+             DOCKER_USERNAME="$(echo "$basic_auth" | cut -d: -f1)"
+             DOCKER_PASSWORD="$(echo "$basic_auth" | cut -d: -f2-)"
+             ;;
+    esac
+}
+
+token () {
+    local scope="$1"
+
+    set_basic_auth_vars
+
+    local tok="$(curl -s -u "$DOCKER_USERNAME:$DOCKER_PASSWORD" "https://$QUAY_SERVER/v2/auth?service=$QUAY_SERVER&scope=$scope" | jq -r ".token")"
+    case "$tok" in
+          ""|null)
+              echo >&2 "Unable to authenticate to https://$QUAY_SERVER/v2/auth."
+              echo >&2
+              echo >&2 "Please try:    docker login $QUAY_SERVER"
+              echo >&2
+              echo >&2 "💡 Don't use your GASPAR password for this! Use the one found"
+              echo >&2 "💡 at $QUAY_SERVER → your avatar (top right corner) → Account Settings →"
+              echo >&2 "💡 Docker CLI Password."
+              exit 1 ;;
+          *) echo "$tok" ;;
+    esac
+}
+
+declare -a curl_args
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+        /v2/*)
+            repo="$(echo "$1" |cut -d/ -f3-4)"
+            curl_args+=(-H "Authorization: Bearer $(token "repository:$repo:pull")" "https://$QUAY_SERVER$1")
+            shift ;;
+        *)
+          curl_args+=("$1")
+          shift ;;
+    esac
+done
+
+exec curl -s "${curl_args[@]}"

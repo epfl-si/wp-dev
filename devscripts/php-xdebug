@@ -13,6 +13,24 @@ Usage:
    php-xdebug start
    php-xdebug stop
 
+Here is a suitable configuration for Visual Studio Code's `launch.json`:
+
+  {
+      "version": "0.2.0",
+      "configurations": [
+          {
+              "name": "Listen for Xdebug",
+              "type": "php",
+              "request": "launch",
+              "port": 9000,
+              "pathMappings": {
+                "/wp": "${workspaceRoot}/volumes/wp",
+                "/wp/nginx-entrypoint": "${workspaceRoot}/wp-ops/docker/nginx"
+              }
+          }
+      ]
+  }
+
 See https://gist.github.com/chadrien/c90927ec2d160ffea9c4
 and also (if you use IntelliJ IDEA)
 https://www.jetbrains.com/help/idea/configuring-xdebug.html
@@ -44,7 +62,7 @@ case "$1" in
             # Linux is ok with the xdebug remote_connect_back strategy
             Linux)
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
+                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_connect_back=on
@@ -54,19 +72,24 @@ EOF
             *)
                 myip --ensure
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini' <<EOF
+                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
         xdebug.remote_enable=on
         xdebug.remote_autostart=on
         xdebug.remote_host=$(myip)
 EOF
-            ;;
         esac
+        $dockerexec sh -c \
+                    "grep 'fastcgi_read_timeout 3600s' /etc/nginx/nginx.conf || sed -i '/\/etc\/nginx\/conf.d/a fastcgi_read_timeout 3600s;' /etc/nginx/nginx.conf"
         ;;
     stop)
         $dockerexec sh -c \
-            'rm -f /etc/php/$PHP_VERSION/apache2/conf.d/99-debug.ini'
+            'rm -f /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini'
+        $dockerexec sh -c \
+                    "sed -i '/fastcgi_read_timeout 3600s/d' /etc/nginx/nginx.conf"
         ;;
     *) usage ;;
 esac
 
-$dockerexec apache2ctl graceful
+$dockerexec /etc/init.d/nginx reload
+$dockerexec sh -c 'killall -HUP php-fpm${PHP_VERSION}'
+

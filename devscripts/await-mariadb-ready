@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+
+. "$(dirname "$0")"/functions.sh
+
+usage () {
+    die <<"USAGE"
+
+await-mariadb-ready: Exactly what it says on the tin.
+
+USAGE
+}
+
+for retry in $(seq 1 30); do
+    if dockermariadb mariadb -u root -h mariadb -e "'select 1'" >/dev/null; then
+        warn "Connection to 'mariadb' successful."
+        exit 0
+    else
+        sleep 1
+    fi
+done
+
+die "MariaDB unavailable after 30 seconds, giving up"

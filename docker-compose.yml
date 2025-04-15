@@ -1,28 +1,99 @@
 # docker-compose.yml for running a local copy of the WordPress stack
 #
-# Unlike the real thing, there is no Varnish (but there is phpmyadmin)
+# Note this docker-compose.yml will consumes the following environment
+# variables (set them in a .env or on the command line):
 #
-# This docker-compose.yml file works hand-to-hand with the Makefie,
-# which ensures that all required images are built, and code
-# repositories are checked out.
+#   MARIADB_ROOT_PASSWORD     The MariaDB's root password, default to `secret`
+#   MARIADB_USER              The MariaDB's user, default to `wp`
+#   MARIADB_PASSWORD          The MariaDB's user's password, default to `secret`
+#   MARIADB_DATABASE          The MariaDB's database, default to `wordpress`
 #
-# docker compose automatically sources the .env file if it exists
-# (see https://docs.docker.com/compose/environment-variables/#the-env-file);
-# this is what makes the ${VARIABLE} expansions below work.
-
-version: '3'
+#   WP_MARIADB_IMAGE_VERSION  MariaDB docker image version, default to `11.4.4`
+#   WP_PHP_IMAGE_VERSION      wp-php docker image version
+#   WP_NGINX_IMAGE_VERSION    wp-nginx docker image version
+#   WP_MENUAPI_IMAGE_VERSION  wp-menu-api docker image version
+#
+#   WP_PHPMA_PORT             Port to access PHPMyAdmin, default to `8080`
+#
 
 services:
 
-  db:
+  mariadb:
     container_name: wp-db
-    image: mariadb:10.9.4
+    # https://quay-its.epfl.ch/repository/svc0041/mariadb
+    image: quay-its.epfl.ch/svc0041/mariadb:${WP_MARIADB_IMAGE_VERSION:-11.4.4}
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-secret}
+      - MARIADB_USER=${MARIADB_USER:-wp}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-secret}
+      - MARIADB_DATABASE=${MARIADB_DATABASE:-wordpress}
     ports:
       - 3306:3306
     volumes:
-      - ./volumes/mariadb:/var/lib/mysql
+      - mariadb-data:/var/lib/mysql
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
+
+  php:
+    container_name: wp-php
+    # https://quay-its.epfl.ch/repository/svc0041/wp-php
+    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-047}
+    volumes:
+      # Created by Makefile:
+      - ./src:/wp/6
+      - phpfpm-socket:/run/php-fpm
+      - ./var/wp-data:/wp-data
+      # A PHP file (wp-nonces.php) containing these secret keys:
+      # https://api.wordpress.org/secret-key/1.1/salt/
+      - ./run/wp-nonces:/wp-nonces
+      # Our nginx-specific entry point
+      - ./wp-ops/docker/wordpress-php:/wp/nginx-entrypoint
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
+
+  nginx:
+    container_name: wp-nginx
+    # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
+    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-047}
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./src:/wp/6
+      - ./var/wp-data:/wp-data
+      - phpfpm-socket:/run/php-fpm
+      - ./run/nginx:/etc/nginx/conf
+      - ./run/certs:/etc/nginx/ssl
+    entrypoint:
+      - /usr/bin/nginx
+      - -c
+      - /etc/nginx/conf/nginx.conf
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
+
+  menu-api:
+    container_name: wp-menu-api
+    # build: menu-api
+    # https://quay-its.epfl.ch/repository/svc0041/menu-api
+    image: quay-its.epfl.ch/svc0041/menu-api:${WP_MENUAPI_IMAGE_VERSION:-2025-020}
+    ports:
+      - 3001:3001
+    volumes:
+      - ./menu-api/menu-api-config.yaml:/config/menu-api-config.yaml
+    labels:
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
+
+  # clinic:
+  #   container_name: wp-clinic
+  #   # https://quay-its.epfl.ch/repository/svc0041/ubuntu
+  #   image: quay-its.epfl.ch/svc0041/ubuntu
+  #   command: ["sleep","infinity"]
+  #   volumes:
+  #     - volumes/wp:/wp
 
   phpmyadmin:
     container_name: wp-pma
@@ -30,62 +101,11 @@ services:
     environment:
       - PMA_ARBITRARY=1
     ports:
-      - ${WP_PORT_PHPMA}:80
-    volumes:
-      - /sessions
-
-  httpd:
-    privileged: true
-    container_name: wp-httpd
-    build: wp-ops/docker/httpd
+      - ${WP_PHPMA_PORT:-8080}:80
     labels:
-      ch.epfl.wordpress.httpd.env: ${WP_ENV}
-    image: docker-registry.default.svc:5000/wwp-test/httpd
-    volumes:
-      # See README.md and Makefile for explanations on volumes
-      - ./volumes/srv:/srv
-      # Unlike production, /wp is editable from outside the Docker
-      # container, and contains the "live" code (in the form of
-      # Git checkouts; see Makefile)
-      - ./volumes/wp:/wp
-      # Certificates are auto-generated when httpd first starts up.
-      # For comfort, keep them across restarts
-      - ./volumes/ssl:/etc/apache2/ssl
-    links:
-      - db:db
-    # The `httpd` container only needs to know WP_ENV:
-    environment:
-      - WP_ENV=${WP_ENV}
-      - SMTP_SECRET=${SMTP_SECRET}
-    ports:
-      - "${WP_PORT_HTTP}:8080"
-      - "${WP_PORT_HTTPS}:8443"
+      maintainer: "isas-fsd@groupes.epfl.ch"
+      organization: "EPFL / ISAS-FSD"
 
-  mgmt:
-    container_name: wp-mgmt
-    labels:
-      ch.epfl.wordpress.mgmt.env: ${WP_ENV}
-    image: docker-registry.default.svc:5000/wwp-test/mgmt
-    build: wp-ops/docker/mgmt
-    # The `mgmt` container gets access to the entire environment:
-    env_file:
-      - .env
-    environment:
-      - WP_ENV=${WP_ENV}
-      - MYSQL_DB_HOST=${MYSQL_DB_HOST}
-      - MYSQL_SUPER_USER=${MYSQL_SUPER_USER}
-      - MYSQL_SUPER_PASSWORD=${MYSQL_SUPER_PASSWORD}
-    volumes:
-      - ./volumes/srv:/srv
-      - ./volumes/wp:/wp
-      - ./volumes/wp/wp-cli/vendor/epfl-si:/var/www/.wp-cli/packages/vendor/epfl-si
-      - ./volumes/wp/wp-cli/vendor/cortneyray:/var/www/.wp-cli/packages/vendor/cortneyray
-      - .env:/srv/.env
-      - ./volumes/usrlocalbin:/usr/local/bin
-      - ./wp-ops:/wp-ops
-    ports:
-      - "${WP_PORT_SSHD}:22"
-
-  menu-api:
-    container_name: menu-api
-    build: menu-api
+volumes:
+   phpfpm-socket:
+   mariadb-data:
