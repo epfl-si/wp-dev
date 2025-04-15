@@ -105,7 +105,7 @@ wp-operator:
 	$(call _git_clone, epfl-si/wp-operator)
 
 menu-api:
-	$(call _git_clone, epfl-si/wp-menu-api, WPN)
+	$(call _git_clone, epfl-si/wp-menu-api, master)
 
 
 ################################################################################
