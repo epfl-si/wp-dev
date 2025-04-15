@@ -6,21 +6,21 @@
 usage () {
     die <<"USAGE"
 
-mysql-general-log: Turn MySQL statement log ("general log") on or off
+mariadb-general-log: Turn MariaDB statement log ("general log") on or off
 
 Usage:
 
-   mysql-general-log start
-   mysql-general-log stop
+   mariadb-general-log start
+   mariadb-general-log stop
 
 You can follow the logs e.g. with
 
-   mysql-general-log tail
+   mariadb-general-log tail
 
 USAGE
 }
 
-warn_altered_mysql_log_file () {
+warn_altered_mariadb_log_file () {
     warn <<WARN_GENERAL_LOG_FILE
 WARNING: the variable 'general_log_file' appears to have been altered;
 "$0 tail" may not work.
@@ -29,29 +29,29 @@ WARN_GENERAL_LOG_FILE
 
 start () {
     # https://stackoverflow.com/a/7470567/435004
-    echo 'SET GLOBAL general_log = ON;' | dockermysql mysql
+    echo 'SET GLOBAL general_log = ON;' | dockermariadb mariadb
     status >/dev/null
 }
 
 stop () {
-    echo 'SET GLOBAL general_log = OFF;' | dockermysql mysql
+    echo 'SET GLOBAL general_log = OFF;' | dockermariadb mariadb
 }
 
 status () {
-    echo 'SHOW VARIABLES LIKE "general_log%"' | dockermysql mysql
+    echo 'SHOW VARIABLES LIKE "general_log%"' | dockermariadb mariadb
     case $(echo 'SELECT @@general_log_file AS "";' \
-               | dockermysql mysql)
+               | dockermariadb mariadb)
     in
-        */*) warn_altered_mysql_log_file ; return 2 ;;
+        */*) warn_altered_mariadb_log_file ; return 2 ;;
         *.log) return 0 ;;
-        *)  warn_altered_mysql_log_file ; return 2 ;;
+        *)  warn_altered_mariadb_log_file ; return 2 ;;
     esac
 }
 
 tail () {
     trap stop EXIT HUP INT
     start
-    dockermysql "exec tail -F /var/lib/mysql/*.log"
+    dockermariadb "exec tail -F /var/lib/mysql/*.log"
 }
 
 set -e

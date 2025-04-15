@@ -296,7 +296,7 @@ lnav:
 
 .PHONY: tail-sql
 tail-sql: ## Activate and follow the MariaDB general query log
-	./devscripts/mysql-general-log tail
+	./devscripts/mariadb-general-log tail
 
 
 ########################################################################
