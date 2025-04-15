@@ -11,9 +11,6 @@ include .env
 # Figure out whether we clone over https or git+ssh (you need a GitHub
 # account set up with an ssh public key for the latter)
 	@echo _GITHUB_BASE = $(if $(shell ssh -T git@github.com 2>&1|grep 'successful'),git@github.com:,https://github.com/) >> $@
-	@echo _DOCKER_PULLED_IMAGES = $(shell cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-) >> $@
-	@echo _DOCKER_BUILT_IMAGES = wp-base $(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-) >> $@
-	@echo _WPBASE_IMAGE_DEPS = $(shell find wp-ops/docker/wp-base -type f | sed 's/\n/ /g') >> $@
 	@echo _HOST_TAR_X = $(shell if [ "$$(uname -s)" = "Linux" ]; then echo "tar -m --overwrite" ; else echo tar; fi) >> $@
 	@keybase fs read /keybase/team/epfl_wp_test/s3-assets-credentials.sh >> $@
 	@if ! grep AWS_ACCESS_KEY_ID $@ > /dev/null; then \
@@ -43,10 +40,6 @@ help: ## Display this help.
 WP_ENV ?= your-env
 WP_PORT_HTTP ?= 80
 WP_PORT_HTTPS ?= 443
-
-DOCKER_IMAGE_STAMPS = .docker-images-pulled.stamp \
-  .docker-base-image-built.stamp \
-  .docker-all-images-built.stamp
 
 WP_MAJOR_VERSION = 6
 WP_CONTENT_DIR = volumes/wp/$(WP_MAJOR_VERSION)/wp-content
@@ -107,7 +100,8 @@ checkout: ## Checkout wp-ops, WP Thems and Plugins
 
 git_clone = mkdir -p $(dir $@) || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@; touch $@
 
-$(WP_CONTENT_DIR): .docker-all-images-built.stamp
+$(WP_CONTENT_DIR):
+	$(ensure_wp_base)
 	-rm -f `find $(WP_CONTENT_DIR)/plugins \
 	             $(WP_CONTENT_DIR)/themes \
 	             $(WP_CONTENT_DIR)/mu-plugins -type l`
@@ -215,9 +209,6 @@ wp-ops:
 menu-api:
 	$(call git_clone, epfl-si/wp-menu-api)
 
-wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
-	./wp-ops/ansible/wpsible -t nothing
-
 .PHONY: wp-operator
 wp-operator:
 	$(call git_clone, epfl-si/wp-operator)
@@ -234,59 +225,17 @@ wp-base:  ## Build the WordPress base image, which several other images depend o
 	--build-arg AWS_SECRET_ACCESS_KEY=$$AWS_SECRET_ACCESS_KEY \
 	wp-ops/docker/wp-base
 
-.PHONY: pull
-pull:  ## Refresh the Docker images
-	rm -f .docker-images-pulled.stamp
-	$(MAKE) .docker-images-pulled.stamp
-
-.docker-images-pulled.stamp: docker-compose.yml
-	for image in $(_DOCKER_PULLED_IMAGES); do docker pull $$image; done
-	touch $@
-
-ifndef MINIMAL
-_DEFAULT_INSTALL_AUTO_FLAGS = $(_S3_INSTALL_AUTO_FLAGS)   # Below
-endif
-
-_S3_KEYBASE_TEAM_DIR := /keybase/team/epfl_wp_test
-_S3_SUITCASE_EYAML_PATH := $(shell pwd)/wp-ops/ansible/ansible-deps-cache/bin
-_S3_SECRETS_PATH := wp-ops/ansible/roles/wordpress-openshift-namespace/vars/secrets-wwp-test.yml
-_s3_secrets_build_query = $(shell perl -ne 'if (m/^build:/) { $$skipping = 0; } elsif (m/^[a-z]/) { $$skipping = 1; }; next if $$skipping; print if s/^\s*$(1): //' < $(_S3_SECRETS_PATH))
-
-_S3_INSTALL_AUTO_FLAGS = \
-   --s3-endpoint-url=$(call _s3_secrets_build_query,endpoint_url) \
-   --s3-region=$(call _s3_secrets_build_query,region) \
-   --s3-key-id=$(call _s3_secrets_build_query,key_id) \
-   --s3-bucket-name=$(call _s3_secrets_build_query,bucket_name) \
-   --s3-secret=$(shell export PATH=$(_S3_SUITCASE_EYAML_PATH):$$PATH; \
-      env EYAML_PRIVKEY="$$(keybase fs read $(_S3_KEYBASE_TEAM_DIR)/eyaml-privkey.pem)" \
-          EYAML_PUBKEY="$$(keybase fs read $(_S3_KEYBASE_TEAM_DIR)/eyaml-pubkey.pem)" \
-      eyaml decrypt \
-            --pkcs7-private-key-env-var EYAML_PRIVKEY \
-            --pkcs7-public-key-env-var EYAML_PUBKEY \
-            -s "$(call _s3_secrets_build_query,secret)")
-
-.debug.s3:
-	-@echo $(_S3_INSTALL_AUTO_FLAGS)
-
-.docker-base-image-built.stamp: wp-ops/ansible/ansible-deps-cache/bin/eyaml $(_WPBASE_IMAGE_DEPS))
-	[ -d wp-ops/docker/wp-base ] && \
-	  docker build -t wp-base $(WPBASE_BUILD_ARGS) --build-arg INSTALL_AUTO_FLAGS="$(INSTALL_AUTO_FLAGS) $(_DEFAULT_INSTALL_AUTO_FLAGS)" wp-ops/docker/wp-base
-	touch $@
-
-.docker-all-images-built.stamp: .docker-base-image-built.stamp wp-ops
-	docker compose build $(DOCKER_BUILD_ARGS)
-	touch $@
-
 .PHONY: docker-build
 docker-build:  ## Build the Docker images locally
-	rm -f .docker*built.stamp
-	$(MAKE) .docker-all-images-built.stamp
+	@$(ensure_wp_base)
+	docker compose build $(DOCKER_BUILD_ARGS)
 
 .PHONY: clean-images
 clean-images:  ## Prune the Docker images
-	for image in $(_DOCKER_PULLED_IMAGES) $(_DOCKER_BUILT_IMAGES); do docker rmi $$image || true; done
+	docker_pulled_images="$$(cat docker-compose.yml | grep 'image: ' | grep -v default.svc | cut -d: -f2-)"; \
+	docker_built_images="wp-base $$(shell cat docker-compose.yml | grep 'image: ' | grep default.svc | cut -d: -f2-)"; \
+	for image in $$docker_pulled_images $$docker_built_images ; do docker rmi $$image || true; done
 	docker image prune
-	rm -f .docker*.stamp
 
 .PHONY: wpn
 wpn: ## Build the wp-nginx and wp-php images and push them
@@ -311,7 +260,7 @@ endif
 SITE_DIR := /srv/test/wp-httpd/htdocs
 
 .PHONY: up
-up: checkout $(DOCKER_IMAGE_STAMPS) volumes/srv/test  ## Start up a local WordPress instance
+up: checkout docker-build volumes/srv/test  ## Start up a local WordPress instance
 	$(source_smtp_secrets); \
 	docker compose up -d
 	./devscripts/await-mariadb-ready
