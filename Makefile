@@ -233,6 +233,10 @@ wp-ops:
 	cd wp-ops; git checkout WPN
 	$(MAKE) -C wp-ops checkout
 
+.PHONY: menu-api
+menu-api:
+	$(call git_clone, epfl-si/wp-menu-api)
+
 wp-ops/ansible/ansible-deps-cache/bin/eyaml: wp-ops
 	./wp-ops/ansible/wpsible -t nothing
 
