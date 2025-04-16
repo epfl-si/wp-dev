@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 
+PHP_VERSION=8.2
+
 . "$(dirname "$0")"/functions.sh
 
 usage () {
@@ -42,14 +44,15 @@ myip () {
     $(dirname "$0")/myip "$@"
 }
 
-dockerexec="docker exec -i wp-httpd"
+dockerexec="docker exec -i wp-php"
+dockerexec_nginx="docker exec -i wp-nginx"
 
 ensure_php_xdebug_installed () {
     if ! $dockerexec sh -c \
-         'test -f /etc/php/$PHP_VERSION/mods-available/xdebug.ini';
+         'test -f /etc/php/'$PHP_VERSION'/mods-available/xdebug.ini';
     then
         $dockerexec apt update
-        $dockerexec apt install php-xdebug
+        $dockerexec apt install php$PHP_VERSION-xdebug
     fi
 }
 
@@ -59,37 +62,36 @@ case "$1" in
     start)
         ensure_php_xdebug_installed
         case "$(uname -s)" in
-            # Linux is ok with the xdebug remote_connect_back strategy
+            # Linux is ok with the xdebug.discover_client_host mechanism
             Linux)
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
-        xdebug.remote_enable=on
-        xdebug.remote_autostart=on
-        xdebug.remote_connect_back=on
+                    'cat > /etc/php/'$PHP_VERSION'/fpm/conf.d/99-debug.ini' <<EOF
+        xdebug.mode=debug
+        xdebug.start_with_request=yes
+        xdebug.discover_client_host=yes
 EOF
             ;;
             # Darwin is not, so use the current ip strategy
             *)
                 myip --ensure
                 $dockerexec sh -c \
-                    'cat > /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini' <<EOF
-        xdebug.remote_enable=on
-        xdebug.remote_autostart=on
-        xdebug.remote_host=$(myip)
+                    'cat > /etc/php/'$PHP_VERSION'/fpm/conf.d/99-debug.ini' <<EOF
+        xdebug.mode=debug
+        xdebug.start_with_request=yes
+        xdebug.client_host=$(myip)
 EOF
         esac
-        $dockerexec sh -c \
-                    "grep 'fastcgi_read_timeout 3600s' /etc/nginx/nginx.conf || sed -i '/\/etc\/nginx\/conf.d/a fastcgi_read_timeout 3600s;' /etc/nginx/nginx.conf"
+        $dockerexec_nginx sh -c 'grep -q "fastcgi_read_timeout 3600s;" /etc/nginx/template/wordpress_fastcgi.conf || echo "fastcgi_read_timeout 3600s;" >> /etc/nginx/template/wordpress_fastcgi.conf'
+        $dockerexec_nginx sh -c 'grep -q "proxy_read_timeout 3600s;" /etc/nginx/template/wordpress_fastcgi.conf || echo "proxy_read_timeout 3600s;" >> /etc/nginx/template/wordpress_fastcgi.conf'
         ;;
     stop)
         $dockerexec sh -c \
-            'rm -f /etc/php/$PHP_VERSION/fpm/conf.d/99-debug.ini'
-        $dockerexec sh -c \
-                    "sed -i '/fastcgi_read_timeout 3600s/d' /etc/nginx/nginx.conf"
+            'rm -f /etc/php/'$PHP_VERSION'/fpm/conf.d/99-debug.ini'
+        $dockerexec_nginx sh -c \
+                    "sed -i -e '/fastcgi_read_timeout 3600s;/d' -e '/proxy_read_timeout 3600s;/d' /etc/nginx/nginx.conf"
         ;;
     *) usage ;;
 esac
 
-$dockerexec /etc/init.d/nginx reload
-$dockerexec sh -c 'killall -HUP php-fpm${PHP_VERSION}'
-
+$dockerexec_nginx sh -c 'kill -HUP $(cat /tmp/nginx/nginx.pid)'
+$dockerexec sh -c 'killall -HUP php-fpm'${PHP_VERSION}
