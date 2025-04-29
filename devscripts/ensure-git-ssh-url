@@ -6,7 +6,7 @@ find "$1" -type f -path '*/.git/config' | while read -r config_file; do
     if grep -q 'url = https://github.com/epfl-si/' "$config_file"; then
         echo "Updating $config_file to use a SSH URL"
         # Use sed to replace the URL
-        sed -i .bak 's|url = https://github.com/epfl-si/|url = git@github.com:epfl-si/|g' "$config_file"
+        sed -i.bak -e 's|url = https://github.com/epfl-si/|url = git@github.com:epfl-si/|g' "$config_file"
     fi
 done
 
