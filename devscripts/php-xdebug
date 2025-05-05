@@ -51,7 +51,7 @@ ensure_php_xdebug_installed () {
     if ! $dockerexec sh -c \
          'test -f /etc/php/'$PHP_VERSION'/mods-available/xdebug.ini';
     then
-        $dockerexec apt update
+        $dockerexec apt update --allow-releaseinfo-change
         $dockerexec apt install php$PHP_VERSION-xdebug
     fi
 }
