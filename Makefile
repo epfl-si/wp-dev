@@ -54,7 +54,7 @@ WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php
 # it's not possible to sort them in reverse order or to increase the limit.
 _get_latest_image_tag = ./devscripts/curl-authenticated-quay '/v2/svc0041/wp-php/tags/list?last=2025-090' | \
                         jq -r '.tags | map(select(test("^[0-9]{4}-[0-9]{3}$$"))) | last'
-# Set WP_PHP_IMAGE_VERSION in a `.env` file to have precedence on the 
+# Set WP_PHP_IMAGE_VERSION in a `.env` file to have precedence on the
 # _get_latest_image_tag script.
 WP_PHP_IMAGE_TAG := $(or $(WP_PHP_IMAGE_VERSION),$(shell $(_get_latest_image_tag)))
 # Export WP_PHP_IMAGE_VERSION & WP_NGINX_IMAGE_VERSION variables for docker compose
@@ -123,6 +123,13 @@ wp-base: ## Build the WordPress base image, which several other images depend on
 	--build-arg AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 	wp-ops/docker/wp-base
 
+WPCRON_VER := 2025-001
+
+.PHONY: wp-cron
+wp-cron: ## Build the WP-Cron image, based on wp-base image
+	docker build -t quay-its.epfl.ch/svc0041/wp-cron:$(WPCRON_VER) \
+	wp-ops/docker/wp-cron
+
 .PHONY: docker-build
 docker-build: ## Build the Docker images locally
 	@$(ensure_wp_base)
@@ -162,6 +169,10 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 	echo "Edit wp-ops/ansible/roles/wordpress-namespace/vars/image-vars.yml,"; \
 	echo "or use an extra var: -e \"nginx_deployment_images_tag='$$ver'\""; \
 	echo "to change the images version.";
+
+.PHONY: wpn-push
+wp-cron-push: ## Push the wp-cron image
+	docker push quay-its.epfl.ch/svc0041/wp-cron:$(WPCRON_VER) ;
 
 .PHONY: build-apache-redirector
 build-apache-redirector: ## Build the apache-redirector image
