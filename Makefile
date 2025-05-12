@@ -170,7 +170,7 @@ wpn-push: ## Push the wordpress-nginx and wordpress-php images
 	echo "or use an extra var: -e \"nginx_deployment_images_tag='$$ver'\""; \
 	echo "to change the images version.";
 
-.PHONY: wpn-push
+.PHONY: wp-cron-push
 wp-cron-push: ## Push the wp-cron image
 	docker push quay-its.epfl.ch/svc0041/wp-cron:$(WPCRON_VER) ;
 
