@@ -49,6 +49,7 @@ services:
       - ./run/wp-nonces:/wp-nonces
       # Our nginx-specific entry point
       - ./wp-ops/docker/wordpress-php:/wp/nginx-entrypoint
+      - ./wp-ops/docker/wordpress-php/nginx-entrypoint.d:/wp/nginx-entrypoint.d
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
