@@ -73,7 +73,7 @@ _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 # from the "wp-base" Docker image.
 
 .PHONY: checkout
-checkout: src wp-ops wp-operator menu-api ## Checkout wp-ops, wp-operator, menu-api, WP Themes and WP Plugins
+checkout: src wp-ops wp-operator wp-continuous-integration menu-api ## Checkout wp-ops, wp-operator, wp-continuous-integration, menu-api, WP Themes and WP Plugins
 
 src:
 	# TODO ensure wp-php
@@ -106,6 +106,9 @@ wp-ops:
 
 wp-operator:
 	$(call _git_clone, epfl-si/wp-operator)
+
+wp-continuous-integration:
+	$(call _git_clone, epfl-si/wp-continuous-integration)
 
 menu-api:
 	$(call _git_clone, epfl-si/wp-menu-api, master)
