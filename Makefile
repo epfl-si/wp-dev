@@ -121,7 +121,7 @@ ensure_wp_base := docker inspect wp-base >/dev/null 2>&1 || $(MAKE) wp-base
 
 .PHONY: wp-base
 wp-base: ## Build the WordPress base image, which several other images depend on
-	docker build -t wp-base \
+	docker build -t quay-its.epfl.ch/svc0041/wp-base:rc \
 	--build-arg AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 	--build-arg AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 	wp-ops/docker/wp-base
