@@ -50,9 +50,9 @@ WP_MAJOR_VERSION = 6
 WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php
 # Get the latest image tag from the https://quay-its.epfl.ch API.
 # Note that for some (unknown) reason, the query parameter to limit the number
-# of result (`n=200`) is maxed at 100. Using `?last=2025-090` is a quick fix as
+# of result (`n=200`) is maxed at 100. Using `?last=2025-274` is a quick fix as
 # it's not possible to sort them in reverse order or to increase the limit.
-_get_latest_image_tag = ./devscripts/curl-authenticated-quay '/v2/svc0041/wp-php/tags/list?last=2025-090' | \
+_get_latest_image_tag = ./devscripts/curl-authenticated-quay '/v2/svc0041/wp-php/tags/list?last=2025-274' | \
                         jq -r '.tags | map(select(test("^[0-9]{4}-[0-9]{3}$$"))) | last'
 # Set WP_PHP_IMAGE_VERSION in a `.env` file to have precedence on the
 # _get_latest_image_tag script.
