@@ -82,8 +82,8 @@ src:
 	chmod 1777 "$@" || true
 	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
 	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL):$(WP_PHP_IMAGE_TAG) sleep 100
-	# Copy the latest version of WordPress from the image
-	docker cp wp-php-4-wp-extractor:/wp/$(WP_MAJOR_VERSION)/. src
+	# Copy WordPress out of the image
+	docker cp wp-php-4-wp-extractor:/wp/. src
 	touch $@
 	# Ensure "epfl-si" repositories' remote URLs are SSH URL
 	./devscripts/ensure-git-ssh-url ./src
