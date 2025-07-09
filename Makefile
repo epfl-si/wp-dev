@@ -251,12 +251,8 @@ rm: ## Remove the containers by name
 down: ## Stop the local WordPress instance and delete its containers
 	docker compose down
 
-nvm:
-	. ${NVM_DIR}/nvm.sh && nvm install 20;
-
 .PHONY: gutenberg
 gutenberg: ## Start the development server for Gutenberg
-	$(MAKE) nvm
 	cd src/plugins/wp-gutenberg-epfl; npm install --silent --no-fund; npm start
 
 
