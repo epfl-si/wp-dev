@@ -46,7 +46,6 @@ help: ## Display this help
 all: checkout git-pull up
 
 
-WP_MAJOR_VERSION = 6
 WP_PHP_IMAGE_URL = quay-its.epfl.ch/svc0041/wp-php
 # Get the latest image tag from the https://quay-its.epfl.ch API.
 # Note that for some (unknown) reason, the query parameter to limit the number
