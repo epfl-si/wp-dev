@@ -76,7 +76,7 @@ checkout: src wp-ops wp-operator wp-continuous-integration menu-api ## Checkout 
 
 src:
 	# TODO ensure wp-php
-	-rm -f src
+	-rm -rf src
 	mkdir -p "$@" || true
 	chmod 1777 "$@" || true
 	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
