@@ -98,7 +98,7 @@ git-pull: ## Walk down the directory to find repositories to update (with rebase
 
 
 ########################### Clone sub-repositories #############################
-_git_clone = mkdir -p $@ || true; devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@ $(2); touch $@
+_git_clone = devscripts/ensure-git-clone.sh $(_GITHUB_BASE)$(strip $(1)) $@ $(2); touch $@
 
 wp-ops:
 	$(call _git_clone, epfl-si/wp-ops, master)
