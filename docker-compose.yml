@@ -53,6 +53,8 @@ services:
     labels:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
+    environment:
+      - OPDO_DIR=/tmp
 
   nginx:
     container_name: wp-nginx
