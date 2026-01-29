@@ -350,7 +350,7 @@ mrproper: down ## Mr. Clean will clean your whole house and everything that's in
 	@echo "Do you want to proceed with the action? This will remove everything. [y/n]: "
 	@read answer; \
 	if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
-		echo "Whiping everything..."; \
+		echo "Wiping everything..."; \
 		OS=$$(uname -s); \
 		if [ "$$OS" = "Linux" ]; then \
 			echo "This is a Linux system"; \
