@@ -37,8 +37,9 @@ services:
 
   php:
     container_name: wp-php
+    build: wp-ops/docker/wordpress-php
     # https://quay-its.epfl.ch/repository/svc0041/wp-php
-    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2025-047}
+    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2026-068}
     volumes:
       # src is created by Makefile:
       - ./src:/wp
@@ -58,8 +59,9 @@ services:
 
   nginx:
     container_name: wp-nginx
+    build: wp-ops/docker/wordpress-nginx
     # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
-    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2025-047}
+    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2026-068}
     ports:
       - 80:80
       - 443:443
