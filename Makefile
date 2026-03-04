@@ -243,7 +243,7 @@ var/wp-data:
 
 .PHONY: stop
 stop: ## Stop the local WordPress instance
-	docker compose stop
+	docker compose --profile "*" stop
 
 .PHONY: rm
 rm: ## Remove the containers by name
@@ -251,7 +251,7 @@ rm: ## Remove the containers by name
 
 .PHONY: down
 down: ## Stop the local WordPress instance and delete its containers
-	docker compose down
+	docker compose --profile "*" down
 
 .PHONY: gutenberg
 gutenberg: ## Start the development server for Gutenberg
@@ -312,6 +312,17 @@ lnav:
 .PHONY: tail-sql
 tail-sql: ## Activate and follow the MariaDB general query log
 	./devscripts/mariadb-general-log tail
+
+
+########################################################################
+##@ Trace
+
+.PHONY: trace-up
+trace-up: ## Start the containers to provide tracing features
+	docker compose --profile observability up -d
+	@echo ""
+	@echo "To look at the generated traces,"
+	@echo "Open http://localhost:3000/explore, look under \"Query type\" > \"Search\" "
 
 
 ########################################################################
