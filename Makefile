@@ -75,16 +75,16 @@ _docker_exec_clinic := docker exec --user www-data -it wp-clinic
 checkout: src wp-ops wp-operator wp-continuous-integration menu-api ## Checkout wp-ops, wp-operator, wp-continuous-integration, menu-api, WP Themes and WP Plugins
 
 src:
-	# TODO ensure wp-php
+# TODO ensure wp-php
 	-rm -rf src
 	mkdir -p "$@" || true
 	chmod 1777 "$@" || true
-	# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
+# Scratch haz nothing :( need bash or something. FIXME: Use wp-base instead of wp-php
 	docker run -d --name wp-php-4-wp-extractor --rm $(WP_PHP_IMAGE_URL):$(WP_PHP_IMAGE_TAG) sleep 100
-	# Copy WordPress out of the image
+# Copy WordPress out of the image
 	docker cp wp-php-4-wp-extractor:/wp/. src
 	touch $@
-	# Ensure "epfl-si" repositories' remote URLs are SSH URL
+# Ensure "epfl-si" repositories' remote URLs are SSH URL
 	./devscripts/ensure-git-ssh-url ./src
 
 _find_git_depots := find . \( -path ./volumes -prune -false \) -o -name .git -prune |xargs -n 1 dirname|grep -v 'ansible-deps-cache'
