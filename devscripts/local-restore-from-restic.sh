@@ -16,7 +16,7 @@ set -e -x
 
 scriptdir="$(dirname "$0")"
 export $(cat ${scriptdir}/../.env | grep WP_ENV=)
-_mgmt_container="$(docker ps -q --filter "label=ch.epfl.wordpress.mgmt.env=${WP_ENV}")"
+_php_container="$(docker ps -q --filter "label=com.docker.compose.project=wp-dev" --filter "label=com.docker.compose.service=php")"
 
 SITE_ORIGINAL_URL="${SITE_ORIGINAL_URL:-https://www.epfl.ch/campus/services/website/canari/}"
 SITE_ANSIBLE_IDENTIFIER="${SITE_ANSIBLE_IDENTIFIER:-www__campus__services__website__canari}"
@@ -30,24 +30,27 @@ export AWS_ACCESS_KEY_ID=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | 
 export RESTIC_PASSWORD=$(cat /keybase/team/epfl_wp_prod/aws-cli-credentials | grep -A4 '\[backup-wwp\]' | grep restic_password | sed 's/restic_password = //')
 
 # Get the latest DB backup from S3
-restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/sql dump latest db-backup.sql > ${scriptdir}/../volumes/srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql
+restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/sql dump latest db-backup.sql > ${scriptdir}/../srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql
+
+# Set correct permissions
+docker exec -i ${_php_container} bash -c "chmod g+rwx -R /srv; chown root:www-data -R /srv"
 
 # Create the empty dir for the new site
-docker exec --user www-data -i ${_mgmt_container} bash -c "mkdir -p /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}"
+docker exec --user www-data -i ${_php_container} bash -c "mkdir -p /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}"
 
 # Initilialize the new site
-docker exec --user www-data -i ${_mgmt_container} bash -c "cd /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}; new-wp-site --debug"
+docker exec --user www-data -i ${_php_container} bash -c "cd /srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME}; new-wp-site --debug"
 
 # Restore the backup directly in the new site's folder
 restic -r s3:https://s3.epfl.ch/${S3_BUCKET_NAME}/backup/wordpresses/${SITE_ANSIBLE_IDENTIFIER}/files dump latest /wp-content \
-   | docker exec --user www-data -i ${_mgmt_container} tar -C/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} -xpvf -
+   | docker exec --user www-data -i ${_php_container} tar -C/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} -xpvf -
 
 # Import the DB
-docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} db import /srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql"
+docker exec --user www-data -i ${_php_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} db import /srv/${WP_ENV}/${SITE_ANSIBLE_IDENTIFIER}-db-backup.sql"
 
 # Ensure that URLs are correct with search-replace
 #  - see https://stackoverflow.com/a/9018877/960623 for the ${DIR%/} that remove the trailing slash
-docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} search-replace ${SITE_ORIGINAL_URL%/} https://wp-httpd/${RESTORED_SITE_DIR_NAME%/}"
+docker exec --user www-data -i ${_php_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} search-replace ${SITE_ORIGINAL_URL%/} https://wp-httpd/${RESTORED_SITE_DIR_NAME%/}"
 
 # Set the admin password to "secret"
-docker exec --user www-data -i ${_mgmt_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} user update admin --user_pass=secret"
+docker exec --user www-data -i ${_php_container} bash -c "wp --path=/srv/${WP_ENV}/wp-httpd/htdocs/${RESTORED_SITE_DIR_NAME} user update admin --user_pass=secret"
