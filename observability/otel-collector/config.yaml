@@ -18,9 +18,11 @@ exporters:
       max_elapsed_time: 30s
     sending_queue:
       enabled: false
+  debug:
+    verbosity: normal
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlp/tempo]
+      exporters: [otlp/tempo,debug]
