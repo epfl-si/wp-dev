@@ -39,7 +39,7 @@ services:
     container_name: wp-php
     build: wp-ops/docker/wordpress-php
     # https://quay-its.epfl.ch/repository/svc0041/wp-php
-    image: quay-its.epfl.ch/svc0041/wp-php:${WP_PHP_IMAGE_VERSION:-2026-068}
+    image: quay-its.epfl.ch/svc0041/wp-php:otel
     volumes:
       # src is created by Makefile:
       - ./src:/wp
@@ -56,12 +56,25 @@ services:
       organization: "EPFL / ISAS-FSD"
     environment:
       - OPDO_DIR=/tmp
+      ##
+      # Tracing
+      - OTEL_PHP_AUTOLOAD_ENABLED=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=wp-php
+      - OTEL_RESOURCE_ATTRIBUTES="service.name=wp-php,service.environment=development,service.namespace=local-dev"
+      # To only sample the 20%:
+      #- OTEL_TRACES_SAMPLER=parentbased_traceidratio
+      #- OTEL_TRACES_SAMPLER_ARG=0.2
+      # To activate debug:
+      #- OTEL_LOG_LEVEL=debug
+      #- OTEL_TRACES_EXPORTER=console
 
   nginx:
     container_name: wp-nginx
     build: wp-ops/docker/wordpress-nginx
     # https://quay-its.epfl.ch/repository/svc0041/wp-nginx
-    image: quay-its.epfl.ch/svc0041/wp-nginx:${WP_NGINX_IMAGE_VERSION:-2026-068}
+    image: quay-its.epfl.ch/svc0041/wp-nginx:2026-068
     ports:
       - 80:80
       - 443:443
@@ -111,6 +124,50 @@ services:
       maintainer: "isas-fsd@groupes.epfl.ch"
       organization: "EPFL / ISAS-FSD"
 
+  ###
+  # Observability
+  tempo:
+    profiles: [observability]
+    image: grafana/tempo:2.3.1
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./observability/tempo/config.yaml:/etc/tempo.yaml
+      - tempo-data:/tmp/tempo/blocks
+      - tempo-wal:/tmp/tempo/wal
+    ports:
+      - "3200:3200"   # Tempo HTTP API
+      - "4327:4327"   # OTLP gRPC (internal use)
+      - "4328:4328"   # OTLP HTTP (internal use)
+
+  otel-collector:
+    profiles: [observability]
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./observability/otel-collector/config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC (exposed to your apps)
+      - "4318:4318"   # OTLP HTTP (exposed to your apps)
+    depends_on:
+      - tempo
+
+  grafana:
+    profiles: [observability]
+    image: grafana/grafana:12.4.1
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - ./observability/grafana/datasources-tempo.yaml:/etc/grafana/provisioning/datasources/tempo.yaml
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - tempo
+
 volumes:
    phpfpm-socket:
    mariadb-data:
+   grafana-data:
+   tempo-data:
+   tempo-wal:
