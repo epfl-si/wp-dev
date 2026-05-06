@@ -56,6 +56,8 @@ services:
       organization: "EPFL / ISAS-FSD"
     environment:
       - OPDO_DIR=/tmp
+      - PEOPLE_BASE_URL=${PEOPLE_BASE_URL:-https://people-test.epfl.ch}
+      - PEOPLE_BEARER_TOKEN=${PEOPLE_BEARER_TOKEN:-NA}
 
   nginx:
     container_name: wp-nginx
