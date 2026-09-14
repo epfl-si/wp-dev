@@ -9,14 +9,20 @@
 
 # TL;DR
 
-```sh
-git clone git@github.com:epfl-si/wp-dev wp-dev
-cd wp-dev
-make up
-```
+1. Check that ports 80, 443 and 3306 are available on your workstation. If not, the following might help:
 
-It will deploy different services and you should be able to access a WordPress
-site on https://wordpress.localhost.
+    ```sh
+    systemctl stop apache2
+    systemctl stop mariadb
+    ```
+2.
+    ```sh
+    git clone git@github.com:epfl-si/wp-dev wp-dev
+    cd wp-dev
+    make up
+    ```
+
+3. Browse https://wordpress.localhost and initialize WordPress from the interactive form
 
 Use `make help` to learn more about the commands you will need along the way.
 
@@ -26,7 +32,7 @@ Use `make help` to learn more about the commands you will need along the way.
 This will deploy a WordPress development environment using docker and docker
 compose.
 
-Inside the `wp-dev` directory, you will get:
+Inside the `wp-dev` directory, you should see:
 
 - Other repositories that are needed:
    - `menu-api`: https://github.com/epfl-si/menu-api
@@ -86,11 +92,11 @@ handled by the [Ansible suitcase].
 From here you can either choose to fetch the *whole stack* (meaning you have 
 access to the secrets and the EPFL network) or choose the *minimal install*.
 
-1. Minimal installation can be acheived with  
+1. Minimal installation can be acheived with
    `make checkout MINIMAL=1`.
 
-For the complete install (which will get all the plugins and themes), follow
-theses steps:
+For the complete install (including all the plugins and themes), follow
+these steps:
 
 *  If you don't have `eyaml` version 3.2.0 on your system, you need first to
    run `make wp-ops` (which will clone the [wp-ops] repository) and launch the
@@ -108,62 +114,6 @@ theses steps:
 1. Type `make exec` to enter the so-called management container.<br>💡 For some tasks (e.g. using the `wp` command-line tool), you should first change into the directory at the top of the project hierarchy:<pre>cd /srv/test/wp-httpd/htdocs/</pre>
 1. Have [nvm](https://github.com/nvm-sh/nvm) installed and type `make gutenberg`
    to start using the [wp-gutenberg-epfl] plugin.
-
-
-## Populate the serving tree
-
-> :warning: These options are intended to be executed by people who have access
-   to team's secrets and EPFL network.
-
-### Copy from production
-
-This is the easiest way, as you get all the DB, without the media. Assuming you 
-have production access, from outside the container, run  
-`export WP_VERSION=6 && ./devscripts/copy-enac-from-prod.sh`  
-(Change `WP_VERSION` value if you import a different site version)
-
-It will to copy a subset of the production serving tree of `www.epfl.ch` into 
-your wp-dev checkout:
-- https://wp-httpd/
-- https://wp-httpd/schools
-- https://wp-httpd/schools/enac
-- https://wp-httpd/schools/enac/education
-
-Then you can, optionally, run `./devscripts/customize-local-sites.sh`. You will 
-be asked if you want to activate debug mode or get back to standard 
-authentification on the copied sites.
-
-### Empty site
-
-This is more difficult, as the sites created in this way are initially “bare”
-(they lack symlinks to the plugins, must-use plugins and themes; and they are
-devoid of configuration and data).
-
-1. Enter the management container (see above), then create one or
-   more sites under `/srv/${WP_ENV}/wp-httpd/htdocs` using either
-   the `wp` command-line tool (for a “vanilla” WordPress site) or the
-   [`new-wp-site.sh`] command (such a site comes with a number of EPFL-specific
-   presets, main theme disabled etc.)
-1. Install and activate the EPFL theme with the following command:  
-   `wp theme install --activate wp-theme-2018`
-1. Browse the site. You should now see a working EPFL theme, and a “raw” 
-   WordPress without plugins.
-1. If required, you can install additional plugins with the  
-   `wp plugin install --activate pluginName`  
-   command.
-
-### Restore from a backup
-
-Another option is to user the [local-restore-from-restic.sh] script which will
-restore a site from its S3 backups (files and database). From the `devscripts` 
-directory of this repo, run (for instance):
-```bash
-SITE_ORIGINAL_URL=https://www.epfl.ch/campus/services/website/canari-wpforms/ \
-SITE_ANSIBLE_IDENTIFIER=www__campus__services__website__canari_wpforms \
-RESTORED_SITE_DIR_NAME=canari-wpforms \
-./devscripts/local-restore-from-restic.sh
-```
-
 
 ## Access the admin area
 
