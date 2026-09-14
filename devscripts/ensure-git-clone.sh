@@ -13,11 +13,6 @@ do_git_clone() {
     git clone -b "$TARGET_BRANCH" "$REPOSITORY_URL" "$TARGET_DIR"
 }
 
-if test -L "$TARGET_DIR"; then
-    # Clean up symlink if exists
-    rm "$TARGET_DIR"
-fi
-
 if ! test -d "$TARGET_DIR"; then
     do_git_clone
 elif [ "$(cd "$TARGET_DIR" && git remote get-url origin)" != "$REPOSITORY_URL" ] ; then
